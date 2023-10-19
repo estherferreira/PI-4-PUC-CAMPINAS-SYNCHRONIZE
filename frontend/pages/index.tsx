@@ -15,11 +15,13 @@ import SectionTitle from "./components/SectionTitle";
 import { CheckIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import PlanCard from "./components/PlanCard";
 import DateCard from "./components/DateCard";
+import Logo from "../assets/Logo.svg";
+import Image from "next/image";
+import Navbar from "./components/Navbar";
 
 const IndexPage = () => (
   <>
-    {/* Primeira sessão */}
-
+    <Navbar />
     <SimpleGrid columns={2}>
       <Box height="100vh" display="flex" alignItems="center" bg="offwhite">
         <Box margin="100px">
@@ -336,6 +338,21 @@ const IndexPage = () => (
         </SimpleGrid>
       </Box>
     </Box>
+    <footer
+      style={{
+        backgroundColor: "black",
+        color: "white",
+        padding: "20px",
+        textAlign: "left",
+        height: "100px",
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      <Text fontFamily="poppins.400" marginLeft="30px">
+        &copy; 2023 Synchronize | Todos os direitos reservados.
+      </Text>
+    </footer>
   </>
 );
 
