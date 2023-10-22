@@ -10,16 +10,18 @@ import com.syn.utils.Data;
 
 import com.syn.models.verifications.Email;
 
-public class User {
+public class User implements Cloneable {
     private Email email;
     private String password;
     private String name;
     private Data dateOfBirth;
     private String bloodType;
+    private SubscriptionPlan subscriptionPlan;
 
     private static final String[] VALID_BLOOD_TYPES = { "A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-" };
 
-    public User(Email email, String password, String name, Data dateOfBirth, String bloodType) {
+    public User(Email email, String password, String name, Data dateOfBirth, String bloodType,
+            SubscriptionPlan subscriptionPlan) {
         this.name = name;
         this.email = email;
         if (isPasswordStrong(password)) {
@@ -36,6 +38,8 @@ public class User {
             throw new IllegalArgumentException(
                     "Tipo sanguíneo inválido. Tipos válidos são: A+, B+, AB+, O+, A-, B-, AB-, O-");
         }
+
+        this.subscriptionPlan = subscriptionPlan;
     }
 
     public String getPassword() {
@@ -145,6 +149,69 @@ public class User {
                 "Email: " + email.toString() + '\n' +
                 "Password Hash: " + password + '\n' +
                 "DateOfBirth: " + dateOfBirth.toString() + '\n' +
-                "BloodType: " + bloodType;
+                "BloodType: " + bloodType + '\n' +
+                "SubscriptionPlan: " + subscriptionPlan.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        if (obj == null)
+            return false;
+        if (obj.getClass() != this.getClass())
+            return false;
+
+        User user = (User) obj;
+
+        if (user.email != this.email ||
+                user.password != this.password ||
+                user.name != this.name ||
+                user.dateOfBirth != this.dateOfBirth ||
+                user.bloodType != this.bloodType ||
+                user.subscriptionPlan != this.subscriptionPlan)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 13;
+
+        result = 7 * result + email.hashCode();
+        result = 7 * result + password.hashCode();
+        result = 7 * result + name.hashCode();
+        result = 7 * result + dateOfBirth.hashCode();
+        result = 7 * result + bloodType.hashCode();
+        result = 7 * result + subscriptionPlan.hashCode();
+
+        if (result < 0)
+            result = -result;
+
+        return result;
+    }
+
+    private User(User modelo) throws Exception {
+        if (modelo == null)
+            throw new Exception("modelo ausente");
+
+        this.email = modelo.email;
+        this.password = modelo.password;
+        this.name = modelo.name;
+        this.dateOfBirth = modelo.dateOfBirth;
+        this.bloodType = modelo.bloodType;
+        this.subscriptionPlan = modelo.subscriptionPlan;
+    }
+
+    public Object clone() {
+        User ret = null;
+
+        try {
+            ret = new User(this);
+        } catch (Exception erro) {
+        }
+
+        return ret;
     }
 }
