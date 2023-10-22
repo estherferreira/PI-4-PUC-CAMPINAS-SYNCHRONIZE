@@ -1,27 +1,26 @@
 package com.syn.models;
 
 import org.mindrot.jbcrypt.BCrypt;
-import java.text.SimpleDateFormat;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import java.util.Calendar;
-import java.util.Date;
+import com.syn.utils.Data;
+
+import com.syn.models.verifications.Email;
 
 public class User {
-    private String email;
+    private Email email;
     private String password;
     private String name;
-    private Date dateOfBirth;
-    private byte day;
-    private byte month;
-    private short year;
+    private Data dateOfBirth;
     private String bloodType;
 
     private static final String[] VALID_BLOOD_TYPES = { "A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-" };
 
-    public User(String email, String password, String name, byte day, byte month, short year, String bloodType) {
+    public User(Email email, String password, String name, Data dateOfBirth, String bloodType) {
+        this.name = name;
         this.email = email;
         if (isPasswordStrong(password)) {
             // Realize o hashing da senha antes de armazená-la
@@ -29,8 +28,7 @@ public class User {
         } else {
             throw new IllegalArgumentException("A senha não atende aos critérios de segurança.");
         }
-        this.name = name;
-        setBirthDate(day, month, year);
+        this.dateOfBirth = dateOfBirth;
 
         if (isValidBloodType(bloodType)) {
             this.bloodType = bloodType;
@@ -38,14 +36,6 @@ public class User {
             throw new IllegalArgumentException(
                     "Tipo sanguíneo inválido. Tipos válidos são: A+, B+, AB+, O+, A-, B-, AB-, O-");
         }
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPassword() {
@@ -72,53 +62,21 @@ public class User {
         this.name = name;
     }
 
-    public byte getDay() {
-        return day;
-    }
-
-    public void setDay(byte day) {
-        this.day = day;
-    }
-
-    public byte getMonth() {
-        return month;
-    }
-
-    public void setMonth(byte month) {
-        this.month = month;
-    }
-
-    public short getYear() {
-        return year;
-    }
-
-    public void setYear(short year) {
-        this.year = year;
-    }
-
     public void setBirthDate(byte day, byte month, short year) {
-        Calendar birthCalendar = Calendar.getInstance();
-        birthCalendar.set(Calendar.YEAR, year);
-        birthCalendar.set(Calendar.MONTH, month - 1); // O mês começa em 0 (janeiro) no Calendar
-        birthCalendar.set(Calendar.DAY_OF_MONTH, day);
+        try {
+            Data date = new Data(day, month, year);
 
-        if (isValidDate(day, month, year)) {
-            if (isAdult(birthCalendar)) {
-                this.dateOfBirth = birthCalendar.getTime();
-            } else {
+            if (!Data.isValida(day, month, year)) {
+                throw new IllegalArgumentException("Data de nascimento inválida.");
+            }
+
+            if (!isAdult(date)) {
                 throw new IllegalArgumentException("O usuário deve ter mais de 18 anos.");
             }
-        } else {
-            throw new IllegalArgumentException("Data de nascimento inválida.");
-        }
-    }
 
-    public String getDateOfBirthFormatted() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        if (dateOfBirth != null) {
-            return dateFormat.format(dateOfBirth);
-        } else {
-            return "";
+            this.dateOfBirth = date;
+        } catch (Exception e) {
+            System.err.println("Ocorreu um erro ao definir a data de nascimento: " + e.getMessage());
         }
     }
 
@@ -164,8 +122,10 @@ public class User {
     }
 
     // Verifica se é a idade do usuário é maior ou igual a 18 anos
-    private boolean isAdult(Calendar birthCalendar) {
+    private boolean isAdult(Data birthDate) {
         Calendar currentCalendar = Calendar.getInstance();
+        Calendar birthCalendar = Calendar.getInstance();
+        birthCalendar.set(birthDate.getAno(), birthDate.getMes() - 1, birthDate.getDia());
 
         int age = currentCalendar.get(Calendar.YEAR) - birthCalendar.get(Calendar.YEAR);
 
@@ -178,25 +138,13 @@ public class User {
         return age >= 18;
     }
 
-    // Verifica se a data de nascimento é válida
-    private boolean isValidDate(byte day, byte month, short year) {
-        Calendar cal = Calendar.getInstance();
-        int currentYear = cal.get(Calendar.YEAR);
-
-        if (year < 1900 || year > currentYear || month < 1 || month > 12 || day < 1 || day > 31) {
-            return false;
-        }
-
-        return year >= 1900 && year <= currentYear && month >= 1 && month <= 12 && day >= 1 && day <= 31;
-    }
-
     @Override
     public String toString() {
         return "User:" + '\n' + '\n' +
                 "Name: " + name + '\n' +
-                "Email: " + email + '\n' +
+                "Email: " + email.toString() + '\n' +
                 "Password Hash: " + password + '\n' +
-                "DateOfBirth: " + getDateOfBirthFormatted() + '\n' +
+                "DateOfBirth: " + dateOfBirth.toString() + '\n' +
                 "BloodType: " + bloodType;
     }
 }
