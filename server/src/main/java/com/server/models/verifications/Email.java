@@ -1,4 +1,4 @@
-package com.syn.models.verifications;
+package com.server.models.verifications;
 
 public class Email {
 

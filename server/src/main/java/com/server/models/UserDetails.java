@@ -1,16 +1,14 @@
-package com.syn.models;
-
-import org.mindrot.jbcrypt.BCrypt;
+package com.server.models;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import java.util.Calendar;
-import com.syn.utils.Data;
 
-import com.syn.models.verifications.Email;
+import com.server.utils.Data;
+import com.server.models.verifications.Email;
 
-public class User implements Cloneable {
+public class UserDetails {
     private Email email;
     private String password;
     private String name;
@@ -20,7 +18,7 @@ public class User implements Cloneable {
 
     private static final String[] VALID_BLOOD_TYPES = { "A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-" };
 
-    public User(Email email, String password, String name, Data dateOfBirth, String bloodType,
+    public UserDetails(Email email, String password, String name, Data dateOfBirth, String bloodType,
             SubscriptionPlan subscriptionPlan) {
         this.name = name;
         this.email = email;
@@ -162,7 +160,7 @@ public class User implements Cloneable {
         if (obj.getClass() != this.getClass())
             return false;
 
-        User user = (User) obj;
+        UserDetails user = (UserDetails) obj;
 
         if (user.email != this.email ||
                 user.password != this.password ||
@@ -192,7 +190,7 @@ public class User implements Cloneable {
         return result;
     }
 
-    private User(User modelo) throws Exception {
+    private UserDetails(UserDetails modelo) throws Exception {
         if (modelo == null)
             throw new Exception("modelo ausente");
 
@@ -205,10 +203,10 @@ public class User implements Cloneable {
     }
 
     public Object clone() {
-        User ret = null;
+        UserDetails ret = null;
 
         try {
-            ret = new User(this);
+            ret = new UserDetails(this);
         } catch (Exception erro) {
         }
 

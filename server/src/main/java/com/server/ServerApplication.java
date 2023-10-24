@@ -1,26 +1,27 @@
-package com.syn;
+package com.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import com.syn.models.User;
-import com.syn.models.verifications.Email;
-import com.syn.utils.Data;
-import com.syn.models.Diagnosis;
-import com.syn.models.SubscriptionPlan;
+
+import com.server.models.Diagnosis;
+import com.server.models.SubscriptionPlan;
+import com.server.models.UserDetails;
+import com.server.models.verifications.Email;
+import com.server.utils.Data;
 
 @SpringBootApplication
-public class SynApplication {
+public class ServerApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(SynApplication.class, args);
+	public static void main(String[] args) {
+		SpringApplication.run(ServerApplication.class, args);
 
-        try {
+		try {
             // Crie o objeto User usando o construtor
-            User user = new User(new Email("luanapiovani@gmail.com"), "LuPiovani#12", "Luana Piovani",
+            UserDetails user = new UserDetails(new Email("luanapiovani@gmail.com"), "LuPiovani#12", "Luana Piovani",
                     new Data((byte) 29, (byte) 8, (short) 1996), "O-", new SubscriptionPlan("Básico"));
             System.out.print(user + "\n");
             
-            User samUser = new User(new Email("laurabarros@gmail"), "LauraBarros&14", "Laura Barros",
+            UserDetails samUser = new UserDetails(new Email("laurabarros@gmail"), "LauraBarros&14", "Laura Barros",
                     new Data((byte) 25, (byte) 8, (short) 2003), "O-", new SubscriptionPlan("Premium"));
 
             // System.out.println(user.getPassword());

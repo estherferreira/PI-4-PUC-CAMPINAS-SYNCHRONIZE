@@ -1,4 +1,4 @@
-package com.syn.configurations;
+package com.synback.configurations;
 public class ApiChatGPTConfig {
     
 }

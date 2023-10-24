@@ -1,4 +1,4 @@
-package com.syn.models;
+package com.server.models;
 
 public class SubscriptionPlan implements Cloneable {
 
@@ -87,3 +87,4 @@ public class SubscriptionPlan implements Cloneable {
         return ret;
     }
 }
+
