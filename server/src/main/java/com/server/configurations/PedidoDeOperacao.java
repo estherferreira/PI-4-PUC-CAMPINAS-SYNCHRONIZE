@@ -1,4 +1,4 @@
-package com.server.controllers;
+package com.server.configurations;
 public class PedidoDeOperacao extends Comunicado
 {
     private char   operacao;

@@ -1,4 +1,4 @@
-package com.server.configurations;
+package com.server.services;
 public class ApiChatGPTConfig {
     
 }

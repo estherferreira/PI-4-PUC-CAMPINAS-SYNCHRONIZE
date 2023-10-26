@@ -1,3 +1,3 @@
-package com.server.controllers;
+package com.server.configurations;
 public class ComunicadoDeDesligamento extends Comunicado
 {}

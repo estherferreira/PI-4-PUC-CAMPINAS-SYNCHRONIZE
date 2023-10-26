@@ -1,4 +1,4 @@
-package com.server.controllers;
+package com.server.configurations;
 import java.util.*;
 
 public class Servidor
