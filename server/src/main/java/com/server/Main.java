@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.server.models.Diagnosis;
 import com.server.models.SubscriptionPlan;
 import com.server.models.User;
-import com.server.models.verifications.Email;
 import com.server.utils.Data;
 
 @SpringBootApplication
@@ -18,7 +17,7 @@ public class Main {
         try {
             // Crie o objeto User usando o construtor
             
-            User user = new User("Luana Pionvani", new Email("luanapiovani@gmail.com"), new Data((byte) 1, (byte) 1, (short) 2000), 50.0,
+            User user = new User(new Data((byte) 1, (byte) 1, (short) 2000), 50.0,
                     (short) 160, "Feminino", (byte) 30, "Nenhum", "A+", new SubscriptionPlan("Premium"));
             System.out.print(user + "\n");
 

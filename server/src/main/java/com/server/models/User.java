@@ -1,13 +1,9 @@
 package com.server.models;
 
 import java.util.Calendar;
-
-import com.server.models.verifications.Email;
 import com.server.utils.Data;
 
 public class User {
-    private String name;
-    private Email email;
     private Data dateOfBirth;
     private double weight;
     private short height;
@@ -19,11 +15,9 @@ public class User {
 
     private static final String[] VALID_BLOOD_TYPES = { "A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-" };
 
-    public User(String name, Email email, Data dateOfBirth, double weight, short height, String gender,
+    public User(Data dateOfBirth, double weight, short height, String gender,
             byte dailyExerciseTime, String diseasesInTheFamily, String bloodType,
             SubscriptionPlan subscriptionPlan) {
-        this.name = name;
-        this.email = email;
         this.dateOfBirth = dateOfBirth;
         this.weight = weight;
         this.height = height;
@@ -39,14 +33,6 @@ public class User {
         }
 
         this.subscriptionPlan = subscriptionPlan;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Data getDateOfBirth() {
@@ -169,8 +155,6 @@ public class User {
     @Override
     public String toString() {
         return "User:" + '\n' + '\n' +
-                "Name: " + name + '\n' +
-                "E-mail: " + email + '\n' +
                 "DateOfBirth: " + dateOfBirth.toString() + '\n' +
                 "Weight: " + weight + '\n' +
                 "Height: " + height + '\n' +
@@ -192,9 +176,7 @@ public class User {
 
         User user = (User) obj;
 
-        if (user.name != this.name ||
-                user.email != this.email ||
-                user.dateOfBirth != this.dateOfBirth ||
+        if (user.dateOfBirth != this.dateOfBirth ||
                 user.weight != this.weight ||
                 user.height != this.height ||
                 user.gender != this.gender ||
@@ -211,8 +193,6 @@ public class User {
     public int hashCode() {
         int result = 13;
 
-        result = 7 * result + name.hashCode();
-        result = 7 * result + email.hashCode();
         result = 7 * result + dateOfBirth.hashCode();
         result = 7 * result + Double.hashCode(weight);
         result = 7 * result + Short.hashCode(height);
@@ -232,8 +212,6 @@ public class User {
         if (modelo == null)
             throw new Exception("modelo ausente");
 
-        this.name = modelo.name;
-        this.email = modelo.email;
         this.dateOfBirth = modelo.dateOfBirth;
         this.weight = modelo.weight;
         this.height = modelo.height;
