@@ -10,10 +10,10 @@ import com.server.models.verifications.Email;
 import com.server.utils.Data;
 
 @SpringBootApplication
-public class ServerApplication {
+public class Main {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ServerApplication.class, args);
+		SpringApplication.run(Main.class, args);
 
 		try {
             // Crie o objeto User usando o construtor
