@@ -5,33 +5,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.server.models.Diagnosis;
 import com.server.models.SubscriptionPlan;
-import com.server.models.UserDetails;
-import com.server.models.verifications.Email;
+import com.server.models.User;
 import com.server.utils.Data;
 
 @SpringBootApplication
 public class Main {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Main.class, args);
+    public static void main(String[] args) {
+        SpringApplication.run(Main.class, args);
 
-		try {
+        try {
             // Crie o objeto User usando o construtor
-            UserDetails user = new UserDetails(new Email("luanapiovani@gmail.com"), "LuPiovani#12", "Luana Piovani",
-                    new Data((byte) 29, (byte) 8, (short) 1996), "O-", new SubscriptionPlan("Básico"));
-            System.out.print(user + "\n");
             
-            UserDetails samUser = new UserDetails(new Email("laurabarros@gmail"), "LauraBarros&14", "Laura Barros",
-                    new Data((byte) 25, (byte) 8, (short) 2003), "O-", new SubscriptionPlan("Premium"));
-
-            // System.out.println(user.getPassword());
-            // user.setPassword("LauraBarros&14");
-            // System.out.println(user.getPassword());
-            // System.out.println(user.equals(samUser));
-
-            // System.out.println(user.clone());
-            // System.out.println(user.hashCode());
-            // System.out.println(user.toString());
+            User user = new User("Luana Pionvani", new Data((byte) 1, (byte) 1, (short) 2000), 50.0,
+                    (short) 160, "Feminino", (byte) 30, "Nenhum", "A+", new SubscriptionPlan("Premium"));
+            System.out.print(user + "\n");
 
             System.out.print("\n");
             System.out.println("---------------------------------------------------------");
@@ -47,6 +35,7 @@ public class Main {
             // Crie o objeto SubscriptionPlan usando o construtor
             SubscriptionPlan subscriptionPlan = new SubscriptionPlan("Premium");
             System.out.print("Subscription Plan: " + subscriptionPlan);
+             System.out.print("\n");
 
         } catch (Exception e) {
             System.out.println(e.getMessage());

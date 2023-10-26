@@ -1,34 +1,30 @@
 package com.server.models;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import java.util.Calendar;
-
 import com.server.utils.Data;
-import com.server.models.verifications.Email;
 
-public class UserDetails {
-    private Email email;
-    private String password;
+public class User {
     private String name;
     private Data dateOfBirth;
+    private double weight;
+    private short height;
+    private String gender;
+    private byte dailyExerciseTime;
+    private String diseasesInTheFamily;
     private String bloodType;
     private SubscriptionPlan subscriptionPlan;
 
     private static final String[] VALID_BLOOD_TYPES = { "A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-" };
 
-    public UserDetails(Email email, String password, String name, Data dateOfBirth, String bloodType,
+    public User(String name, Data dateOfBirth, double weight, short height, String gender,
+            byte dailyExerciseTime, String diseasesInTheFamily, String bloodType,
             SubscriptionPlan subscriptionPlan) {
         this.name = name;
-        this.email = email;
-        if (isPasswordStrong(password)) {
-            // Realize o hashing da senha antes de armazená-la
-            this.password = hashPassword(password);
-        } else {
-            throw new IllegalArgumentException("A senha não atende aos critérios de segurança.");
-        }
         this.dateOfBirth = dateOfBirth;
+        this.weight = weight;
+        this.height = height;
+        this.gender = gender;
+        this.dailyExerciseTime = dailyExerciseTime;
+        this.diseasesInTheFamily = diseasesInTheFamily;
 
         if (isValidBloodType(bloodType)) {
             this.bloodType = bloodType;
@@ -40,28 +36,16 @@ public class UserDetails {
         this.subscriptionPlan = subscriptionPlan;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public boolean setPassword(String password) {
-        if (password == null || password.isEmpty()) {
-            throw new IllegalArgumentException("Campo obrigatório.");
-        }
-        if (isPasswordStrong(password)) {
-            this.password = hashPassword(password);
-            return true;
-        } else {
-            throw new IllegalArgumentException("A senha não atende aos critérios de segurança.");
-        }
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Data getDateOfBirth() {
+        return dateOfBirth;
     }
 
     public void setBirthDate(byte day, byte month, short year) {
@@ -82,6 +66,58 @@ public class UserDetails {
         }
     }
 
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        if (weight > 0) {
+            this.weight = weight;
+        } else {
+            throw new IllegalArgumentException("Peso inválido.");
+        }
+    }
+
+    public short getHeight() {
+        return height;
+    }
+
+    public void setHeight(short height) {
+        if (height > 0) {
+            this.height = height;
+        } else {
+            throw new IllegalArgumentException("Altura inválida.");
+        }
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public byte getDailyExerciseTime() {
+        return dailyExerciseTime;
+    }
+
+    public void setDailyExerciseTime(byte dailyExerciseTime) {
+        if (dailyExerciseTime >= 0 && dailyExerciseTime <= 1440) {
+            this.dailyExerciseTime = dailyExerciseTime;
+        } else {
+            throw new IllegalArgumentException("Tempo de exercício diário inválido.");
+        }
+    }
+
+    public String getDiseasesInTheFamily() {
+        return diseasesInTheFamily;
+    }
+
+    public void setDiseasesInTheFamily(String diseasesInTheFamily) {
+        this.diseasesInTheFamily = diseasesInTheFamily;
+    }
+
     public String getBloodType() {
         return bloodType;
     }
@@ -96,21 +132,6 @@ public class UserDetails {
     }
 
     /* Métodos auxiliares */
-
-    // Verifica se a senha é forte
-    private boolean isPasswordStrong(String password) {
-        String regex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(password);
-        return matcher.matches();
-    }
-
-    // Gera é uma representação segura do hash da senha com o (cost) de 10. O valor
-    // do custo é usado para controlar a velocidade de geração do hash e, portanto,
-    // o tempo necessário para um ataque de força bruta.
-    private String hashPassword(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
-    }
 
     // Verifica se o tipo sanguineo informado é válido de acordo com a lista de
     // tipos sanguineos válidos
@@ -144,9 +165,12 @@ public class UserDetails {
     public String toString() {
         return "User:" + '\n' + '\n' +
                 "Name: " + name + '\n' +
-                "Email: " + email.toString() + '\n' +
-                "Password Hash: " + password + '\n' +
                 "DateOfBirth: " + dateOfBirth.toString() + '\n' +
+                "Weight: " + weight + '\n' +
+                "Height: " + height + '\n' +
+                "Gender: " + gender + '\n' +
+                "DailyExerciseTime: " + dailyExerciseTime + '\n' +
+                "DiseasesInTheFamily: " + diseasesInTheFamily + '\n' +
                 "BloodType: " + bloodType + '\n' +
                 "SubscriptionPlan: " + subscriptionPlan.toString();
     }
@@ -160,12 +184,15 @@ public class UserDetails {
         if (obj.getClass() != this.getClass())
             return false;
 
-        UserDetails user = (UserDetails) obj;
+        User user = (User) obj;
 
-        if (user.email != this.email ||
-                user.password != this.password ||
-                user.name != this.name ||
+        if (user.name != this.name ||
                 user.dateOfBirth != this.dateOfBirth ||
+                user.weight != this.weight ||
+                user.height != this.height ||
+                user.gender != this.gender ||
+                user.dailyExerciseTime != this.dailyExerciseTime ||
+                user.diseasesInTheFamily != this.diseasesInTheFamily ||
                 user.bloodType != this.bloodType ||
                 user.subscriptionPlan != this.subscriptionPlan)
             return false;
@@ -177,10 +204,13 @@ public class UserDetails {
     public int hashCode() {
         int result = 13;
 
-        result = 7 * result + email.hashCode();
-        result = 7 * result + password.hashCode();
         result = 7 * result + name.hashCode();
         result = 7 * result + dateOfBirth.hashCode();
+        result = 7 * result + Double.hashCode(weight);
+        result = 7 * result + Short.hashCode(height);
+        result = 7 * result + gender.hashCode();
+        result = 7 * result + Byte.hashCode(dailyExerciseTime);
+        result = 7 * result + diseasesInTheFamily.hashCode();
         result = 7 * result + bloodType.hashCode();
         result = 7 * result + subscriptionPlan.hashCode();
 
@@ -190,23 +220,26 @@ public class UserDetails {
         return result;
     }
 
-    private UserDetails(UserDetails modelo) throws Exception {
+    private User(User modelo) throws Exception {
         if (modelo == null)
             throw new Exception("modelo ausente");
 
-        this.email = modelo.email;
-        this.password = modelo.password;
         this.name = modelo.name;
         this.dateOfBirth = modelo.dateOfBirth;
+        this.weight = modelo.weight;
+        this.height = modelo.height;
+        this.gender = modelo.gender;
+        this.dailyExerciseTime = modelo.dailyExerciseTime;
+        this.diseasesInTheFamily = modelo.diseasesInTheFamily;
         this.bloodType = modelo.bloodType;
         this.subscriptionPlan = modelo.subscriptionPlan;
     }
 
     public Object clone() {
-        UserDetails ret = null;
+        User ret = null;
 
         try {
-            ret = new UserDetails(this);
+            ret = new User(this);
         } catch (Exception erro) {
         }
 
