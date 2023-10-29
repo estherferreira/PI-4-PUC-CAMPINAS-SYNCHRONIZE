@@ -1,235 +1,134 @@
 package com.server.models;
 
-import java.util.Calendar;
-import com.server.utils.Data;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
-public class User {
-    private Data dateOfBirth;
-    private double weight;
-    private short height;
-    private String gender;
-    private byte dailyExerciseTime;
-    private String diseasesInTheFamily;
-    private String bloodType;
-    private SubscriptionPlan subscriptionPlan;
+import com.server.utils.Email;
 
-    private static final String[] VALID_BLOOD_TYPES = { "A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-" };
+public class User implements Cloneable {
 
-    public User(Data dateOfBirth, double weight, short height, String gender,
-            byte dailyExerciseTime, String diseasesInTheFamily, String bloodType,
-            SubscriptionPlan subscriptionPlan) {
-        this.dateOfBirth = dateOfBirth;
-        this.weight = weight;
-        this.height = height;
-        this.gender = gender;
-        this.dailyExerciseTime = dailyExerciseTime;
-        this.diseasesInTheFamily = diseasesInTheFamily;
+     private final String id;
+     private Email email;
+     private String password;
+     private final String role;
 
-        if (isValidBloodType(bloodType)) {
-            this.bloodType = bloodType;
-        } else {
-            throw new IllegalArgumentException(
-                    "Tipo sanguíneo inválido. Tipos válidos são: A+, B+, AB+, O+, A-, B-, AB-, O-");
-        }
+     public User(String id, Email email, String password, String role) {
+          this.id = id;
+          this.email = email;
+          if (isPasswordStrong(password)) {
+               // Realize o hashing da senha antes de armazená-la
+               this.password = hashPassword(password);
+          } else {
+               throw new IllegalArgumentException(
+                         "Para atender aos critérios de segurança, sua senha de conter pelo menos uma letra maiúscula, uma letra minúscula, um dígito e um caractere especial.");
+          }
+          this.role = role;
+     }
 
-        this.subscriptionPlan = subscriptionPlan;
-    }
+     public String getId() {
+          return id;
+     }
 
-    public Data getDateOfBirth() {
-        return dateOfBirth;
-    }
+     public String getEmail() {
+          return email.getEmail();
+     }
 
-    public void setBirthDate(byte day, byte month, short year) {
-        try {
-            Data date = new Data(day, month, year);
+     public String getPassword() {
+          return password;
+     }
 
-            if (!Data.isValida(day, month, year)) {
-                throw new IllegalArgumentException("Data de nascimento inválida.");
-            }
+     public boolean setPassword(String password) {
+          if (password == null || password.isEmpty()) {
+               throw new IllegalArgumentException("Campo obrigatório.");
+          }
+          if (isPasswordStrong(password)) {
+               this.password = hashPassword(password);
+               return true;
+          } else {
+               throw new IllegalArgumentException("A senha não atende aos critérios de segurança.");
+          }
+     }
 
-            if (!isAdult(date)) {
-                throw new IllegalArgumentException("O usuário deve ter mais de 18 anos.");
-            }
+     /* Métodos auxiliares */
 
-            this.dateOfBirth = date;
-        } catch (Exception e) {
-            System.err.println("Ocorreu um erro ao definir a data de nascimento: " + e.getMessage());
-        }
-    }
+     // Verifica se a senha é forte
+     private boolean isPasswordStrong(String password) {
+          String regex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
+          Pattern pattern = Pattern.compile(regex);
+          Matcher matcher = pattern.matcher(password);
+          return matcher.matches();
+     }
 
-    public double getWeight() {
-        return weight;
-    }
+     // Gera é uma representação segura do hash da senha com o (cost) de 10. O valor
+     // do custo é usado para controlar a velocidade de geração do hash e, portanto,
+     // o tempo necessário para um ataque de força bruta.
+     private String hashPassword(String password) {
+          return BCrypt.hashpw(password, BCrypt.gensalt());
+     }
 
-    public void setWeight(double weight) {
-        if (weight > 0) {
-            this.weight = weight;
-        } else {
-            throw new IllegalArgumentException("Peso inválido.");
-        }
-    }
+     @Override
+     public String toString() {
+          return "User:" + '\n' + '\n' +
+                    "Id: " + id + '\n' +
+                    "Email: " + email.toString() + '\n' +
+                    "Password Hash: " + password + '\n' +
+                    "Role: " + role;
+     }
 
-    public short getHeight() {
-        return height;
-    }
+     @Override
+     public boolean equals(Object obj) {
+          if (obj == this)
+               return true;
+          if (obj == null)
+               return false;
+          if (obj.getClass() != this.getClass())
+               return false;
 
-    public void setHeight(short height) {
-        if (height > 0) {
-            this.height = height;
-        } else {
-            throw new IllegalArgumentException("Altura inválida.");
-        }
-    }
+          User user = (User) obj;
 
-    public String getGender() {
-        return gender;
-    }
+          if (user.id != this.id ||
+                    user.email != this.email ||
+                    user.password != this.password ||
+                    user.role != this.role)
+               return false;
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+          return true;
+     }
 
-    public byte getDailyExerciseTime() {
-        return dailyExerciseTime;
-    }
+     @Override
+     public int hashCode() {
+          int result = 13;
 
-    public void setDailyExerciseTime(byte dailyExerciseTime) {
-        if (dailyExerciseTime >= 0 && dailyExerciseTime <= 1440) {
-            this.dailyExerciseTime = dailyExerciseTime;
-        } else {
-            throw new IllegalArgumentException("Tempo de exercício diário inválido.");
-        }
-    }
+          result = 7 * result + id.hashCode();
+          result = 7 * result + email.hashCode();
+          result = 7 * result + password.hashCode();
+          result = 7 * result + role.hashCode();
 
-    public String getDiseasesInTheFamily() {
-        return diseasesInTheFamily;
-    }
+          if (result < 0)
+               result = -result;
 
-    public void setDiseasesInTheFamily(String diseasesInTheFamily) {
-        this.diseasesInTheFamily = diseasesInTheFamily;
-    }
+          return result;
+     }
 
-    public String getBloodType() {
-        return bloodType;
-    }
+     private User(User modelo) throws Exception {
+          if (modelo == null)
+               throw new Exception("modelo ausente");
 
-    public void setBloodType(String bloodType) {
-        if (isValidBloodType(bloodType)) {
-            this.bloodType = bloodType;
-        } else {
-            throw new IllegalArgumentException(
-                    "Tipo sanguíneo inválido. Tipos válidos são: A+, B+, AB+, O+, A-, B-, AB-, O-");
-        }
-    }
+          this.id = modelo.id;
+          this.email = modelo.email;
+          this.password = modelo.password;
+          this.role = modelo.role;
+     }
 
-    /* Métodos auxiliares */
+     public Object clone() {
+          User ret = null;
 
-    // Verifica se o tipo sanguineo informado é válido de acordo com a lista de
-    // tipos sanguineos válidos
-    private boolean isValidBloodType(String bloodType) {
-        for (String validType : VALID_BLOOD_TYPES) {
-            if (validType.equals(bloodType)) {
-                return true;
-            }
-        }
-        return false;
-    }
+          try {
+               ret = new User(this);
+          } catch (Exception erro) {
+          }
 
-    // Verifica se é a idade do usuário é maior ou igual a 18 anos
-    private boolean isAdult(Data birthDate) {
-        Calendar currentCalendar = Calendar.getInstance();
-        Calendar birthCalendar = Calendar.getInstance();
-        birthCalendar.set(birthDate.getAno(), birthDate.getMes() - 1, birthDate.getDia());
-
-        int age = currentCalendar.get(Calendar.YEAR) - birthCalendar.get(Calendar.YEAR);
-
-        if (currentCalendar.get(Calendar.MONTH) < birthCalendar.get(Calendar.MONTH) ||
-                (currentCalendar.get(Calendar.MONTH) == birthCalendar.get(Calendar.MONTH) &&
-                        currentCalendar.get(Calendar.DAY_OF_MONTH) < birthCalendar.get(Calendar.DAY_OF_MONTH))) {
-            age--; // Ainda não fez aniversário neste ano
-        }
-
-        return age >= 18;
-    }
-
-    @Override
-    public String toString() {
-        return "User:" + '\n' + '\n' +
-                "DateOfBirth: " + dateOfBirth.toString() + '\n' +
-                "Weight: " + weight + '\n' +
-                "Height: " + height + '\n' +
-                "Gender: " + gender + '\n' +
-                "DailyExerciseTime: " + dailyExerciseTime + '\n' +
-                "DiseasesInTheFamily: " + diseasesInTheFamily + '\n' +
-                "BloodType: " + bloodType + '\n' +
-                "SubscriptionPlan: " + subscriptionPlan.toString();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this)
-            return true;
-        if (obj == null)
-            return false;
-        if (obj.getClass() != this.getClass())
-            return false;
-
-        User user = (User) obj;
-
-        if (user.dateOfBirth != this.dateOfBirth ||
-                user.weight != this.weight ||
-                user.height != this.height ||
-                user.gender != this.gender ||
-                user.dailyExerciseTime != this.dailyExerciseTime ||
-                user.diseasesInTheFamily != this.diseasesInTheFamily ||
-                user.bloodType != this.bloodType ||
-                user.subscriptionPlan != this.subscriptionPlan)
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 13;
-
-        result = 7 * result + dateOfBirth.hashCode();
-        result = 7 * result + Double.hashCode(weight);
-        result = 7 * result + Short.hashCode(height);
-        result = 7 * result + gender.hashCode();
-        result = 7 * result + Byte.hashCode(dailyExerciseTime);
-        result = 7 * result + diseasesInTheFamily.hashCode();
-        result = 7 * result + bloodType.hashCode();
-        result = 7 * result + subscriptionPlan.hashCode();
-
-        if (result < 0)
-            result = -result;
-
-        return result;
-    }
-
-    private User(User modelo) throws Exception {
-        if (modelo == null)
-            throw new Exception("modelo ausente");
-
-        this.dateOfBirth = modelo.dateOfBirth;
-        this.weight = modelo.weight;
-        this.height = modelo.height;
-        this.gender = modelo.gender;
-        this.dailyExerciseTime = modelo.dailyExerciseTime;
-        this.diseasesInTheFamily = modelo.diseasesInTheFamily;
-        this.bloodType = modelo.bloodType;
-        this.subscriptionPlan = modelo.subscriptionPlan;
-    }
-
-    public Object clone() {
-        User ret = null;
-
-        try {
-            ret = new User(this);
-        } catch (Exception erro) {
-        }
-
-        return ret;
-    }
+          return ret;
+     }
 }

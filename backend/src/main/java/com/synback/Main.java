@@ -1,12 +1,12 @@
-package com.server;
+package com.synback;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.server.models.Diagnosis;
-import com.server.models.SubscriptionPlan;
-import com.server.models.User;
-import com.server.utils.Data;
+import com.synback.models.Diagnosis;
+import com.synback.models.SubscriptionPlan;
+import com.synback.models.User;
+import com.synback.utils.Data;
 
 @SpringBootApplication
 public class Main {
