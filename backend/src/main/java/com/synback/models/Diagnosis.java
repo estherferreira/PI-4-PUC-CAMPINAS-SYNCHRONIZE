@@ -1,4 +1,4 @@
-package com.server.models;
+package com.synback.models;
 
 public class Diagnosis implements Cloneable {
     private String disease;

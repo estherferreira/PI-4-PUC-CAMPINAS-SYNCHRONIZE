@@ -1,7 +1,7 @@
-package com.server.models;
+package com.synback.models;
 
 import java.util.Calendar;
-import com.server.utils.Data;
+import com.synback.utils.Data;
 
 public class User {
     private Data dateOfBirth;

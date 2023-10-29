@@ -1,4 +1,4 @@
-package com.server.utils;
+package com.synback.utils;
 
 public class Main {
     public static void main(String[] args) {

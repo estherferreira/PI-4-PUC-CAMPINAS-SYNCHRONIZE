@@ -1,4 +1,4 @@
-package com.server.utils;
+package com.synback.utils;
 
 public class Data implements Cloneable, Comparable<Data>
 {
