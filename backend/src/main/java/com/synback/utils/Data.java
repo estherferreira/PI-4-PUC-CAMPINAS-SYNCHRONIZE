@@ -6,9 +6,6 @@ public class Data implements Cloneable, Comparable<Data>
     private short ano;
     private static int qtd=0;
 
-    // private String obrigatorio;
-    // private String facultativo;
-
     public static int getQtd ()
     {
         return Data.qtd;
@@ -132,20 +129,6 @@ public class Data implements Cloneable, Comparable<Data>
         }
         catch (Exception erro)
         {} // sei que não vai acontecer erro
-        ret.avanceUmDia();
-        return ret;
-    }
-
-    private Data getDataDaquiA (short qtdDias) throws Exception
-    {
-        Data ret=null;
-        try
-        {
-            ret = new Data (this.dia,this.mes,this.ano);
-        }
-        catch (Exception erro)
-        {} // sei que não vai acontecer erro
-        ret.avance(qtdDias);
         return ret;
     }
 
@@ -189,7 +172,6 @@ public class Data implements Cloneable, Comparable<Data>
         }
         catch (Exception erro)
         {} // sei que não vai acontecer erro
-        ret.retrocedaUmDia();
         return ret;
     }
 
@@ -199,19 +181,6 @@ public class Data implements Cloneable, Comparable<Data>
 
         for (short dia=0; dia<qtdDias; dia++)
             this.retrocedaUmDia();
-    }
-
-    private Data getDataHa (short qtdDias) throws Exception
-    {
-        Data ret=null;
-        try
-        {
-            ret = new Data (this.dia,this.mes,this.ano);
-        }
-        catch (Exception erro)
-        {} // sei que não vai acontecer erro
-        ret.retroceda(qtdDias);
-        return ret;
     }
 
     @Override
@@ -232,12 +201,7 @@ public class Data implements Cloneable, Comparable<Data>
         if (obj==this) return true;
         if (obj==null) return false;
         if (obj.getClass()!=this.getClass()) return false;
-        /*
-        if (((Data)obj).dia!=this.dia ||
-            ((Data)obj).mes!=this.mes ||
-            ((Data)obj).ano!=this.ano)
-              return false;
-        */
+
         Data d = (Data)obj;
         if (d.dia!=this.dia ||
             d.mes!=this.mes ||
