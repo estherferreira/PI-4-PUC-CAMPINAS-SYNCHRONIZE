@@ -1,7 +1,12 @@
-package com.server.configurations;
+package com.server;
 import java.util.*;
 
-public class Servidor
+import com.server.configurations.AceitadoraDeConexao;
+import com.server.configurations.ComunicadoDeDesligamento;
+import com.server.configurations.Parceiro;
+import com.server.configurations.Teclado;
+
+public class ServerConfig
 {
 	public static String PORTA_PADRAO = "3000";
 	
@@ -13,7 +18,7 @@ public class Servidor
             return;
         }
 
-        String porta=Servidor.PORTA_PADRAO;
+        String porta= ServerConfig.PORTA_PADRAO;
         
         if (args.length==1)
             porta = args[0];
