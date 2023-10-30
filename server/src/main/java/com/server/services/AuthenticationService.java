@@ -24,6 +24,10 @@ public class AuthenticationService {
     @Autowired
     private UserCommunicationService userCommunicationService;
 
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+    
     public void register(User user) {
         if (userCommunicationService.findByEmail(user.getEmail()) != null) {
             throw new RuntimeException("Este e-mail já está registrado.");

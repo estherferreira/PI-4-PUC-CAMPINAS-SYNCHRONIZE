@@ -17,7 +17,7 @@ public class Main {
         try {
             // Crie o objeto User usando o construtor
             
-            User user = new User(new Data((byte) 1, (byte) 1, (short) 2000), 50.0,
+            User user = new User("0001", "Luana", new Data((byte) 1, (byte) 1, (short) 2000), 50.0,
                     (short) 160, "Feminino", (byte) 30, "Nenhum", "A+", new SubscriptionPlan("Premium"));
             System.out.print(user + "\n");
 

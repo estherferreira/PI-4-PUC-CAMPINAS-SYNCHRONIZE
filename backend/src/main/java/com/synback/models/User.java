@@ -4,6 +4,8 @@ import java.util.Calendar;
 import com.synback.utils.Data;
 
 public class User {
+    private String id;
+    private String name;
     private Data dateOfBirth;
     private double weight;
     private short height;
@@ -15,9 +17,11 @@ public class User {
 
     private static final String[] VALID_BLOOD_TYPES = { "A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-" };
 
-    public User(Data dateOfBirth, double weight, short height, String gender,
+    public User(String id, String name, Data dateOfBirth, double weight, short height, String gender,
             byte dailyExerciseTime, String diseasesInTheFamily, String bloodType,
             SubscriptionPlan subscriptionPlan) {
+        this.id = id;
+        this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.weight = weight;
         this.height = height;
@@ -33,6 +37,22 @@ public class User {
         }
 
         this.subscriptionPlan = subscriptionPlan;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Data getDateOfBirth() {
@@ -155,6 +175,8 @@ public class User {
     @Override
     public String toString() {
         return "User:" + '\n' + '\n' +
+                "Id: " + id + '\n' +
+                "Name: " + name + '\n' +
                 "DateOfBirth: " + dateOfBirth.toString() + '\n' +
                 "Weight: " + weight + '\n' +
                 "Height: " + height + '\n' +
@@ -176,7 +198,9 @@ public class User {
 
         User user = (User) obj;
 
-        if (user.dateOfBirth != this.dateOfBirth ||
+        if (user.id != this.id ||
+                user.name != this.name ||
+                user.dateOfBirth != this.dateOfBirth ||
                 user.weight != this.weight ||
                 user.height != this.height ||
                 user.gender != this.gender ||
@@ -193,6 +217,8 @@ public class User {
     public int hashCode() {
         int result = 13;
 
+        result = 7 * result + id.hashCode();
+        result = 7 * result + name.hashCode();
         result = 7 * result + dateOfBirth.hashCode();
         result = 7 * result + Double.hashCode(weight);
         result = 7 * result + Short.hashCode(height);
@@ -212,6 +238,8 @@ public class User {
         if (modelo == null)
             throw new Exception("modelo ausente");
 
+        this.id = modelo.id;
+        this.name = modelo.name;    
         this.dateOfBirth = modelo.dateOfBirth;
         this.weight = modelo.weight;
         this.height = modelo.height;
