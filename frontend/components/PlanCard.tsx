@@ -23,9 +23,9 @@ const PlanCard = ({ name, price, features, color, subtitle }) => {
       </Flex>
       {subtitle}
       <Box>
-        {features.map((item: Object) => {
+        {features.map((item: Object, index: number) => {
           return (
-            <Flex alignItems="center" gap="10px" marginBottom="30px">
+            <Flex key={index} alignItems="center" gap="10px" marginBottom="30px">
               <CheckIcon />
               <Text fontFamily="poppins.400">{item}</Text>
             </Flex>

@@ -9,15 +9,15 @@ import {
   Card,
   Center,
 } from "@chakra-ui/react";
-import ProgressBar from "./components/ProgressBar";
-import Step from "./components/Step";
-import SectionTitle from "./components/SectionTitle";
+import ProgressBar from "../components/ProgressBar";
+import Step from "../components/Step";
+import SectionTitle from "../components/SectionTitle";
 import { CheckIcon, ArrowForwardIcon } from "@chakra-ui/icons";
-import PlanCard from "./components/PlanCard";
-import DateCard from "./components/DateCard";
+import PlanCard from "../components/PlanCard";
+import DateCard from "../components/DateCard";
 import Logo from "../assets/Logo.svg";
 import Image from "next/image";
-import Navbar from "./components/Navbar";
+import Navbar from "../components/Navbar";
 
 const IndexPage = () => (
   <>

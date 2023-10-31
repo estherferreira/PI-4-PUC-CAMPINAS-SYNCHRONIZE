@@ -1,5 +1,5 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import theme from "./theme/theme";
+import theme from "../styles/theme/theme";
 import { Inter, Poppins } from "next/font/google";
 
 const inter400 = Inter({ subsets: ["latin"], weight: ["400"] });
