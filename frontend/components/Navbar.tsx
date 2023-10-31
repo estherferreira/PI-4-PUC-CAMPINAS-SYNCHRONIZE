@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Flex, Heading, Text, Button, Box } from "@chakra-ui/react";
-import Logo from "../assets/logo.svg";
+import Logo from "../assets/Logo.svg";
 import Image from "next/image";
 
 const Navbar = () => {
