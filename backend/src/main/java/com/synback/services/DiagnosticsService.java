@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public class DiagnosticsService {
 
-    private static final String OPENAI_API_KEY = "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";
+    private static final String OPENAI_API_KEY = System.getenv("PUBLIC_API_KEY");
 
     private final UserService userService;
 
@@ -36,10 +36,11 @@ public class DiagnosticsService {
                 CompletionRequest completionRequest = CompletionRequest.builder()
                         .prompt(prompt)
                         .model("gpt-3.5-turbo")
+                        .maxTokens(4000)
                         .echo(true)
                         .build();
                 String response = service.createCompletion(completionRequest).getChoices().get(0).getText();
-
+                System.out.println("Response" + response);
                 return response;
             } else {
                 return "Usuário não encontrado";
