@@ -11,15 +11,20 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import LoginImage from "../assets/sandDuneGuy.jpg";
+import RegisterImage from "../assets/manRunning.jpg";
 import Logo from "../assets/Logo.svg";
 
-const Login = () => {
+const Register = () => {
   return (
     <Box height="100vh">
       <Grid templateColumns="repeat(10, 1fr)">
         <GridItem colSpan={6} h="100vh" position="relative">
-          <Image src={LoginImage} alt="Image" layout="fill" objectFit="cover" />
+          <Image
+            src={RegisterImage}
+            alt="Image"
+            layout="fill"
+            objectFit="cover"
+          />
         </GridItem>
         <GridItem colSpan={4} h="100vh" width="40vw">
           <Flex
@@ -73,16 +78,23 @@ const Login = () => {
             </Box>
             <Box>
               <Button bgColor="brand.900" w="35vw" textColor="white">
-                Entrar
+                Criar conta
               </Button>
             </Box>
             <Divider />
-            <Text fontWeight="inter.400" fontSize="sm" display="flex">
-              Ainda não tem uma conta?
-              <Text display="flex" color="brand.900" marginLeft="10px">
-                Criar conta
+            <Box display="flex" alignItems="center">
+              <Text fontWeight="inter.400" fontSize="sm">
+                Ja tenho uma conta
               </Text>
-            </Text>
+              <Text
+                fontWeight="inter.400"
+                color="brand.900"
+                marginLeft="10px"
+                cursor="pointer"
+              >
+                Entrar
+              </Text>
+            </Box>
           </Flex>
         </GridItem>
       </Grid>
@@ -90,4 +102,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
