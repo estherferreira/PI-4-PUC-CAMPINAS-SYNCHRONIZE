@@ -13,8 +13,10 @@ import {
 import Image from "next/image";
 import LoginImage from "../assets/sandDuneGuy.jpg";
 import Logo from "../assets/Logo.svg";
+import { useRouter } from "next/router";
 
 const Login = () => {
+  const router = useRouter();
   return (
     <Box height="100vh">
       <Grid templateColumns="repeat(10, 1fr)">
@@ -79,7 +81,13 @@ const Login = () => {
             <Divider />
             <Text fontWeight="inter.400" fontSize="sm" display="flex">
               Ainda não tem uma conta?
-              <Text display="flex" color="brand.900" marginLeft="10px">
+              <Text
+                display="flex"
+                color="brand.900"
+                marginLeft="10px"
+                cursor="pointer"
+                onClick={() => router.push("/register")}
+              >
                 Criar conta
               </Text>
             </Text>

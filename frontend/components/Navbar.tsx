@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Flex, Heading, Text, Button, Box } from "@chakra-ui/react";
 import Logo from "../assets/Logo.svg";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 const Navbar = () => {
   const [scrolling, setScrolling] = useState(false);
+
+  const router = useRouter();
 
   const handleScroll = () => {
     if (window.scrollY > 50) {
@@ -52,8 +55,15 @@ const Navbar = () => {
         </Button>
       </Box>
       <Flex align="center">
-        <Button color="black">Entrar</Button>
-        <Button color="brand.900" backgroundColor="black" width="150px">
+        <Button color="black" onClick={() => router.push("/login")}>
+          Entrar
+        </Button>
+        <Button
+          color="brand.900"
+          backgroundColor="black"
+          width="150px"
+          onClick={() => router.push("/register")}
+        >
           Criar conta
         </Button>
       </Flex>

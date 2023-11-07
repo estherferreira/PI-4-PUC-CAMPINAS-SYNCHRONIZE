@@ -6,6 +6,7 @@ const theme = extendTheme({
     offwhite: "#EEF3F6",
     card: "#EAF1F0",
     gray: "#7A7A7A",
+    ice: "#E4ECF0",
   },
   fonts: {
     body: "Poppins, sans-serif",

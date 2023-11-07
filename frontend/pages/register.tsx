@@ -13,8 +13,10 @@ import {
 import Image from "next/image";
 import RegisterImage from "../assets/manRunning.jpg";
 import Logo from "../assets/Logo.svg";
+import { useRouter } from "next/router";
 
 const Register = () => {
+  const router = useRouter();
   return (
     <Box height="100vh">
       <Grid templateColumns="repeat(10, 1fr)">
@@ -91,6 +93,7 @@ const Register = () => {
                 color="brand.900"
                 marginLeft="10px"
                 cursor="pointer"
+                onClick={() => router.push("/login")}
               >
                 Entrar
               </Text>

@@ -5,6 +5,7 @@ import {
   Input,
   Radio,
   RadioGroup,
+  Select,
   SimpleGrid,
   Stack,
   Text,
@@ -31,7 +32,10 @@ const Dashboard = () => {
           <FormInput placeholder="Data de nascimento" />
           <FormInput placeholder="Peso" />
           <FormInput placeholder="Altura" />
-          <FormInput placeholder="Gênero" />
+          <Select height="60px" placeholder="Gênero" fontFamily="poppins.500">
+            <option value="M">Masculino</option>
+            <option value="F">Feminino</option>
+          </Select>
           <FormInput placeholder="Tempo médio de exercícios (em minutos)" />
         </SimpleGrid>
 
