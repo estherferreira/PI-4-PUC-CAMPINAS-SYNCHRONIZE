@@ -13,13 +13,13 @@ public class Diagnosis implements Cloneable {
     private String id;
     private List<ReportItem> report;
     private String symptoms;
-    private String name;
+    private String userName;
 
-    public Diagnosis(String id, List<ReportItem> report, String symptoms, String name) {
+    public Diagnosis(String id, List<ReportItem> report, String symptoms, String userName) {
         this.id = id;
         this.report = report;
         this.symptoms = symptoms;
-        this.name = name;
+        this.userName = userName;
     }
 
     public String getId() {
@@ -46,12 +46,12 @@ public class Diagnosis implements Cloneable {
         this.symptoms = symptoms;
     }
 
-    public String getName() {
-        return name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public static class ReportItem {
@@ -96,7 +96,7 @@ public class Diagnosis implements Cloneable {
                 "id='" + id + '\'' +
                 ", report=" + report +
                 ", symptoms='" + symptoms + '\'' +
-                ", userName='" + name + '\'' +
+                ", userName='" + userName + '\'' +
                 '}';
     }
 
@@ -114,7 +114,7 @@ public class Diagnosis implements Cloneable {
         if (diagnosis.id != this.id ||
                 diagnosis.report != this.report ||
                 diagnosis.symptoms != this.symptoms ||
-                diagnosis.name != this.name)
+                diagnosis.userName != this.userName)
             return false;
 
         return true;
@@ -127,7 +127,7 @@ public class Diagnosis implements Cloneable {
         result = 7 * result + id.hashCode();
         result = 7 * result + report.hashCode();
         result = 7 * result + symptoms.hashCode();
-        result = 7 * result + name.hashCode();
+        result = 7 * result + userName.hashCode();
 
         if (result < 0)
             result = -result;
@@ -142,7 +142,7 @@ public class Diagnosis implements Cloneable {
     this.id = modelo.id;
     this.report = modelo.report != null ? new ArrayList<>(modelo.report) : null;
     this.symptoms = modelo.symptoms;
-    this.name = modelo.name;
+    this.userName = modelo.userName;
     }
 
     public Object clone() {
