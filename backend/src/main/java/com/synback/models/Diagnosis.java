@@ -1,33 +1,103 @@
 package com.synback.models;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Document(collection = "diagnosis")
 public class Diagnosis implements Cloneable {
-    private String disease;
-    private double probability;
 
-    public Diagnosis(String disease, double probability) {
-        this.disease = disease;
-        this.probability = probability;
+    @Id
+    private String id;
+    private List<ReportItem> report;
+    private String symptoms;
+    private String name;
+
+    public Diagnosis(String id, List<ReportItem> report, String symptoms, String name) {
+        this.id = id;
+        this.report = report;
+        this.symptoms = symptoms;
+        this.name = name;
     }
 
-    public String getDisease() {
-        return disease;
+    public String getId() {
+        return id;
     }
 
-    public void setDisease(String disease) {
-        this.disease = disease;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public double getProbability() {
-        return probability;
+    public List<ReportItem> getReport() {
+        return report;
     }
 
-    public void setProbability(double probability) {
-        this.probability = probability;
+    public void setReport(List<ReportItem> report) {
+        this.report = report;
+    }
+
+    public String getSymptoms() {
+        return symptoms;
+    }
+
+    public void setSymptoms(String symptoms) {
+        this.symptoms = symptoms;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public static class ReportItem {
+        private String problem;
+        private int percentage;
+        private String description;
+
+        public ReportItem(String problem, int percentage, String description) {
+            this.problem = problem;
+            this.percentage = percentage;
+            this.description = description;
+        }
+
+        public String getProblem() {
+            return problem;
+        }
+
+        public void setProblem(String problem) {
+            this.problem = problem;
+        }
+
+        public int getPercentage() {
+            return percentage;
+        }
+
+        public void setPercentage(int percentage) {
+            this.percentage = percentage;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
     }
 
     @Override
     public String toString() {
-        return "[disease = " + disease + ", probability = " + probability + "]";
+        return "Diagnosis{" +
+                "id='" + id + '\'' +
+                ", report=" + report +
+                ", symptoms='" + symptoms + '\'' +
+                ", userName='" + name + '\'' +
+                '}';
     }
 
     @Override
@@ -41,8 +111,10 @@ public class Diagnosis implements Cloneable {
 
         Diagnosis diagnosis = (Diagnosis) obj;
 
-        if (diagnosis.disease != this.disease ||
-                diagnosis.probability != this.probability)
+        if (diagnosis.id != this.id ||
+                diagnosis.report != this.report ||
+                diagnosis.symptoms != this.symptoms ||
+                diagnosis.name != this.name)
             return false;
 
         return true;
@@ -52,8 +124,10 @@ public class Diagnosis implements Cloneable {
     public int hashCode() {
         int result = 13;
 
-        result = 7 * result + disease.hashCode();
-        result = 7 * result + Double.valueOf(this.probability).hashCode();
+        result = 7 * result + id.hashCode();
+        result = 7 * result + report.hashCode();
+        result = 7 * result + symptoms.hashCode();
+        result = 7 * result + name.hashCode();
 
         if (result < 0)
             result = -result;
@@ -65,8 +139,10 @@ public class Diagnosis implements Cloneable {
         if (modelo == null)
             throw new Exception("modelo ausente");
 
-        this.disease = modelo.disease;
-        this.probability = modelo.probability;
+    this.id = modelo.id;
+    this.report = modelo.report != null ? new ArrayList<>(modelo.report) : null;
+    this.symptoms = modelo.symptoms;
+    this.name = modelo.name;
     }
 
     public Object clone() {
@@ -76,7 +152,7 @@ public class Diagnosis implements Cloneable {
             ret = new Diagnosis(this);
         } catch (Exception erro) {
         }
-        
+
         return ret;
     }
 }
