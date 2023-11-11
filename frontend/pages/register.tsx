@@ -14,9 +14,52 @@ import Image from "next/image";
 import RegisterImage from "../assets/manRunning.jpg";
 import Logo from "../assets/Logo.svg";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 const Register = () => {
   const router = useRouter();
+  const [error, setError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const fetchData = async () => {
+    setError("");
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("http://localhost:8080/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        //Transforma o corpo da resposta em JSON
+        const errorMessage = await response.text();
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      console.log("E-mail e senha enviados para o servidor com sucesso!");
+    } catch (error) {
+      console.error("Erro ao enviar dados: ", error.message);
+    }
+  };
+
+  const handleButtonClick = () => {
+    if (email && password) {
+      fetchData();
+    } else {
+      setErrorMessage("Por favor, preencha todos os campos.");
+    }
+    setButtonClicked(true);
+  };
+
   return (
     <Box height="100vh">
       <Grid templateColumns="repeat(10, 1fr)">
@@ -58,6 +101,8 @@ const Register = () => {
                 borderColor="white"
                 h="48px"
                 w="35vw"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
               />
             </Box>
             <Box>
@@ -76,12 +121,31 @@ const Register = () => {
                 borderColor="white"
                 h="48px"
                 w="35vw"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
               />
+              <Box py={2}>
+                <Text color="red" fontSize="xs">
+                  {error}
+                </Text>
+              </Box>
             </Box>
             <Box>
-              <Button bgColor="brand.900" w="35vw" textColor="white">
+              <Button
+                bgColor="brand.900"
+                w="35vw"
+                textColor="white"
+                onClick={handleButtonClick}
+              >
                 Criar conta
               </Button>
+              {buttonClicked && errorMessage && (
+                <Box py={2}>
+                  <Text color="red" fontSize="xs">
+                    {errorMessage}
+                  </Text>
+                </Box>
+              )}
             </Box>
             <Divider />
             <Box display="flex" alignItems="center">
