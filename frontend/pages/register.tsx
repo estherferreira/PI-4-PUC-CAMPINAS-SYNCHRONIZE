@@ -13,31 +13,6 @@ import RegisterImage from "../assets/manRunning.jpg";
 import Logo from "../assets/Logo.svg";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useForm, Resolver } from "react-hook-form";
-import api from "../api";
-
-type FormValues = {
-  email: string;
-  password: string;
-};
-
-const resolver: Resolver<FormValues> = async (values) => {
-  return {
-    values: values.email ? values : {},
-    errors: !values.password
-      ? {
-          email: {
-            type: "required",
-            message: "Digite um email.",
-          },
-          password: {
-            type: "required",
-            message: "Digite uma senha.",
-          },
-        }
-      : {},
-  };
-};
 
 const Register = () => {
   const router = useRouter();
@@ -47,22 +22,40 @@ const Register = () => {
   const [buttonClicked, setButtonClicked] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>({ resolver });
 
-  const onSubmit = (formData: FormValues) => {
-    console.log(formData);
+  const fetchData = async () => {
+    setError("");
+    setErrorMessage("");
+
     try {
-      const response = api.post("/register", {
-        email: formData.email,
-        password: formData.password,
+      const response = await fetch("http://localhost:8080/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
+
+      if (!response.ok) {
+        //Transforma o corpo da resposta em JSON
+        const errorMessage = await response.text();
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      console.log("E-mail e senha enviados para o servidor com sucesso!");
     } catch (error) {
-      console.log(error);
+      console.error("Erro ao enviar dados: ", error.message);
     }
+  };
+
+  const handleButtonClick = () => {
+    if (email && password) {
+      fetchData();
+    } else {
+      setErrorMessage("Por favor, preencha todos os campos.");
+    }
+    setButtonClicked(true);
   };
 
   return (
@@ -90,87 +83,83 @@ const Register = () => {
             <Flex>
               <Image src={Logo} alt="Logo" />
             </Flex>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Box>
-                <Text
-                  width="450px"
-                  fontWeight="inter.400"
-                  fontSize="sm"
-                  marginLeft="20px"
-                  marginBottom="10px"
-                >
-                  E-mail
+            <Box>
+              <Text
+                width="450px"
+                fontWeight="inter.400"
+                fontSize="sm"
+                marginLeft="20px"
+                marginBottom="10px"
+              >
+                E-mail
+              </Text>
+              <Input
+                placeholder="Digite seu e-mail"
+                bgColor="offwhite"
+                borderColor="white"
+                h="48px"
+                w="35vw"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
+            </Box>
+            <Box>
+              <Text
+                width="450px"
+                fontWeight="inter.400"
+                fontSize="sm"
+                marginLeft="20px"
+                marginBottom="10px"
+              >
+                Senha
+              </Text>
+              <Input
+                placeholder="Digite sua senha"
+                bgColor="offwhite"
+                borderColor="white"
+                h="48px"
+                w="35vw"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+              <Box py={2}>
+                <Text color="red" fontSize="xs">
+                  {error}
                 </Text>
-                <Input
-                  {...register("email", { required: true })}
-                  placeholder="Digite seu e-mail"
-                  fontFamily="inter.400"
-                  fontSize="sm"
-                  bgColor="offwhite"
-                  borderColor="white"
-                  h="48px"
-                  w="35vw"
-                />
+              </Box>
+            </Box>
+            <Box>
+              <Button
+                bgColor="brand.900"
+                w="35vw"
+                textColor="white"
+                onClick={handleButtonClick}
+              >
+                Criar conta
+              </Button>
+              {buttonClicked && errorMessage && (
                 <Box py={2}>
                   <Text color="red" fontSize="xs">
-                    {errors?.email && <>{errors?.email.message}</>}
+                    {errorMessage}
                   </Text>
                 </Box>
-              </Box>
-              <Box>
-                <Text
-                  width="450px"
-                  fontWeight="inter.400"
-                  fontSize="sm"
-                  marginLeft="20px"
-                  marginBottom="10px"
-                >
-                  Senha
-                </Text>
-                <Input
-                  {...register("password", { required: true })}
-                  type="password"
-                  placeholder="Digite sua senha"
-                  fontFamily="inter.400"
-                  fontSize="sm"
-                  bgColor="offwhite"
-                  borderColor="white"
-                  h="48px"
-                  w="35vw"
-                />
-                <Box py={2}>
-                  <Text color="red" fontSize="xs">
-                    {errors?.password && <>{errors.password.message}</>}
-                  </Text>
-                </Box>
-              </Box>
-              <Box>
-                <Button
-                  type="submit"
-                  bgColor="brand.900"
-                  fontFamily="inter.500"
-                  w="35vw"
-                  textColor="white"
-                >
-                  Criar conta
-                </Button>
-              </Box>
-              <Divider />
-              <Box display="flex" alignItems="center">
-                <Text fontWeight="inter.400" fontSize="sm">
-                  Ja tenho uma conta
-                </Text>
-                <Text
-                  fontWeight="inter.400"
-                  color="brand.900"
-                  marginLeft="10px"
-                  cursor="pointer"
-                  onClick={() => router.push("/login")}
-                >
-                  Entrar
-                </Text>
-              </Box>
-            </form>
+              )}
+            </Box>
+            <Divider />
+            <Box display="flex" alignItems="center">
+              <Text fontWeight="inter.400" fontSize="sm">
+                Ja tenho uma conta
+              </Text>
+              <Text
+                fontWeight="inter.400"
+                color="brand.900"
+                marginLeft="10px"
+                cursor="pointer"
+                onClick={() => router.push("/login")}
+              >
+                Entrar
+              </Text>
+            </Box>
           </Flex>
         </GridItem>
       </Grid>
