@@ -1,12 +1,10 @@
 import {
   Box,
-  Center,
   Flex,
   Grid,
   GridItem,
   Text,
   Input,
-  Stack,
   Button,
   Divider,
 } from "@chakra-ui/react";
