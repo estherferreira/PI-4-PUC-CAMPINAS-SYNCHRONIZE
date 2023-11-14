@@ -139,7 +139,7 @@ public class PersonalInfo {
 
         PersonalInfo personalInfo = (PersonalInfo) obj;
 
-        if (personalInfo.name != this.name || personalInfo.weight != this.weight
+        if (!personalInfo.name.equals(this.name) || personalInfo.weight != this.weight
                 || personalInfo.height != this.height || personalInfo.exerciseTime != this.exerciseTime
                 || personalInfo.dateOfBirth != this.dateOfBirth)
             return false;
