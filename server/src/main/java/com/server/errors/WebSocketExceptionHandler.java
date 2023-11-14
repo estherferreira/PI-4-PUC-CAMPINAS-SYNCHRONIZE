@@ -1,10 +1,9 @@
-package com.server.controllers;
+package com.server.errors;
 
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import com.server.errors.CustomException;
 
 @Controller
 public class WebSocketExceptionHandler {
