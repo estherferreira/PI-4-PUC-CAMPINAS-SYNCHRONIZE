@@ -1,4 +1,4 @@
-package com.server.configurations;
+package com.synback.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +28,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5000")); // Adicione outros domínios conforme necessário
+        configuration.setAllowedOrigins(Arrays.asList("*")); // Eu poderia ter colocado apenas o 3000 e o 8080, mas o Postman ou outros clientes podem não enviar o cabeçalho Origin esperado
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos HTTP permitidos
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type")); // Cabeçalhos permitidos
         configuration.setAllowCredentials(true); // Se necessário para cookies, autorização etc.

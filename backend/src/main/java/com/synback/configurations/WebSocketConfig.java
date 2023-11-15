@@ -1,4 +1,4 @@
-package com.server.configurations;
+package com.synback.configurations;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -13,8 +13,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/websocket")
-                .setAllowedOrigins("http://localhost:5000");
+        registry.addEndpoint("/websocket");
 
         // Permite conexões de qualquer origem.
         // OBS: Em ambiente de produção deve se restringir as origens permitidas por
@@ -22,6 +21,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
 
     @Override
+    
     // Este método configura o broker de mensagens
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/topic"); // prefixo para os destinos de mensagens de broker
