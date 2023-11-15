@@ -16,7 +16,9 @@ public class UserCredentials implements Cloneable {
           this.email = email;
 
           if (!isPasswordStrong(password)) {
-               throw new CustomException("Para atender aos critérios de segurança, sua senha de conter pelo menos uma letra maiúscula, uma letra minúscula, um dígito e um caractere especial.", 1001);
+               throw new CustomException(
+                         "Para atender aos critérios de segurança, sua senha de conter pelo menos uma letra maiúscula, uma letra minúscula, um dígito e um caractere especial.",
+                         1001);
           }
           this.password = hashPassword(password);
 
@@ -35,7 +37,9 @@ public class UserCredentials implements Cloneable {
                throw new IllegalArgumentException("Campo obrigatório.");
           }
           if (!isPasswordStrong(password)) {
-               throw new CustomException("Para atender aos critérios de segurança, sua senha de conter pelo menos uma letra maiúscula, uma letra minúscula, um dígito e um caractere especial.", 1001);
+               throw new CustomException(
+                         "Para atender aos critérios de segurança, sua senha de conter pelo menos uma letra maiúscula, uma letra minúscula, um dígito e um caractere especial.",
+                         1001);
           }
           this.password = hashPassword(password);
           return true;
@@ -76,8 +80,7 @@ public class UserCredentials implements Cloneable {
 
           UserCredentials user = (UserCredentials) obj;
 
-          if (user.email != this.email ||
-                    user.password != this.password)
+          if (!user.email.equals(this.email) || !user.password.equals(this.password))
                return false;
 
           return true;
