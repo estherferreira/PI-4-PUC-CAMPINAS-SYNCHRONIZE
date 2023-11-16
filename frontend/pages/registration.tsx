@@ -11,7 +11,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useForm, Resolver } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import api from "../api";
 
 type FormValues = {
@@ -24,65 +24,8 @@ type FormValues = {
   diseaseHistory: string;
 };
 
-/* const resolver: Resolver<FormValues> = async (values) => {
-  return {
-    values: {
-      ...values,
-      userName: values.userName,
-    },
-    errors: {
-      userName: !values.userName
-        ? {
-            type: "required",
-            message: "Please enter a username.",
-          }
-        : undefined,
-      dateOfBirth: !values.dateOfBirth
-        ? {
-            type: "required",
-            message: "Please enter your date of birth.",
-          }
-        : undefined,
-      weight: !values.weight
-        ? {
-            type: "required",
-            message: "Please enter your weight.",
-          }
-        : undefined,
-      height: !values.height
-        ? {
-            type: "required",
-            message: "Please enter your height.",
-          }
-        : undefined,
-      gender: !values.gender
-        ? {
-            type: "required",
-            message: "Please select your gender.",
-          }
-        : undefined,
-      exerciseTime: !values.exerciseTime
-        ? {
-            type: "required",
-            message: "Please enter your exercise time.",
-          }
-        : undefined,
-      diseaseHistory: !values.diseaseHistory
-        ? {
-            type: "required",
-            message: "Please enter your disease history.",
-          }
-        : undefined,
-    },
-  };
-}; */
-
 const Dashboard = () => {
   const [history, setHistory] = useState("false");
-  const [error, setError] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
-  const [buttonClicked, setButtonClicked] = useState(false);
   const {
     register,
     handleSubmit,
@@ -97,43 +40,6 @@ const Dashboard = () => {
       ano: year,
     };
   };
-
-  /*   const fetchData = async () => {
-    setError("");
-    setErrorMessage("");
-
-    const dateOfBirthData = convertDateToServerFormat(data.dateOfBirth);
-
-    try {
-      const response = await fetch(
-        "http://localhost:8080/profile/registration",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: data.userName,
-            weight: data.weight,
-            height: data.height,
-            exerciseTime: data.exerciseTime,
-            dateOfBirth: dateOfBirthData,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.text();
-        console.log(errorData);
-        setError(errorData);
-        throw new Error(errorData);
-      }
-
-      console.log("Dados do perfil enviados para o servidor com sucesso!");
-    } catch (error) {
-      console.error("Erro ao enviar dados: ", error.message);
-    }
-  }; */
 
   const onSubmit = async (formData: FormValues) => {
     try {
@@ -317,18 +223,6 @@ const Dashboard = () => {
             </Button>
           </Box>
         </form>
-        {buttonClicked && errorMessage && (
-          <Box py={2}>
-            <Text color="red" fontSize="xs">
-              {errorMessage}
-            </Text>
-          </Box>
-        )}
-        <Box py={2}>
-          <Text color="red" fontSize="xs">
-            {error}
-          </Text>
-        </Box>
       </Box>
     </Box>
   );

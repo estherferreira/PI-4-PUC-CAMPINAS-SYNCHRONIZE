@@ -1,18 +1,17 @@
 import {
   Box,
-  Center,
   Flex,
   Grid,
   GridItem,
   Text,
   Input,
-  Stack,
   Button,
   Divider,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import LoginImage from "../assets/sandDuneGuy.jpg";
 import Logo from "../assets/Logo.svg";
+import { IoIosArrowBack } from "react-icons/io";
 import { useRouter } from "next/router";
 
 const Login = () => {
@@ -23,24 +22,44 @@ const Login = () => {
         <GridItem colSpan={6} h="100vh" position="relative">
           <Image src={LoginImage} alt="Image" layout="fill" objectFit="cover" />
         </GridItem>
+
         <GridItem colSpan={4} h="100vh" width="40vw">
+          <Flex
+            justifyContent="space-between"
+            alignItems="center"
+            margin="60px"
+            marginTop="200px"
+          >
+            <Flex>
+              <Image src={Logo} alt="Logo" />
+            </Flex>
+            <Flex
+              cursor="pointer"
+              alignItems="center"
+              gap="10px"
+              onClick={() => {
+                router.push("/");
+              }}
+            >
+              <IoIosArrowBack />
+              <Text fontFamily="poppins.400" sx={{ textAlign: "center" }}>
+                Voltar
+              </Text>
+            </Flex>
+          </Flex>
           <Flex
             justifyContent="center"
             alignItems="center"
-            h="inherit"
             w="inherit"
             direction="column"
             padding="48px"
             rowGap="48px"
             flexGrow={1}
           >
-            <Flex>
-              <Image src={Logo} alt="Logo" />
-            </Flex>
             <Box>
               <Text
                 width="450px"
-                fontWeight="inter.400"
+                fontFamily="inter.400"
                 fontSize="sm"
                 marginLeft="20px"
                 marginBottom="10px"
@@ -48,6 +67,7 @@ const Login = () => {
                 E-mail
               </Text>
               <Input
+                fontFamily="inter.400"
                 placeholder="Digite seu e-mail"
                 bgColor="offwhite"
                 borderColor="white"
@@ -58,7 +78,7 @@ const Login = () => {
             <Box>
               <Text
                 width="450px"
-                fontWeight="inter.400"
+                fontFamily="inter.400"
                 fontSize="sm"
                 marginLeft="20px"
                 marginBottom="10px"
@@ -66,6 +86,7 @@ const Login = () => {
                 Senha
               </Text>
               <Input
+                fontFamily="inter.400"
                 placeholder="Digite sua senha"
                 bgColor="offwhite"
                 borderColor="white"
@@ -74,14 +95,20 @@ const Login = () => {
               />
             </Box>
             <Box>
-              <Button bgColor="brand.900" w="35vw" textColor="white">
+              <Button
+                fontFamily="inter.500"
+                bgColor="brand.900"
+                w="35vw"
+                textColor="white"
+              >
                 Entrar
               </Button>
             </Box>
             <Divider color="gray" />
-            <Text fontWeight="inter.400" fontSize="sm" display="flex">
+            <Text fontFamily="inter.400" fontSize="sm" display="flex">
               Ainda não tem uma conta?
               <Text
+                fontFamily="inter.400"
                 display="flex"
                 color="brand.900"
                 marginLeft="10px"

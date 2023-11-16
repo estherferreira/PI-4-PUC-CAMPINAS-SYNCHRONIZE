@@ -12,6 +12,8 @@ import Image from "next/image";
 import RegisterImage from "../assets/manRunning.jpg";
 import Logo from "../assets/Logo.svg";
 import { useRouter } from "next/router";
+import { IoIosArrowBack } from "react-icons/io";
+
 import { useState, useEffect } from "react";
 import { Stomp } from "stompjs/lib/stomp.min.js";
 import SockJS from "sockjs-client";
@@ -111,22 +113,41 @@ const Register = () => {
         </GridItem>
         <GridItem colSpan={4} h="100vh" width="40vw">
           <Flex
+            justifyContent="space-between"
+            alignItems="center"
+            margin="60px"
+            marginTop="200px"
+          >
+            <Flex>
+              <Image src={Logo} alt="Logo" />
+            </Flex>
+            <Flex
+              cursor="pointer"
+              alignItems="center"
+              gap="10px"
+              onClick={() => {
+                router.push("/");
+              }}
+            >
+              <IoIosArrowBack />
+              <Text fontFamily="poppins.400" sx={{ textAlign: "center" }}>
+                Voltar
+              </Text>
+            </Flex>
+          </Flex>
+          <Flex
             justifyContent="center"
             alignItems="center"
-            h="inherit"
             w="inherit"
             direction="column"
             padding="48px"
             rowGap="48px"
             flexGrow={1}
           >
-            <Flex>
-              <Image src={Logo} alt="Logo" />
-            </Flex>
             <Box>
               <Text
                 width="450px"
-                fontWeight="inter.400"
+                fontFamily="inter.400"
                 fontSize="sm"
                 marginLeft="20px"
                 marginBottom="10px"
@@ -134,6 +155,7 @@ const Register = () => {
                 E-mail
               </Text>
               <Input
+                fontFamily="inter.400"
                 placeholder="Digite seu e-mail"
                 bgColor="offwhite"
                 borderColor="white"
@@ -146,7 +168,7 @@ const Register = () => {
             <Box>
               <Text
                 width="450px"
-                fontWeight="inter.400"
+                fontFamily="inter.400"
                 fontSize="sm"
                 marginLeft="20px"
                 marginBottom="10px"
@@ -154,6 +176,7 @@ const Register = () => {
                 Senha
               </Text>
               <Input
+                fontFamily="inter.400"
                 placeholder="Digite sua senha"
                 bgColor="offwhite"
                 borderColor="white"
@@ -170,6 +193,7 @@ const Register = () => {
             </Box>
             <Box>
               <Button
+                fontFamily="inter.400"
                 bgColor="brand.900"
                 w="35vw"
                 textColor="white"
@@ -187,11 +211,11 @@ const Register = () => {
             </Box>
             <Divider color="gray" />
             <Box display="flex" alignItems="center">
-              <Text fontWeight="inter.400" fontSize="sm">
+              <Text fontFamily="inter.400" fontSize="sm">
                 Ja tenho uma conta
               </Text>
               <Text
-                fontWeight="inter.400"
+                fontFamily="inter.500"
                 color="brand.900"
                 marginLeft="10px"
                 cursor="pointer"

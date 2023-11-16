@@ -1,24 +1,19 @@
 import {
   Box,
   Flex,
-  Heading,
   Text,
   SimpleGrid,
   Button,
   Input,
   Card,
-  Center,
 } from "@chakra-ui/react";
 import ProgressBar from "../components/ProgressBar";
 import Step from "../components/Step";
 import SectionTitle from "../components/SectionTitle";
-import { CheckIcon, ArrowForwardIcon } from "@chakra-ui/icons";
+import { ArrowForwardIcon } from "@chakra-ui/icons";
 import PlanCard from "../components/PlanCard";
 import DateCard from "../components/DateCard";
-import Logo from "../assets/Logo.svg";
-import Image from "next/image";
 import Navbar from "../components/Navbar";
-import { useRouter } from "next/router";
 
 const IndexPage = () => {
   return (
@@ -45,6 +40,7 @@ const IndexPage = () => {
               marginBottom="10px"
             />
             <Button
+              fontFamily="inter.500"
               color="brand.900"
               backgroundColor="black"
               width="150px"

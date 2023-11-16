@@ -213,6 +213,7 @@ const Profile = () => {
           <Box ml="auto">
             <Button
               color="brand.900"
+              fontFamily="inter.500"
               backgroundColor="black"
               width="150px"
               onClick={handleButtonClick}
