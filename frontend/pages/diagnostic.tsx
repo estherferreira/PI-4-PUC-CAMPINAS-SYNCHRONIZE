@@ -14,9 +14,11 @@ import FormInput from "../components/FormInput";
 import { useState } from "react";
 import { InfoIcon } from "@chakra-ui/icons";
 import ProgressBar from "../components/ProgressBar";
+import { useRouter } from "next/router";
 
 const Diagnostic = () => {
   const [newDiagnostic, setNewDiagnostic] = useState(true);
+  const router = useRouter();
   return (
     <Box backgroundColor="offwhite" h="100vh">
       <Box paddingTop="100px" marginX="310px" justifyContent="center">
@@ -31,7 +33,14 @@ const Diagnostic = () => {
             <Text fontFamily="poppins.400" fontSize="lg">
               Sophia Iwara
             </Text>
-            <Text fontFamily="poppins.400" color="gray" cursor="pointer">
+            <Text
+              fontFamily="poppins.400"
+              color="gray"
+              cursor="pointer"
+              onClick={() => {
+                router.push("/profile");
+              }}
+            >
               Ver perfil
             </Text>
           </Box>
