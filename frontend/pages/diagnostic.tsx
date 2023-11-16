@@ -1,16 +1,13 @@
 import {
   Box,
   Button,
-  Checkbox,
+  Flex,
   IconButton,
   Input,
-  Radio,
-  RadioGroup,
   SimpleGrid,
-  Stack,
   Text,
 } from "@chakra-ui/react";
-import FormInput from "../components/FormInput";
+import { FiLogOut } from "react-icons/fi";
 import { useState } from "react";
 import { InfoIcon } from "@chakra-ui/icons";
 import ProgressBar from "../components/ProgressBar";
@@ -22,28 +19,42 @@ const Diagnostic = () => {
   return (
     <Box backgroundColor="offwhite" h="100vh">
       <Box paddingTop="100px" marginX="310px" justifyContent="center">
-        <Box display="flex" gap="12px">
-          <Box
-            height="56px"
-            width="56px"
-            borderRadius="full"
-            backgroundColor="black"
-          />
-          <Box>
-            <Text fontFamily="poppins.400" fontSize="lg">
-              Sophia Iwara
+        <Box display="flex" gap="12px" justifyContent="space-between">
+          <Flex align="center" gap="15px">
+            <Box
+              height="56px"
+              width="56px"
+              borderRadius="full"
+              backgroundColor="black"
+            />
+            <Box>
+              <Text fontFamily="poppins.400" fontSize="lg">
+                Sophia Iwara
+              </Text>
+              <Text
+                fontFamily="poppins.400"
+                color="gray"
+                cursor="pointer"
+                onClick={() => {
+                  router.push("/profile");
+                }}
+              >
+                Ver perfil
+              </Text>
+            </Box>
+          </Flex>
+          <Flex
+            align="center"
+            gap="10px"
+            onClick={() => {
+              router.push("/login");
+            }}
+          >
+            <Text fontFamily="poppins.400" cursor="pointer">
+              Ir embora
             </Text>
-            <Text
-              fontFamily="poppins.400"
-              color="gray"
-              cursor="pointer"
-              onClick={() => {
-                router.push("/profile");
-              }}
-            >
-              Ver perfil
-            </Text>
-          </Box>
+            <FiLogOut />
+          </Flex>
         </Box>
         <Box
           marginTop="65px"
@@ -95,7 +106,12 @@ const Diagnostic = () => {
               marginTop="70px"
             />
             <Box>
-              <Button color="brand.900" backgroundColor="black" width="150px">
+              <Button
+                fontFamily="inter.500"
+                color="brand.900"
+                backgroundColor="black"
+                width="150px"
+              >
                 Enviar
               </Button>
             </Box>

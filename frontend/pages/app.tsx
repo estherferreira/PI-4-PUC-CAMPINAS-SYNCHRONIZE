@@ -1,23 +1,7 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  Flex,
-  IconButton,
-  Input,
-  Radio,
-  RadioGroup,
-  SimpleGrid,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
-import FormInput from "../components/FormInput";
-import { useState } from "react";
-import { InfoIcon } from "@chakra-ui/icons";
-import ProgressBar from "../components/ProgressBar";
-import DateCard from "../components/DateCard";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 import { useRouter } from "next/router";
+import DateCard from "../components/DateCard";
 
 const History = () => {
   const router = useRouter();
@@ -49,7 +33,13 @@ const History = () => {
             </Box>
           </Flex>
           <Flex align="center" gap="10px">
-            <Text fontFamily="poppins.400" cursor="pointer">
+            <Text
+              fontFamily="poppins.400"
+              cursor="pointer"
+              onClick={() => {
+                router.push("/login");
+              }}
+            >
               Ir embora
             </Text>
             <FiLogOut />
@@ -57,7 +47,7 @@ const History = () => {
         </Box>
         <Flex justifyContent="space-between" marginTop="120px">
           <Text fontFamily="poppins.500" fontSize="2xl">
-            Ultimos diagnósticos
+            Últimos diagnósticos
           </Text>
           <Button
             fontFamily="inter.500"
