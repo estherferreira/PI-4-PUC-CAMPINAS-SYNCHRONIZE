@@ -50,7 +50,7 @@ const Register = () => {
         stompClient.subscribe("/topic/errors", (error: any) => {
           console.error("Erro recebido: ", error.body);
           setError(error.body);
-      });
+        });
       },
       (error: any) => {
         console.error("Erro na conexão WebSocket: ", error);
@@ -185,7 +185,7 @@ const Register = () => {
                 </Box>
               )}
             </Box>
-            <Divider />
+            <Divider color="gray" />
             <Box display="flex" alignItems="center">
               <Text fontWeight="inter.400" fontSize="sm">
                 Ja tenho uma conta

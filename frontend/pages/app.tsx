@@ -17,8 +17,10 @@ import { InfoIcon } from "@chakra-ui/icons";
 import ProgressBar from "../components/ProgressBar";
 import DateCard from "../components/DateCard";
 import { FiLogOut } from "react-icons/fi";
+import { useRouter } from "next/router";
 
 const History = () => {
+  const router = useRouter();
   return (
     <Box backgroundColor="offwhite" h="100vh">
       <Box paddingTop="100px" marginX="310px" justifyContent="center">
@@ -34,7 +36,14 @@ const History = () => {
               <Text fontFamily="poppins.400" fontSize="lg">
                 Sophia Iwara
               </Text>
-              <Text fontFamily="poppins.400" color="gray" cursor="pointer">
+              <Text
+                fontFamily="poppins.400"
+                color="gray"
+                cursor="pointer"
+                onClick={() => {
+                  router.push("/profile");
+                }}
+              >
                 Ver perfil
               </Text>
             </Box>
@@ -56,6 +65,9 @@ const History = () => {
             backgroundColor="black"
             width="200px"
             marginBottom="115px"
+            onClick={() => {
+              router.push("/diagnostic");
+            }}
           >
             Fazer diagnóstico
           </Button>

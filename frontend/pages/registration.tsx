@@ -11,15 +11,71 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useForm, Resolver } from "react-hook-form";
+import api from "../api";
 
-interface Data {
+type FormValues = {
   userName: string;
   dateOfBirth: string;
   weight: number;
   height: number;
   gender: string;
   exerciseTime: number;
-}
+  diseaseHistory: string;
+};
+
+/* const resolver: Resolver<FormValues> = async (values) => {
+  return {
+    values: {
+      ...values,
+      userName: values.userName,
+    },
+    errors: {
+      userName: !values.userName
+        ? {
+            type: "required",
+            message: "Please enter a username.",
+          }
+        : undefined,
+      dateOfBirth: !values.dateOfBirth
+        ? {
+            type: "required",
+            message: "Please enter your date of birth.",
+          }
+        : undefined,
+      weight: !values.weight
+        ? {
+            type: "required",
+            message: "Please enter your weight.",
+          }
+        : undefined,
+      height: !values.height
+        ? {
+            type: "required",
+            message: "Please enter your height.",
+          }
+        : undefined,
+      gender: !values.gender
+        ? {
+            type: "required",
+            message: "Please select your gender.",
+          }
+        : undefined,
+      exerciseTime: !values.exerciseTime
+        ? {
+            type: "required",
+            message: "Please enter your exercise time.",
+          }
+        : undefined,
+      diseaseHistory: !values.diseaseHistory
+        ? {
+            type: "required",
+            message: "Please enter your disease history.",
+          }
+        : undefined,
+    },
+  };
+}; */
 
 const Dashboard = () => {
   const [history, setHistory] = useState("false");
@@ -27,14 +83,11 @@ const Dashboard = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
-  const [data, setData] = useState<Data>({
-    userName: "",
-    dateOfBirth: "",
-    weight: null,
-    height: null,
-    gender: "",
-    exerciseTime: null,
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
 
   const convertDateToServerFormat = (dateString: any) => {
     const [year, month, day] = dateString.split("T")[0].split("-").map(Number);
@@ -45,7 +98,7 @@ const Dashboard = () => {
     };
   };
 
-  const fetchData = async () => {
+  /*   const fetchData = async () => {
     setError("");
     setErrorMessage("");
 
@@ -80,21 +133,20 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Erro ao enviar dados: ", error.message);
     }
-  };
+  }; */
 
-  const handleButtonClick = () => {
-    if (
-      data?.userName &&
-      data?.gender &&
-      data?.weight &&
-      data?.height &&
-      data?.exerciseTime
-    ) {
-      fetchData();
-    } else {
-      setErrorMessage("Por favor, preencha todos os campos.");
+  const onSubmit = async (formData: FormValues) => {
+    try {
+      const response = await api.post("/profile/registration", {
+        name: formData.userName,
+        weight: formData.weight,
+        height: formData.height,
+        exerciseTime: formData.exerciseTime,
+        dateOfBirth: convertDateToServerFormat(formData.dateOfBirth),
+      });
+    } catch (error) {
+      console.log(error);
     }
-    setButtonClicked(true);
   };
 
   return (
@@ -108,100 +160,163 @@ const Dashboard = () => {
         >
           Preencha as informações abaixo para continuar
         </Text>
-        <SimpleGrid columns={2} spacing={10}>
-          <Input
-            placeholder="Nome"
-            value={data.userName}
-            onChange={(event: any) =>
-              setData({ ...data, userName: event.target.value })
-            }
-          />
-          <Input
-            placeholder="Data de nascimento"
-            type="datetime-local"
-            value={data.dateOfBirth}
-            onChange={(event: any) =>
-              setData({ ...data, dateOfBirth: event.target.value })
-            }
-          />
-          <Input
-            placeholder="Peso (kg)"
-            value={data.weight}
-            onChange={(event: any) =>
-              setData({ ...data, weight: event.target.value })
-            }
-          />
-          <Input
-            placeholder="Altura (cm)"
-            value={data.height}
-            onChange={(event: any) =>
-              setData({ ...data, height: event.target.value })
-            }
-          />
-          <Select
-            height="40px"
-            placeholder="Gênero"
-            fontFamily="poppins.500"
-            value={data.gender}
-            onChange={(event: any) =>
-              setData({ ...data, gender: event.target.value })
-            }
-          >
-            <option value="M">Masculino</option>
-            <option value="F">Feminino</option>
-          </Select>
-          <Input
-            placeholder="Tempo médio de exercícios (em minutos)"
-            value={data.exerciseTime}
-            onChange={(event: any) =>
-              setData({ ...data, exerciseTime: event.target.value })
-            }
-          />
-        </SimpleGrid>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <SimpleGrid columns={2} spacing={10}>
+            <Box>
+              <Input
+                h="50px"
+                fontFamily="poppins.500"
+                placeholder="Nome"
+                {...register("userName", { required: "Digite um nome" })}
+              />
+              <Box py={2}>
+                <Text color="red" fontSize="xs">
+                  {errors?.userName && <>{errors?.userName.message}</>}
+                </Text>
+              </Box>
+            </Box>
+            <Box>
+              <Input
+                h="50px"
+                fontFamily="poppins.500"
+                placeholder="Data de nascimento"
+                type="date"
+                {...register("dateOfBirth", {
+                  required: "Escolha uma data de nascimento",
+                })}
+              />
+              <Box py={2}>
+                <Text color="red" fontSize="xs">
+                  {errors?.dateOfBirth && <>{errors?.dateOfBirth.message}</>}
+                </Text>
+              </Box>
+            </Box>
+            <Box>
+              <Input
+                h="50px"
+                type="number"
+                fontFamily="poppins.500"
+                placeholder="Peso (kg)"
+                {...register("weight", { required: "Digite seu peso", min: 1 })}
+              />
+              <Box py={2}>
+                <Text color="red" fontSize="xs">
+                  {errors?.weight && <>{errors?.weight.message}</>}
+                  {errors?.weight && errors?.weight.type === "min" && (
+                    <span>Valor inválido</span>
+                  )}
+                </Text>
+              </Box>
+            </Box>
+            <Box>
+              <Input
+                h="50px"
+                type="number"
+                fontFamily="poppins.500"
+                placeholder="Altura (cm)"
+                {...register("height", {
+                  required: "Digite sua altura",
+                  min: 1,
+                })}
+              />
+              <Box py={2}>
+                <Text color="red" fontSize="xs">
+                  {errors?.height && <>{errors?.height.message}</>}
+                  {errors?.height && errors?.height.type === "min" && (
+                    <span>Valor inválido</span>
+                  )}
+                </Text>
+              </Box>
+            </Box>
+            <Box>
+              <Select
+                h="50px"
+                fontFamily="poppins.500"
+                placeholder="Gênero"
+                {...register("gender", { required: "Selecione um gênero" })}
+              >
+                <option value="M">Masculino</option>
+                <option value="F">Feminino</option>
+              </Select>
+              <Box py={2}>
+                <Text color="red" fontSize="xs">
+                  {errors?.gender && <>{errors?.gender.message}</>}
+                </Text>
+              </Box>
+            </Box>
+            <Box>
+              <Input
+                h="50px"
+                type="number"
+                fontFamily="poppins.500"
+                placeholder="Tempo médio de exercícios (em minutos)"
+                {...register("exerciseTime", {
+                  required: "Digite o tempo médio de exercícios",
+                  min: 0,
+                })}
+              />
+              <Box py={2}>
+                <Text color="red" fontSize="xs">
+                  {errors?.exerciseTime && <>{errors?.exerciseTime.message}</>}
+                  {errors?.exerciseTime &&
+                    errors?.exerciseTime.type === "min" && (
+                      <span>Valor inválido</span>
+                    )}
+                </Text>
+              </Box>
+            </Box>
+          </SimpleGrid>
 
-        <Text fontFamily="poppins.500" marginTop="40px">
-          Doencas na familia?
-        </Text>
-        <RadioGroup onChange={setHistory} value={history} marginY="30px">
-          <Stack>
-            <Radio colorScheme="blackAlpha" size="lg" value={"false"}>
-              Nao
-            </Radio>
-            <Radio colorScheme="blackAlpha" size="lg" value={"true"}>
-              Sim
-            </Radio>
-          </Stack>
-        </RadioGroup>
-        {history === "true" && (
-          <Input placeholder="Quais?" value="" onChange={() => {}} />
-        )}
-        <Text fontFamily="poppins.500" marginTop="40px" marginBottom="20px">
-          Termos de uso:
-        </Text>
-        <Text color="gray">
-          * Para obter um diagnóstico preciso e recomendações específicas, é
-          importante consultar um médico. Além disso, se os sintomas persistirem
-          ou piorarem, é essencial buscar atendimento médico imediatamente.
-        </Text>
-        <Box display="flex" justifyContent="space-between" marginTop="30px">
-          <Checkbox
-            size="lg"
-            colorScheme="blackAlpha"
-            borderColor="black"
-            borderRadius="8px"
-            defaultChecked
-          >
-            <Text fontSize="small">Li e concordo com os termos de uso</Text>
-          </Checkbox>
-          <Button
-            color="brand.900"
-            backgroundColor="black"
-            width="150px"
-            onClick={handleButtonClick}
-          >
-            Salvar
-          </Button>
-        </Box>
+          <Text fontFamily="poppins.500" marginTop="40px">
+            Doencas na familia?
+          </Text>
+          <RadioGroup onChange={setHistory} value={history} marginY="30px">
+            <Stack>
+              <Radio colorScheme="blackAlpha" size="lg" value={"false"}>
+                Não
+              </Radio>
+              <Radio colorScheme="blackAlpha" size="lg" value={"true"}>
+                Sim
+              </Radio>
+            </Stack>
+          </RadioGroup>
+          {history === "true" && (
+            <Input
+              h="50px"
+              placeholder="Quais?"
+              {...register("diseaseHistory")}
+            />
+          )}
+          <Text fontFamily="poppins.500" marginTop="40px" marginBottom="20px">
+            Termos de uso:
+          </Text>
+          <Text color="gray">
+            * Para obter um diagnóstico preciso e recomendações específicas, é
+            importante consultar um médico. Além disso, se os sintomas
+            persistirem ou piorarem, é essencial buscar atendimento médico
+            imediatamente.
+          </Text>
+          <Box display="flex" justifyContent="space-between" marginTop="30px">
+            <Checkbox
+              size="lg"
+              colorScheme="blackAlpha"
+              borderColor="black"
+              borderRadius="8px"
+              defaultChecked
+            >
+              <Text fontSize="small">Li e concordo com os termos de uso</Text>
+            </Checkbox>
+            <Button
+              type="submit"
+              color="brand.900"
+              fontFamily="inter.500"
+              backgroundColor="black"
+              width="150px"
+            >
+              Salvar
+            </Button>
+          </Box>
+        </form>
         {buttonClicked && errorMessage && (
           <Box py={2}>
             <Text color="red" fontSize="xs">

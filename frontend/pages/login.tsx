@@ -78,7 +78,7 @@ const Login = () => {
                 Entrar
               </Button>
             </Box>
-            <Divider />
+            <Divider color="gray" />
             <Text fontWeight="inter.400" fontSize="sm" display="flex">
               Ainda não tem uma conta?
               <Text
