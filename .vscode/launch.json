@@ -1,0 +1,26 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Current File",
+      "request": "launch",
+      "mainClass": "${file}"
+    },
+    {
+      "type": "java",
+      "name": "Application",
+      "request": "launch",
+      "mainClass": "com.synback.Main",
+      "projectName": "app",
+      "env": {
+        "MONGODB_CONNECTION_STRING": "mongodb+srv://syn:syn@web.s5ro6cq.mongodb.net/?retryWrites=true&w=majority",
+        "MONGODB_DATABASE_NAME": "Data",
+        "PUBLIC_API_KEY": "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"
+      }
+    }
+  ]
+}
