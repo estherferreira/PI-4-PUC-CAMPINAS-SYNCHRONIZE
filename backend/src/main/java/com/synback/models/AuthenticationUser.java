@@ -2,6 +2,7 @@ package com.synback.models;
 
 public class AuthenticationUser implements Cloneable {
 
+    private int id;
     private String email;
     private String password;
     private final String role = "customer";
@@ -9,6 +10,14 @@ public class AuthenticationUser implements Cloneable {
     public AuthenticationUser(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getEmail() {
