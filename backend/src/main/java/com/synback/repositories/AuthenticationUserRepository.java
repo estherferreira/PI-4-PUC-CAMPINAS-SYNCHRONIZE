@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AuthenticationUserRepository extends
-GenericRepository<AuthenticationUser, String> {
+GenericRepository<AuthenticationUser, Integer> {
 AuthenticationUser findByEmail(String email);
 }
