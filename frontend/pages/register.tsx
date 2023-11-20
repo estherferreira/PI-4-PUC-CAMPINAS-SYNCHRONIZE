@@ -45,7 +45,7 @@ const Register = () => {
         throw new Error(errorMessage);
       }
 
-      console.log("E-mail e senha enviados para o servidor com sucesso!");
+      console.log("E-mail e senha enviados para o backend com sucesso!");
     } catch (error) {
       console.error("Erro ao enviar dados: ", error.message);
     }
