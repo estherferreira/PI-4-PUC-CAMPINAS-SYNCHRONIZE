@@ -12,10 +12,7 @@ public class User {
     private String gender;
     private byte dailyExerciseTime;
     private String diseasesInTheFamily;
-    private String bloodType;
     private SubscriptionPlan subscriptionPlan;
-
-    private static final String[] VALID_BLOOD_TYPES = { "A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-" };
 
     public User(String id, String name, Data dateOfBirth, double weight, short height, String gender,
             byte dailyExerciseTime, String diseasesInTheFamily, String bloodType,
@@ -28,14 +25,6 @@ public class User {
         this.gender = gender;
         this.dailyExerciseTime = dailyExerciseTime;
         this.diseasesInTheFamily = diseasesInTheFamily;
-
-        if (isValidBloodType(bloodType)) {
-            this.bloodType = bloodType;
-        } else {
-            throw new IllegalArgumentException(
-                    "Tipo sanguíneo inválido. Tipos válidos são: A+, B+, AB+, O+, A-, B-, AB-, O-");
-        }
-
         this.subscriptionPlan = subscriptionPlan;
     }
 
@@ -129,31 +118,7 @@ public class User {
         this.diseasesInTheFamily = diseasesInTheFamily;
     }
 
-    public String getBloodType() {
-        return bloodType;
-    }
-
-    public void setBloodType(String bloodType) {
-        if (isValidBloodType(bloodType)) {
-            this.bloodType = bloodType;
-        } else {
-            throw new IllegalArgumentException(
-                    "Tipo sanguíneo inválido. Tipos válidos são: A+, B+, AB+, O+, A-, B-, AB-, O-");
-        }
-    }
-
     /* Métodos auxiliares */
-
-    // Verifica se o tipo sanguineo informado é válido de acordo com a lista de
-    // tipos sanguineos válidos
-    private boolean isValidBloodType(String bloodType) {
-        for (String validType : VALID_BLOOD_TYPES) {
-            if (validType.equals(bloodType)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     // Verifica se é a idade do usuário é maior ou igual a 18 anos
     private boolean isAdult(Data birthDate) {
@@ -182,7 +147,6 @@ public class User {
                 "Gender: " + gender + '\n' +
                 "DailyExerciseTime: " + dailyExerciseTime + '\n' +
                 "DiseasesInTheFamily: " + diseasesInTheFamily + '\n' +
-                "BloodType: " + bloodType + '\n' +
                 "SubscriptionPlan: " + subscriptionPlan.toString();
     }
 
@@ -205,7 +169,6 @@ public class User {
                 user.gender != this.gender ||
                 user.dailyExerciseTime != this.dailyExerciseTime ||
                 user.diseasesInTheFamily != this.diseasesInTheFamily ||
-                user.bloodType != this.bloodType ||
                 user.subscriptionPlan != this.subscriptionPlan)
             return false;
 
@@ -224,7 +187,6 @@ public class User {
         result = 7 * result + gender.hashCode();
         result = 7 * result + Byte.hashCode(dailyExerciseTime);
         result = 7 * result + diseasesInTheFamily.hashCode();
-        result = 7 * result + bloodType.hashCode();
         result = 7 * result + subscriptionPlan.hashCode();
 
         if (result < 0)
@@ -245,7 +207,6 @@ public class User {
         this.gender = modelo.gender;
         this.dailyExerciseTime = modelo.dailyExerciseTime;
         this.diseasesInTheFamily = modelo.diseasesInTheFamily;
-        this.bloodType = modelo.bloodType;
         this.subscriptionPlan = modelo.subscriptionPlan;
     }
 
