@@ -33,23 +33,25 @@ const Dashboard = () => {
   } = useForm<FormValues>();
 
   const convertDateToServerFormat = (dateString: any) => {
-    const [year, month, day] = dateString.split("T")[0].split("-").map(Number);
-    return {
-      dia: day,
-      mes: month,
-      ano: year,
-    };
+    const [year, month, day] = dateString.split("-").map(Number);
+    return { dia: day, mes: month, ano: year };
   };
 
   const onSubmit = async (formData: FormValues) => {
+    const dateOfBirth = convertDateToServerFormat(formData.dateOfBirth);
     try {
       const response = await api.post("/profile/registration", {
         name: formData.userName,
         weight: formData.weight,
         height: formData.height,
         exerciseTime: formData.exerciseTime,
-        dateOfBirth: convertDateToServerFormat(formData.dateOfBirth),
+        dateOfBirth: dateOfBirth,
+        gender: formData.gender,
+        diseasesInTheFamily:
+          history === "true" ? formData.diseaseHistory : "Não",
       });
+
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
