@@ -13,9 +13,51 @@ import LoginImage from "../assets/sandDuneGuy.jpg";
 import Logo from "../assets/Logo.svg";
 import { IoIosArrowBack } from "react-icons/io";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 const Login = () => {
   const router = useRouter();
+  const [error, setError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [buttonClicked, setButtonClicked] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const fetchData = async () => {
+    setError("");
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("http://localhost:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        //Transforma o corpo da resposta em JSON
+        const errorMessage = await response.text();
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      console.log("E-mail e senha enviados para o servidor com sucesso!");
+    } catch (error) {
+      console.error("Erro ao enviar dados: ", error.message);
+    }
+  };
+
+  const handleButtonClick = () => {
+    if (email && password) {
+      fetchData();
+    } else {
+      setErrorMessage("Por favor, preencha todos os campos.");
+    }
+    setButtonClicked(true);
+  };
+  
   return (
     <Box height="100vh">
       <Grid templateColumns="repeat(10, 1fr)">

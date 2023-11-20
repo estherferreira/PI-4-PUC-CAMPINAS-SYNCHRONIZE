@@ -1,35 +1,51 @@
 package com.server.validations;
 
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.server.errors.CustomException;
+
+import lombok.Builder;
+import lombok.Data;
+import lombok.experimental.Tolerate;
+import lombok.extern.jackson.Jacksonized;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import com.server.errors.CustomException;
-import com.server.utils.Email;
-
+@Jacksonized
+@Builder
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserCredentials implements Cloneable {
 
-     private Email email;
+     private String email;
      private String password;
 
-     public UserCredentials(Email email, String password) {
+     @Tolerate
+     public UserCredentials() {
+          // Construtor padrão necessário para deserialização
+     }
+
+     // Construtor explicitamente definido com dois parâmetros
+     public UserCredentials(String email, String password) {
           this.email = email;
-
-          if (!isPasswordStrong(password)) {
-               throw new CustomException(
-                         "Para atender aos critérios de segurança, sua senha de conter pelo menos uma letra maiúscula, uma letra minúscula, um dígito e um caractere especial.",
-                         1001);
-          }
-          this.password = hashPassword(password);
-
+          this.password = password;
      }
 
      public String getEmail() {
-          return email.getEmail();
+          return email;
      }
 
      public String getPassword() {
           return password;
+     }
+
+     public void setEmail(String email) {
+          if (isValidEmail(email)) {
+               this.email = email;
+          } else {
+               throw new CustomException("Endereço de e-mail inválido.", 1007);
+          }
      }
 
      public boolean setPassword(String password) {
@@ -62,10 +78,17 @@ public class UserCredentials implements Cloneable {
           return BCrypt.hashpw(password, BCrypt.gensalt());
      }
 
+     // Verifica se o email é válido (tem o formato de um email)
+     public static boolean isValidEmail(String email) {
+          String regex = "^[A-Za-z0-9+_.-]+@(.+)$";
+          Pattern pattern = Pattern.compile(regex);
+          Matcher matcher = pattern.matcher(email);
+          return matcher.matches() && !email.contains("@.");
+     }
+
      @Override
      public String toString() {
-          return "User:" + '\n' + '\n' +
-                    "Email: " + email.toString() + '\n' +
+          return "Email: " + email + '\n' +
                     "Password Hash: " + password + '\n';
      }
 

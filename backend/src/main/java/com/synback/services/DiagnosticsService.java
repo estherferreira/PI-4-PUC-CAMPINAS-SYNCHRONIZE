@@ -9,7 +9,6 @@ import com.theokanning.openai.service.OpenAiService;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,11 +23,8 @@ public class DiagnosticsService {
         this.diagnosisRepository = diagnosisRepository;
     }
 
-    public Diagnosis diagnose(String userId, String symptoms) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            throw new RuntimeException("Usuário não encontrado");
-        }
+    public Diagnosis diagnosis(String userId, String symptoms) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         String prompt = buildPrompt(user, symptoms);
         String openAiResponse = callOpenAiService(prompt);
@@ -40,19 +36,19 @@ public class DiagnosticsService {
     private List<Diagnosis.ReportItem> parseOpenAiResponse(String response) {
         List<Diagnosis.ReportItem> reportItems = new ArrayList<>();
         String[] lines = response.split("\n");
-    
+
         for (String line : lines) {
             String[] parts = line.split(",");
             if (parts.length >= 3) { // Garantir que há pelo menos 3 partes
                 String problem = parts[0].replace("Problema: ", "").trim();
                 int percentage = Integer.parseInt(parts[1].replace("Porcentagem: ", "").trim());
                 String description = parts[2].replace("Descrição: ", "").trim();
-    
+
                 // Agora adicionamos ReportItems à lista
                 reportItems.add(new Diagnosis.ReportItem(problem, percentage, description));
             }
         }
-    
+
         return reportItems;
     }
 

@@ -8,14 +8,51 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InfoIcon } from "@chakra-ui/icons";
 import ProgressBar from "../components/ProgressBar";
 import { useRouter } from "next/router";
 
 const Diagnostic = () => {
   const [newDiagnostic, setNewDiagnostic] = useState(true);
+  const [symptoms, setSymptoms] = useState("");
+  const [token, setToken] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    // Acessar localStorage somente no lado do cliente
+    const jwtToken = localStorage.getItem('d4pM6FjtykjTwR');
+    console.log("Token: ", token);
+    if (jwtToken) {
+      setToken(jwtToken);
+    }
+  }, []);
+
+
+  const fetchData = async () => {
+    try {
+      // const response = await fetch("http://localhost:8000/api/diagnosis", {
+        const response = await fetch(`http://localhost:8000/api/diagnosis?userId=000152`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ symptoms }),
+      });
+
+      if (!response.ok) {
+        //Transforma o corpo da resposta em JSON
+        const errorMessage = await response.text();
+        throw new Error(errorMessage);
+      }
+
+      console.log("Sintomas enviados para o servidor com sucesso!");
+    } catch (error) {
+      console.error("Erro ao enviar dados: ", error.message);
+    }
+  };
+
   return (
     <Box backgroundColor="offwhite" h="100vh">
       <Box paddingTop="100px" marginX="310px" justifyContent="center">
@@ -104,6 +141,8 @@ const Diagnostic = () => {
               placeholder="Dor de cabeça, dores nas costas..."
               marginBottom="15px"
               marginTop="70px"
+              value={symptoms}
+              onChange={(event) => setSymptoms(event.target.value)}
             />
             <Box>
               <Button
@@ -111,6 +150,7 @@ const Diagnostic = () => {
                 color="brand.900"
                 backgroundColor="black"
                 width="150px"
+                onClick={fetchData}
               >
                 Enviar
               </Button>

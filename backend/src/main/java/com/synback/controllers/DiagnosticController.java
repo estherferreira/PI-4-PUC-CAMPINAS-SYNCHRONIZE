@@ -1,5 +1,6 @@
 package com.synback.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 // import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,25 +9,24 @@ import com.synback.services.DiagnosticsService;
 import com.synback.models.Diagnosis;
 
 @RestController
-@RequestMapping("/diagnostic")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:3000") // Permitir CORS para o frontend
 public class DiagnosticController {
 
-    private final DiagnosticsService diagnosticsService;
+    @Autowired
+    private DiagnosticsService diagnosticsService;
 
-    // Injetar DiagnosticsService usando construtor
-    public DiagnosticController(DiagnosticsService diagnosticsService) {
-        this.diagnosticsService = diagnosticsService;
+    @PostMapping("/diagnosis")
+    public ResponseEntity<Diagnosis> diagnoseUser(@RequestHeader("Authorization")
+    String token,
+    @RequestBody String symptoms) {
+    Diagnosis diagnosis = diagnosticsService.diagnosis(token, symptoms);
+    return new ResponseEntity<>(diagnosis, HttpStatus.OK);
     }
 
-    // Endpoint para receber sintomas e retornar diagnóstico
-    @PostMapping
-    public ResponseEntity<?> getDiagnostic(@RequestBody String symptoms, @RequestParam String userId) {
-        try {
-            Diagnosis diagnosis = diagnosticsService.diagnose(userId, symptoms);
-            return ResponseEntity.ok(diagnosis);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
+    // @PostMapping("/diagnosis")
+    // public ResponseEntity<Diagnosis> diagnoseUser(@RequestParam String userId, @RequestBody String symptoms) {
+    //     Diagnosis diagnosis = diagnosticsService.diagnosis(userId, symptoms);
+    //     return new ResponseEntity<>(diagnosis, HttpStatus.OK);
+    // }
 }

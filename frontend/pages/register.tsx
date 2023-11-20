@@ -13,10 +13,7 @@ import RegisterImage from "../assets/manRunning.jpg";
 import Logo from "../assets/Logo.svg";
 import { useRouter } from "next/router";
 import { IoIosArrowBack } from "react-icons/io";
-
-import { useState, useEffect } from "react";
-import { Stomp } from "stompjs/lib/stomp.min.js";
-import SockJS from "sockjs-client";
+import { useState } from "react";
 
 const Register = () => {
   const router = useRouter();
@@ -26,71 +23,39 @@ const Register = () => {
   const [buttonClicked, setButtonClicked] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [websocket, setWebsocket] = useState(null);
 
-  useEffect(() => {
-    // Estabelece a conexão com o servidor usando SockJS e STOMP
-    const socket = new SockJS("http://localhost:8080/websocket");
-    const stompClient = Stomp.over(socket);
-
-    console.log(stompClient);
-
-    socket.onerror = function (event) {
-      console.error("Erro WebSocket:", event);
-    };
-
-    stompClient.connect(
-      {},
-      () => {
-        console.log("Conexão WebSocket estabelecida");
-        setWebsocket(stompClient);
-
-        stompClient.subscribe("/topic/userResponses", (message: any) => {
-          console.log("Mensagem recebida: ", message.body);
-        });
-
-        stompClient.subscribe("/topic/errors", (error: any) => {
-          console.error("Erro recebido: ", error.body);
-          setError(error.body);
-        });
-      },
-      (error: any) => {
-        console.error("Erro na conexão WebSocket: ", error);
-        setError("Erro na conexão com o servidor");
-      }
-    );
-
-    // Fecha a conexão WebSocket quando o componente é desmontado
-    return () => {
-      if (stompClient && stompClient.connected) {
-        stompClient.disconnect();
-      }
-    };
-  }, []);
-
-  const handleRegister = () => {
+  const fetchData = async () => {
     setError("");
     setErrorMessage("");
 
-    if (!email || !password) {
-      setErrorMessage("Por favor, preencha todos os campos.");
-      return;
-    }
+    try {
+      const response = await fetch("http://localhost:5000/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (websocket && websocket.connected) {
-      // Envia as credenciais via WebSocket usando STOMP
-      const payload = JSON.stringify({ email, password });
-      websocket.send("/register", {}, payload);
-      console.log("E-mail e senha enviados para o servidor via WebSocket!");
-    } else {
-      console.error("Erro: WebSocket não está conectado");
-      console.log("Erro ao enviar dados");
+      if (!response.ok) {
+        //Transforma o corpo da resposta em JSON
+        const errorMessage = await response.text();
+        console.log("Erro ao enviar dados para o backend!");
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      console.log("E-mail e senha enviados para o servidor com sucesso!");
+    } catch (error) {
+      console.error("Erro ao enviar dados: ", error.message);
     }
   };
 
+
+
   const handleButtonClick = () => {
     if (email && password) {
-      handleRegister();
+      fetchData();
     } else {
       setErrorMessage("Por favor, preencha todos os campos.");
     }

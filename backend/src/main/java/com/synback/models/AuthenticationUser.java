@@ -1,23 +1,24 @@
 package com.synback.models;
 
+import java.util.Random;
+import org.springframework.data.annotation.Id;
+
 public class AuthenticationUser implements Cloneable {
 
-    private int id;
+    @Id
+    private String id;
     private String email;
     private String password;
     private final String role = "customer";
 
     public AuthenticationUser(String email, String password) {
+        this.id = generateUniqueId();
         this.email = email;
         this.password = password;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getEmail() {
@@ -26,6 +27,10 @@ public class AuthenticationUser implements Cloneable {
 
     public String getPassword() {
         return password;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setEmail(String email) {
@@ -38,7 +43,7 @@ public class AuthenticationUser implements Cloneable {
 
     @Override
     public String toString() {
-        return "User:" + '\n' + '\n' +
+        return "Id: " + id + '\n' +
                 "Email: " + email.toString() + '\n' +
                 "Password Hash: " + password + '\n' +
                 "Role: " + role;
@@ -55,7 +60,7 @@ public class AuthenticationUser implements Cloneable {
 
         AuthenticationUser user = (AuthenticationUser) obj;
 
-        if (user.email != this.email ||
+        if (user.id != this.id || user.email != this.email ||
                 user.password != this.password ||
                 user.role != this.role)
             return false;
@@ -67,6 +72,7 @@ public class AuthenticationUser implements Cloneable {
     public int hashCode() {
         int result = 13;
 
+        result = 7 * result + id.hashCode();
         result = 7 * result + email.hashCode();
         result = 7 * result + password.hashCode();
         result = 7 * result + role.hashCode();
@@ -75,6 +81,13 @@ public class AuthenticationUser implements Cloneable {
             result = -result;
 
         return result;
+    }
+
+    private static String generateUniqueId() {
+        Random random = new Random();
+        // Gera um número aleatório com 10 dígitos
+        int number = random.nextInt(1000000000, 2000000000);
+        return "SYN-" + String.format("%010d", number);
     }
 
     private AuthenticationUser(AuthenticationUser modelo) throws Exception {
