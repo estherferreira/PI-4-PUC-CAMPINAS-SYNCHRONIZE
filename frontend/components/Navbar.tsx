@@ -44,21 +44,16 @@ const Navbar = () => {
       transition="background-color 0.3s"
     >
       <Image src={Logo} alt="Logo" />
-      <Box display={{ base: "block", md: "none" }}>
-        <Button
-          display={{ base: "block", md: "none" }}
-          onClick={() => {
-            // Toggle mobile menu
-          }}
-        >
-          Menu
-        </Button>
-      </Box>
       <Flex align="center">
-        <Button color="black" onClick={() => router.push("/login")}>
+        <Button
+          fontFamily="inter.500"
+          color="black"
+          onClick={() => router.push("/login")}
+        >
           Entrar
         </Button>
         <Button
+          fontFamily="inter.500"
           color="brand.900"
           backgroundColor="black"
           width="150px"

@@ -12,9 +12,8 @@ import Image from "next/image";
 import RegisterImage from "../assets/manRunning.jpg";
 import Logo from "../assets/Logo.svg";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
-import { Stomp } from "stompjs/lib/stomp.min.js";
-import SockJS from "sockjs-client";
+import { IoIosArrowBack } from "react-icons/io";
+import { useState } from "react";
 
 const Register = () => {
   const router = useRouter();
@@ -24,71 +23,39 @@ const Register = () => {
   const [buttonClicked, setButtonClicked] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [websocket, setWebsocket] = useState(null);
 
-  useEffect(() => {
-    // Estabelece a conexão com o servidor usando SockJS e STOMP
-    const socket = new SockJS("http://localhost:8080/websocket");
-    const stompClient = Stomp.over(socket);
-
-    console.log(stompClient);
-
-    socket.onerror = function (event) {
-      console.error("Erro WebSocket:", event);
-    };
-
-    stompClient.connect(
-      {},
-      () => {
-        console.log("Conexão WebSocket estabelecida");
-        setWebsocket(stompClient);
-
-        stompClient.subscribe("/topic/userResponses", (message: any) => {
-          console.log("Mensagem recebida: ", message.body);
-        });
-
-        stompClient.subscribe("/topic/errors", (error: any) => {
-          console.error("Erro recebido: ", error.body);
-          setError(error.body);
-      });
-      },
-      (error: any) => {
-        console.error("Erro na conexão WebSocket: ", error);
-        setError("Erro na conexão com o servidor");
-      }
-    );
-
-    // Fecha a conexão WebSocket quando o componente é desmontado
-    return () => {
-      if (stompClient && stompClient.connected) {
-        stompClient.disconnect();
-      }
-    };
-  }, []);
-
-  const handleRegister = () => {
+  const fetchData = async () => {
     setError("");
     setErrorMessage("");
 
-    if (!email || !password) {
-      setErrorMessage("Por favor, preencha todos os campos.");
-      return;
-    }
+    try {
+      const response = await fetch("http://localhost:5000/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (websocket && websocket.connected) {
-      // Envia as credenciais via WebSocket usando STOMP
-      const payload = JSON.stringify({ email, password });
-      websocket.send("/register", {}, payload);
-      console.log("E-mail e senha enviados para o servidor via WebSocket!");
-    } else {
-      console.error("Erro: WebSocket não está conectado");
-      console.log("Erro ao enviar dados");
+      if (!response.ok) {
+        //Transforma o corpo da resposta em JSON
+        const errorMessage = await response.text();
+        console.log("Erro ao enviar dados para o backend!");
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      console.log("E-mail e senha enviados para o servidor com sucesso!");
+    } catch (error) {
+      console.error("Erro ao enviar dados: ", error.message);
     }
   };
 
+
+
   const handleButtonClick = () => {
     if (email && password) {
-      handleRegister();
+      fetchData();
     } else {
       setErrorMessage("Por favor, preencha todos os campos.");
     }
@@ -111,22 +78,41 @@ const Register = () => {
         </GridItem>
         <GridItem colSpan={4} h="100vh" width="40vw">
           <Flex
+            justifyContent="space-between"
+            alignItems="center"
+            margin="60px"
+            marginTop="200px"
+          >
+            <Flex>
+              <Image src={Logo} alt="Logo" />
+            </Flex>
+            <Flex
+              cursor="pointer"
+              alignItems="center"
+              gap="10px"
+              onClick={() => {
+                router.push("/");
+              }}
+            >
+              <IoIosArrowBack />
+              <Text fontFamily="poppins.400" sx={{ textAlign: "center" }}>
+                Voltar
+              </Text>
+            </Flex>
+          </Flex>
+          <Flex
             justifyContent="center"
             alignItems="center"
-            h="inherit"
             w="inherit"
             direction="column"
             padding="48px"
             rowGap="48px"
             flexGrow={1}
           >
-            <Flex>
-              <Image src={Logo} alt="Logo" />
-            </Flex>
             <Box>
               <Text
                 width="450px"
-                fontWeight="inter.400"
+                fontFamily="inter.400"
                 fontSize="sm"
                 marginLeft="20px"
                 marginBottom="10px"
@@ -134,6 +120,7 @@ const Register = () => {
                 E-mail
               </Text>
               <Input
+                fontFamily="inter.400"
                 placeholder="Digite seu e-mail"
                 bgColor="offwhite"
                 borderColor="white"
@@ -146,7 +133,7 @@ const Register = () => {
             <Box>
               <Text
                 width="450px"
-                fontWeight="inter.400"
+                fontFamily="inter.400"
                 fontSize="sm"
                 marginLeft="20px"
                 marginBottom="10px"
@@ -154,6 +141,7 @@ const Register = () => {
                 Senha
               </Text>
               <Input
+                fontFamily="inter.400"
                 placeholder="Digite sua senha"
                 bgColor="offwhite"
                 borderColor="white"
@@ -170,6 +158,7 @@ const Register = () => {
             </Box>
             <Box>
               <Button
+                fontFamily="inter.400"
                 bgColor="brand.900"
                 w="35vw"
                 textColor="white"
@@ -185,13 +174,13 @@ const Register = () => {
                 </Box>
               )}
             </Box>
-            <Divider />
+            <Divider color="gray" />
             <Box display="flex" alignItems="center">
-              <Text fontWeight="inter.400" fontSize="sm">
+              <Text fontFamily="inter.400" fontSize="sm">
                 Ja tenho uma conta
               </Text>
               <Text
-                fontWeight="inter.400"
+                fontFamily="inter.500"
                 color="brand.900"
                 marginLeft="10px"
                 cursor="pointer"

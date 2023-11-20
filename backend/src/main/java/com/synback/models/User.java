@@ -174,8 +174,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User:" + '\n' + '\n' +
-                "Id: " + id + '\n' +
+        return "Id: " + id + '\n' +
                 "Name: " + name + '\n' +
                 "DateOfBirth: " + dateOfBirth.toString() + '\n' +
                 "Weight: " + weight + '\n' +
@@ -239,7 +238,7 @@ public class User {
             throw new Exception("modelo ausente");
 
         this.id = modelo.id;
-        this.name = modelo.name;    
+        this.name = modelo.name;
         this.dateOfBirth = modelo.dateOfBirth;
         this.weight = modelo.weight;
         this.height = modelo.height;

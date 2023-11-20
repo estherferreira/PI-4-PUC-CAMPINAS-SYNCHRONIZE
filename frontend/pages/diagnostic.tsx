@@ -1,40 +1,97 @@
 import {
   Box,
   Button,
-  Checkbox,
+  Flex,
   IconButton,
   Input,
-  Radio,
-  RadioGroup,
   SimpleGrid,
-  Stack,
   Text,
 } from "@chakra-ui/react";
-import FormInput from "../components/FormInput";
-import { useState } from "react";
+import { FiLogOut } from "react-icons/fi";
+import { useEffect, useState } from "react";
 import { InfoIcon } from "@chakra-ui/icons";
 import ProgressBar from "../components/ProgressBar";
+import { useRouter } from "next/router";
 
 const Diagnostic = () => {
   const [newDiagnostic, setNewDiagnostic] = useState(true);
+  const [symptoms, setSymptoms] = useState("");
+  const [token, setToken] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    // Acessar localStorage somente no lado do cliente
+    const jwtToken = localStorage.getItem('d4pM6FjtykjTwR');
+    console.log("Token: ", token);
+    if (jwtToken) {
+      setToken(jwtToken);
+    }
+  }, []);
+
+
+  const fetchData = async () => {
+    try {
+      // const response = await fetch("http://localhost:8000/api/diagnosis", {
+        const response = await fetch(`http://localhost:8000/api/diagnosis?userId=000152`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ symptoms }),
+      });
+
+      if (!response.ok) {
+        //Transforma o corpo da resposta em JSON
+        const errorMessage = await response.text();
+        throw new Error(errorMessage);
+      }
+
+      console.log("Sintomas enviados para o servidor com sucesso!");
+    } catch (error) {
+      console.error("Erro ao enviar dados: ", error.message);
+    }
+  };
+
   return (
     <Box backgroundColor="offwhite" h="100vh">
       <Box paddingTop="100px" marginX="310px" justifyContent="center">
-        <Box display="flex" gap="12px">
-          <Box
-            height="56px"
-            width="56px"
-            borderRadius="full"
-            backgroundColor="black"
-          />
-          <Box>
-            <Text fontFamily="poppins.400" fontSize="lg">
-              Sophia Iwara
+        <Box display="flex" gap="12px" justifyContent="space-between">
+          <Flex align="center" gap="15px">
+            <Box
+              height="56px"
+              width="56px"
+              borderRadius="full"
+              backgroundColor="black"
+            />
+            <Box>
+              <Text fontFamily="poppins.400" fontSize="lg">
+                Sophia Iwara
+              </Text>
+              <Text
+                fontFamily="poppins.400"
+                color="gray"
+                cursor="pointer"
+                onClick={() => {
+                  router.push("/profile");
+                }}
+              >
+                Ver perfil
+              </Text>
+            </Box>
+          </Flex>
+          <Flex
+            align="center"
+            gap="10px"
+            onClick={() => {
+              router.push("/login");
+            }}
+          >
+            <Text fontFamily="poppins.400" cursor="pointer">
+              Ir embora
             </Text>
-            <Text fontFamily="poppins.400" color="gray" cursor="pointer">
-              Ver perfil
-            </Text>
-          </Box>
+            <FiLogOut />
+          </Flex>
         </Box>
         <Box
           marginTop="65px"
@@ -84,9 +141,17 @@ const Diagnostic = () => {
               placeholder="Dor de cabeça, dores nas costas..."
               marginBottom="15px"
               marginTop="70px"
+              value={symptoms}
+              onChange={(event) => setSymptoms(event.target.value)}
             />
             <Box>
-              <Button color="brand.900" backgroundColor="black" width="150px">
+              <Button
+                fontFamily="inter.500"
+                color="brand.900"
+                backgroundColor="black"
+                width="150px"
+                onClick={fetchData}
+              >
                 Enviar
               </Button>
             </Box>

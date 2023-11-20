@@ -61,29 +61,28 @@ public class PersonalInfo {
         this.name = name;
     }
 
-    public void setWeight(double weight) throws Exception {
-        if (weight < 0.0) {
+    public void setWeight(double weight) throws CustomException {
+        if (weight <= 0.0) {
             throw new CustomException("O peso deve ser maior que 0", 1006);
         }
         this.weight = weight;
     }
 
-    public void setHeight(short height) throws Exception {
+    public void setHeight(short height) throws CustomException {
         if (height < 0) {
             throw new CustomException("A altura deve ser positiva", 1005);
         }
         this.height = height;
     }
 
-    public void setExerciseTime(short exerciseTime) throws Exception {
+    public void setExerciseTime(short exerciseTime) throws CustomException {
         if (exerciseTime < 1 || exerciseTime > 1440) {
-            throw new CustomException("O tempo médio de exercícios deve ser maior que 0 e menor igual a 1440 minutos",
-                    1004);
+            throw new CustomException("O tempo médio de exercícios deve ser maior que 0 e menor igual a 1440 minutos", 1004);
         }
         this.exerciseTime = exerciseTime;
     }
 
-    public void setBirthDate(byte day, byte month, short year) {
+    public void setBirthDate(byte day, byte month, short year) throws CustomException {
         try {
             Data date = new Data(day, month, year);
 
