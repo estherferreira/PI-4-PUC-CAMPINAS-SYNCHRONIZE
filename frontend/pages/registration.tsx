@@ -13,6 +13,7 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import api from "../api";
+import { useRouter } from "next/router";
 
 type FormValues = {
   userName: string;
@@ -25,6 +26,7 @@ type FormValues = {
 };
 
 const Dashboard = () => {
+  const router = useRouter();
   const [history, setHistory] = useState("false");
   const {
     register,
@@ -59,7 +61,8 @@ const Dashboard = () => {
           history === "true" ? formData.diseaseHistory : "Não",
       });
 
-      console.log(response);
+      router.push("/app");
+      
     } catch (error) {
       console.log(error);
     }

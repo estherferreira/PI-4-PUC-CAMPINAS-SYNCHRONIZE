@@ -44,7 +44,6 @@ const Register = () => {
         throw new Error(errorMessage);
       }
 
-      // console.log("E-mail e senha enviados para o backend com sucesso!");
       router.push("/registration");
 
     } catch (error) {
