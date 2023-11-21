@@ -19,7 +19,6 @@ const Register = () => {
   const router = useRouter();
   const [error, setError] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,12 +39,14 @@ const Register = () => {
       if (!response.ok) {
         //Transforma o corpo da resposta em JSON
         const errorMessage = await response.text();
-        console.log("Erro ao enviar dados para o backend!");
+        // console.log("Erro ao enviar dados para o backend!");
         setError(errorMessage);
         throw new Error(errorMessage);
       }
 
-      console.log("E-mail e senha enviados para o servidor com sucesso!");
+      // console.log("E-mail e senha enviados para o backend com sucesso!");
+      router.push("/registration");
+
     } catch (error) {
       console.error("Erro ao enviar dados: ", error.message);
     }
@@ -61,9 +62,6 @@ const Register = () => {
     }
     setButtonClicked(true);
   };
-
-  console.log(error);
-  console.log(errorMessage);
 
   return (
     <Box height="100vh">

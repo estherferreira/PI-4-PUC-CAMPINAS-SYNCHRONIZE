@@ -1,30 +1,32 @@
 package com.synback.services;
 
-import com.synback.models.User;
+import com.synback.models.UserProfile;
 import com.synback.models.Diagnosis;
 import com.synback.repositories.DiagnosisRepository;
-import com.synback.repositories.UserRepository;
+import com.synback.repositories.UserProfileRepository;
 import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.service.OpenAiService;
-
 import java.util.ArrayList;
+import java.util.Calendar;
+import com.synback.utils.Data;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
 public class DiagnosticsService {
 
-    private final UserRepository userRepository;
+    private final UserProfileRepository userRepository;
     private final DiagnosisRepository diagnosisRepository;
     private static final String OPENAI_API_KEY = System.getenv("PUBLIC_API_KEY");
 
-    public DiagnosticsService(UserRepository userRepository, DiagnosisRepository diagnosisRepository) {
+    public DiagnosticsService(UserProfileRepository userRepository, DiagnosisRepository diagnosisRepository) {
         this.userRepository = userRepository;
         this.diagnosisRepository = diagnosisRepository;
     }
 
     public Diagnosis diagnosis(String userId, String symptoms) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        UserProfile user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         String prompt = buildPrompt(user, symptoms);
         String openAiResponse = callOpenAiService(prompt);
@@ -52,13 +54,31 @@ public class DiagnosticsService {
         return reportItems;
     }
 
-    private String buildPrompt(User user, String symptoms) {
-        return "Idade: " + user.getDateOfBirth() + "\n" +
+    private int calculateAge(Data birthData) {
+        Calendar birthDate = Calendar.getInstance();
+        birthDate.set(Calendar.YEAR, birthData.getAno());
+        birthDate.set(Calendar.MONTH, birthData.getMes() - 1); // O mês no Calendar começa do 0
+        birthDate.set(Calendar.DAY_OF_MONTH, birthData.getDia());
+
+        Calendar currentDate = Calendar.getInstance();
+
+        int age = currentDate.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
+        if (birthDate.get(Calendar.DAY_OF_YEAR) > currentDate.get(Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+
+        return age;
+    }
+
+    private String buildPrompt(UserProfile user, String symptoms) {
+        int age = calculateAge(user.getDateOfBirth());
+
+        return "Idade: " + age + "\n" +
                 "Gênero: " + user.getGender() + "\n" +
                 "Peso: " + user.getWeight() + "\n" +
                 "Altura: " + user.getHeight() + "\n" +
-                "Doenças na família: " + user.getDiseasesInTheFamily() + "\n" +
-                "Tempo médio de exercícios por dia: " + user.getDailyExerciseTime() + "\n" +
+                "Doenças na família: " + user.getDiseaseHistory() + "\n" +
+                "Tempo médio de exercícios por dia: " + user.getExerciseTime() + "\n" +
                 "Sintoma: " + symptoms + "\n" +
                 "Quais são as três doenças ou problemas de saúde mais prováveis que eu deveria me atentar baseado nos dados informados, quais são suas respectivas porcentagens em números de ocorrerem e o que devo fazer para melhorar esses sintomas ou acabar com eles?";
     }

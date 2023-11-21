@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import com.synback.models.AuthenticationUser;
-import com.synback.repositories.AuthenticationUserRepository;
+import com.synback.repositories.AuthenticationRepository;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +24,7 @@ public class AuthenticationService {
     private long expirationTime;
 
     @Autowired
-    private AuthenticationUserRepository userRepository;
+    private AuthenticationRepository userRepository;
 
     // usar na rota de registro
     public void register(AuthenticationUser user) {

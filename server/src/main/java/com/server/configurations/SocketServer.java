@@ -3,7 +3,9 @@ package com.server.configurations;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Calendar;
 import com.server.errors.CustomException;
+import com.server.utils.Data;
 
 public class SocketServer {
     public static void main(String[] args) {
@@ -20,6 +22,7 @@ public class SocketServer {
         }
     }
 
+    // Sessão do cliente
     private static class ClientHandler extends Thread {
         private Socket clientSocket;
 
@@ -31,13 +34,19 @@ public class SocketServer {
             try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                     PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
 
-                String credentials = in.readLine();
-                try {
+                String inputLine = in.readLine();
+                if (inputLine.startsWith("CRED:")) {
+                    String credentials = inputLine.substring(5); // Remove "CRED:"
                     validateCredentials(credentials);
                     out.println("valido");
-                } catch (Exception e) {
-                    out.println(e.getMessage());
+                } else if (inputLine.startsWith("USER:")) {
+                    String userProfile = inputLine.substring(5); // Remove "USER:"
+                    validateUserData(userProfile);
+                    out.println("sucesso");
+                } else {
+                    out.println("Formato de mensagem desconhecido");
                 }
+                
             } catch (IOException e) {
                 System.out.println("Erro ao interagir com o cliente: " + e.getMessage());
             } finally {
@@ -49,6 +58,7 @@ public class SocketServer {
             }
         }
 
+        // Validação de credenciais
         private void validateCredentials(String credentials) throws CustomException {
             // Espera-se que as credenciais venham no formato "email:senha"
             String[] parts = credentials.split(":");
@@ -78,6 +88,83 @@ public class SocketServer {
         private boolean isPasswordStrong(String password) {
             // Implementação da validação da força da senha
             return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$");
+        }
+
+        // Validação completa do usuário
+        private void validateUserData(String userProfile) throws CustomException {
+            // Espera-se que as credenciais venham no formato "name:dateOfBirth:..."
+
+            String[] parts = userProfile.split(":");
+            if (parts.length != 4) {
+                throw new CustomException("Formato de usuário inválido.", 1002);
+            }
+
+            String dateOfBirth = parts[0];
+            String weight = parts[1];
+            String height = parts[2];
+            String exerciseTime = parts[3];
+
+            Data birthDate = convertDateString(dateOfBirth);
+            // Verificar se a data é válida
+            if (!Data.isValida(birthDate.getDia(), birthDate.getMes(), birthDate.getAno())) {
+                throw new IllegalArgumentException("Data de nascimento inválida.");
+            }
+
+            // Verificar se é adulto
+            if (!isAdult(birthDate)) {
+                throw new IllegalArgumentException("O usuário deve ter mais de 18 anos.");
+            }
+            if (Double.parseDouble(weight) <= 0) {
+                throw new IllegalArgumentException("Peso inválido.");
+            }
+
+            if (Integer.parseInt(height) <= 0) {
+                throw new IllegalArgumentException("Altura inválida.");
+            }
+
+            int exerciseTimeInt = Integer.parseInt(exerciseTime);
+            if (exerciseTimeInt < 0 || exerciseTimeInt > 1440) {
+                throw new IllegalArgumentException("Tempo de exercício diário inválido.");
+            }
+        }
+
+        // Verifica se é a idade do usuário é maior ou igual a 18 anos
+        private boolean isAdult(Data birthDate) {
+            Calendar currentCalendar = Calendar.getInstance();
+            Calendar birthCalendar = Calendar.getInstance();
+            birthCalendar.set(birthDate.getAno(), birthDate.getMes() - 1, birthDate.getDia());
+
+            int age = currentCalendar.get(Calendar.YEAR) - birthCalendar.get(Calendar.YEAR);
+
+            if (currentCalendar.get(Calendar.MONTH) < birthCalendar.get(Calendar.MONTH) ||
+                    (currentCalendar.get(Calendar.MONTH) == birthCalendar.get(Calendar.MONTH) &&
+                            currentCalendar.get(Calendar.DAY_OF_MONTH) < birthCalendar.get(Calendar.DAY_OF_MONTH))) {
+                age--; // Ainda não fez aniversário neste ano
+            }
+
+            return age >= 18;
+        }
+
+        // Conversão de string de data para Data
+        private Data convertDateString(String dateString) {
+            try {
+                String[] parts = dateString.split("/");
+                if (parts.length != 3) {
+                    throw new IllegalArgumentException("Formato de data inválido.");
+                }
+
+                byte day = Byte.parseByte(parts[0]);
+                byte month = Byte.parseByte(parts[1]);
+                short year = Short.parseShort(parts[2]);
+
+                return new Data(day, month, year);
+            } catch (NumberFormatException e) {
+                System.err.println("Erro ao converter a data: " + e.getMessage());
+                return null;
+            } catch (Exception e) {
+                System.err.println("Erro ao criar objeto Data: " + e.getMessage());
+                return null;
+            }
         }
     }
 }

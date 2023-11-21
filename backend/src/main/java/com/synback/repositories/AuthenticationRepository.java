@@ -5,12 +5,11 @@ package com.synback.repositories;
 //dados, como buscar um usuário pelo email.
 
 //É usado para simplificar o acesso e a manipulação dos dados de usuários autenticados no bd
-
 import com.synback.models.AuthenticationUser;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AuthenticationUserRepository extends
-GenericRepository<AuthenticationUser, String> {
-AuthenticationUser findByEmail(String email);
+public interface AuthenticationRepository extends MongoRepository<AuthenticationUser, String> {
+    AuthenticationUser findByEmail(String email);
 }
