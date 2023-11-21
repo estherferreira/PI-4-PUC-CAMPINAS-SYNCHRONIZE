@@ -15,7 +15,15 @@ public class UserProfile {
     private String diseaseHistory;
     private final String subscriptionPlan = "Básico";
 
-    public UserProfile() {
+    public UserProfile(String profileId, String name, Data dateOfBirth, int weight, int height, String gender, int exerciseTime, String diseaseHistory) {
+        this.profileId = profileId;
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.weight = weight;
+        this.height = height;
+        this.gender = gender;
+        this.exerciseTime = exerciseTime;
+        this.diseaseHistory = diseaseHistory;
     }
 
     public String getId() {

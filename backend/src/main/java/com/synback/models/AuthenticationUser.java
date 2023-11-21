@@ -9,7 +9,10 @@ public class AuthenticationUser implements Cloneable {
     private String password;
     private final String role = "customer";
 
-    public AuthenticationUser() {
+    public AuthenticationUser(String userId, String email, String password) {
+        this.userId = userId;
+        this.email = email;
+        this.password = password;
     }
 
     public String getId() {

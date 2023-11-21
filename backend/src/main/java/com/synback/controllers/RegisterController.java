@@ -35,10 +35,7 @@ public class RegisterController {
 
         // Se a resposta for "valido", salva no banco de dados
         if ("valido".equals(response)) {
-            AuthenticationUser user = new AuthenticationUser();
-            user.setEmail(email);
-            user.setPassword(password);
-            user.setId(generateUniqueId());
+            AuthenticationUser user = new AuthenticationUser(generateUniqueId(), email, password);
             userRepository.insert(user);
 
             System.out.println(user);
