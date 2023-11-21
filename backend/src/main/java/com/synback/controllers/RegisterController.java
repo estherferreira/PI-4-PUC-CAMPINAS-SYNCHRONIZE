@@ -56,7 +56,7 @@ public class RegisterController {
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-            out.println(email + ":" + password);
+            out.println("CRED:" + email + ":" + password);
             return in.readLine();
 
         } catch (IOException e) {

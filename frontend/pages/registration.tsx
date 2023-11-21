@@ -17,10 +17,10 @@ import api from "../api";
 type FormValues = {
   userName: string;
   dateOfBirth: string;
-  weight: number;
-  height: number;
+  weight: string;
+  height: string;
   gender: string;
-  exerciseTime: number;
+  exerciseTime: string;
   diseaseHistory: string;
 };
 
@@ -32,22 +32,30 @@ const Dashboard = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const convertDateToServerFormat = (dateString: any) => {
+  const convertDateToServerFormat = (dateString) => {
     const [year, month, day] = dateString.split("-").map(Number);
-    return { dia: day, mes: month, ano: year };
+    return {
+      dia: parseInt(day),
+      mes: parseInt(month),
+      ano: parseInt(year),
+    };
   };
 
   const onSubmit = async (formData: FormValues) => {
     const dateOfBirth = convertDateToServerFormat(formData.dateOfBirth);
+    const weight = parseInt(formData.weight);
+    const height = parseInt(formData.height);
+    const exerciseTime = parseInt(formData.exerciseTime);
+
     try {
       const response = await api.post("/profile/registration", {
         name: formData.userName,
-        weight: formData.weight,
-        height: formData.height,
-        exerciseTime: formData.exerciseTime,
+        weight: weight,
+        height: height,
+        exerciseTime: exerciseTime,
         dateOfBirth: dateOfBirth,
         gender: formData.gender,
-        diseasesInTheFamily:
+        diseaseHistory:
           history === "true" ? formData.diseaseHistory : "Não",
       });
 
