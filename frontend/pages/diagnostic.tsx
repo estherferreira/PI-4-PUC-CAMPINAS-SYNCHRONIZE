@@ -14,32 +14,34 @@ import ProgressBar from "../components/ProgressBar";
 import { useRouter } from "next/router";
 
 const Diagnostic = () => {
-  const [newDiagnostic, setNewDiagnostic] = useState(true);
+  const [newDiagnostic, setNewDiagnostic] = useState(false);
   const [symptoms, setSymptoms] = useState("");
   const [token, setToken] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     // Acessar localStorage somente no lado do cliente
-    const jwtToken = localStorage.getItem('d4pM6FjtykjTwR');
+    const jwtToken = localStorage.getItem("d4pM6FjtykjTwR");
     console.log("Token: ", token);
     if (jwtToken) {
       setToken(jwtToken);
     }
   }, []);
 
-
   const fetchData = async () => {
     try {
       // const response = await fetch("http://localhost:8000/api/diagnosis", {
-        const response = await fetch(`http://localhost:8000/api/diagnosis?userId=000152`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ symptoms }),
-      });
+      const response = await fetch(
+        `http://localhost:8000/api/diagnosis?userId=000152`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ symptoms }),
+        }
+      );
 
       if (!response.ok) {
         //Transforma o corpo da resposta em JSON
@@ -163,13 +165,52 @@ const Diagnostic = () => {
             </Text>
           </>
         ) : (
-          <Box display="flex">
+          <Box display="flex" marginTop="50px" gap="70px">
             <SimpleGrid columns={3} width="50%">
-              <ProgressBar percentage={30} reason="Enxaqueca" />
-              <ProgressBar percentage={50} reason="Má alimentação" />
-              <ProgressBar percentage={60} reason="Falta de exercício" />
+              <ProgressBar percentage={30} height="40vh" reason="Enxaqueca" />
+              <ProgressBar
+                percentage={50}
+                height="40vh"
+                reason="Má alimentação"
+              />
+              <ProgressBar
+                percentage={60}
+                height="40vh"
+                reason="Falta de exercício"
+              />
             </SimpleGrid>
-            <Text>Descritivo</Text>
+            <Box width="50%">
+              <Text fontFamily="inter.500" fontSize="2xl">
+                Descritivo
+              </Text>
+              <Text fontFamily="inter.500" marginTop="40px">
+                60% - Falta de exercício
+              </Text>
+              <Text fontFamily="inter.400" marginTop="15px" color="gray">
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry. Lorem Ipsum has been the.Lorem Ipsum is simply dummy
+                text of the printing and typesetting industry. Lorem Ipsum has
+                been the.
+              </Text>
+              <Text fontFamily="inter.500" marginTop="40px">
+                60% - Falta de exercício
+              </Text>
+              <Text fontFamily="inter.400" marginTop="15px" color="gray">
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry. Lorem Ipsum has been the.Lorem Ipsum is simply dummy
+                text of the printing and typesetting industry. Lorem Ipsum has
+                been the.
+              </Text>
+              <Text fontFamily="inter.500" marginTop="40px">
+                60% - Falta de exercício
+              </Text>
+              <Text fontFamily="inter.400" marginTop="15px" color="gray">
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry. Lorem Ipsum has been the.Lorem Ipsum is simply dummy
+                text of the printing and typesetting industry. Lorem Ipsum has
+                been the.
+              </Text>
+            </Box>
           </Box>
         )}
       </Box>
