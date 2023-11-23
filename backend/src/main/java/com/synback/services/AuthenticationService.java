@@ -1,21 +1,25 @@
 package com.synback.services;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.synback.models.AuthenticationUser;
 import com.synback.repositories.AuthenticationRepository;
-
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class AuthenticationService {
+
+    @PostConstruct
+    public void init() {
+        System.out.println("Expiration time: " + expirationTime);
+    }
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -25,17 +29,6 @@ public class AuthenticationService {
 
     @Autowired
     private AuthenticationRepository userRepository;
-
-    // usar na rota de registro
-    // public void register(AuthenticationUser user) {
-    //     if (userRepository.findByEmail(user.getEmail()) != null) {
-    //         throw new RuntimeException("Este e-mail já está registrado.");
-    //     }
-
-    //     String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-    //     user.setPassword(hashedPassword);
-    //     userRepository.save(user);
-    // }
 
     public String login(String email, String password) {
         // Verifica se o e-mail foi fornecido
@@ -58,33 +51,32 @@ public class AuthenticationService {
         if (!BCrypt.checkpw(password, userInDb.getPassword())) {
             throw new RuntimeException("Senha incorreta.");
         }
-        System.out.println("sucesso");
-        return "sucesso";
 
-        // try {
-        //     // Gera o token para o usuário
-        //     return generateTokenForUser(userInDb);
-        // } catch (Exception e) {
-        //     // Loga a exceção para investigação futura e lança uma exceção mais amigável
-        //     e.printStackTrace();
-        //     throw new RuntimeException("Erro ao gerar o token de autenticação.");
-        // }
+        try {
+            // Gera o token para o usuário
+            return generateToken(userInDb.getEmail());
+        } catch (Exception e) {
+            // Loga a exceção para investigação futura e lança uma exceção mais amigável
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao gerar o token de autenticação.");
+        }
     }
 
-    public String generateTokenForUser(AuthenticationUser user) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getId()); // Adicionar o ID do usuário como claim
-        return createToken(claims, user.getEmail());
-    }
+public String generateToken(String email) {
+    long nowMillis = System.currentTimeMillis();
+    Date now = new Date(nowMillis);
+    Algorithm algorithm = Algorithm.HMAC512(secretKey);
 
-    private String createToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(SignatureAlgorithm.HS512, secretKey)
-                .compact();
+    return JWT.create()
+            .withSubject(email)
+            .withIssuedAt(now)
+            .withExpiresAt(new Date(nowMillis + expirationTime))
+            .sign(algorithm);
+}
+
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        final String email = extractEmailFromToken(token);
+        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     // Objetivo: Extrai o e-mail do usuário
@@ -94,12 +86,6 @@ public class AuthenticationService {
     // assunto (subject) do corpo do token, que neste caso é o e-mail do usuário.
     public String extractEmailFromToken(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-    }
-
-    // Extrai o ID do usuário
-    public int extractUserIdFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
-        return claims.get("userId", Integer.class);
     }
 
     // Objetivo: Obtém a data de expiração do token JWT.

@@ -44,13 +44,18 @@ const Login = () => {
         throw new Error(errorMessage);
       }
 
+      // Recebendo e armazenando o token
+      const data = await response.json();
+      console.log("Dados recebidos: ", data);
+      const token = data.token;
+      console.log("Token: ", token);
+      localStorage.setItem("jwtToken", token);
+
       router.push("/app");
     } catch (error) {
       console.error("Erro ao enviar dados: ", error.message);
     }
   };
-
-  console.log(error);
 
   const handleButtonClick = () => {
     if (email && password) {
@@ -158,6 +163,13 @@ const Login = () => {
               >
                 Entrar
               </Button>
+              {buttonClicked && errorMessage && (
+                <Box py={2}>
+                  <Text color="red" fontSize="xs">
+                    {errorMessage}
+                  </Text>
+                </Box>
+              )}
             </Box>
             <Divider color="gray" />
             <Box display="flex" alignItems="center">

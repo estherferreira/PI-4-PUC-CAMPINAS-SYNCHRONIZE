@@ -34,7 +34,8 @@ public class LoginController {
             System.out.println("Token: " + token);
 
             // Retorna o token para o cliente
-            return ResponseEntity.ok("Credenciais validadas e salvas com sucesso.");
+            System.out.println("Credenciais validadas.");
+            return ResponseEntity.ok(tokenResponse);
             // return ResponseEntity.ok(token);
         } catch (RuntimeException e) {
             // Se ocorrer um erro de autenticação, retorna um erro HTTP 401 - Não autorizado
