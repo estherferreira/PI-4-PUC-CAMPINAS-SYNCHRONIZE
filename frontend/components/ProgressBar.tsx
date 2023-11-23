@@ -1,6 +1,6 @@
 import { Box, Text, Flex } from "@chakra-ui/react";
 
-const ProgressBar = ({ percentage, reason }) => {
+const ProgressBar = ({ percentage, reason, height }) => {
   return (
     <Box textAlign="center">
       <Flex direction="column" alignItems="center" justifyContent="center">
@@ -9,7 +9,7 @@ const ProgressBar = ({ percentage, reason }) => {
         </Text>
         <Box
           position="relative"
-          height="50vh"
+          height={height}
           width="100px"
           bgColor="brand.800"
         >
