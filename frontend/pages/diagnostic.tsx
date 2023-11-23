@@ -31,7 +31,6 @@ const Diagnostic = () => {
 
   const fetchData = async () => {
     try {
-      // const response = await fetch("http://localhost:8000/api/diagnosis", {
         const response = await fetch(`http://localhost:8000/api/diagnosis?userId=000152`, {
         method: "POST",
         headers: {

@@ -1,4 +1,5 @@
 package com.synback.models;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "Credentials")
@@ -7,12 +8,17 @@ public class AuthenticationUser implements Cloneable {
     private String userId;
     private String email;
     private String password;
-    private final String role = "customer";
+    private String role;
+
+    // Construtor padrão necessário para a desserialização
+    public AuthenticationUser() {
+    }
 
     public AuthenticationUser(String userId, String email, String password) {
         this.userId = userId;
         this.email = email;
         this.password = password;
+        this.role = "customer";
     }
 
     public String getId() {
@@ -43,14 +49,14 @@ public class AuthenticationUser implements Cloneable {
     public String toString() {
         return "Id: " + userId + '\n' +
                 "Email: " + email.toString() + '\n' +
-                "Password Hash: " + password + '\n' +
+                "Password: " + password + '\n' +
                 "Role: " + role;
     }
 
     public String getRole() {
         return role;
     }
-
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == this)

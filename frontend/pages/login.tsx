@@ -28,7 +28,7 @@ const Login = () => {
     setErrorMessage("");
 
     try {
-      const response = await fetch("http://localhost:8000/api/login", {
+      const response = await fetch("http://localhost:5000/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,15 +39,18 @@ const Login = () => {
       if (!response.ok) {
         //Transforma o corpo da resposta em JSON
         const errorMessage = await response.text();
+        console.log("Erro ao enviar dados para o backend!");
         setError(errorMessage);
         throw new Error(errorMessage);
       }
 
-      console.log("E-mail e senha enviados para o servidor com sucesso!");
+      console.log("E-mail e senha enviados para o backend com sucesso!");
     } catch (error) {
       console.error("Erro ao enviar dados: ", error.message);
     }
   };
+
+  console.log(`login: ${email} ${password}`);
 
   const handleButtonClick = () => {
     if (email && password) {
@@ -57,7 +60,7 @@ const Login = () => {
     }
     setButtonClicked(true);
   };
-  
+
   return (
     <Box height="100vh">
       <Grid templateColumns="repeat(10, 1fr)">
@@ -115,6 +118,8 @@ const Login = () => {
                 borderColor="white"
                 h="48px"
                 w="35vw"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
               />
             </Box>
             <Box>
@@ -134,6 +139,8 @@ const Login = () => {
                 borderColor="white"
                 h="48px"
                 w="35vw"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
               />
             </Box>
             <Box>
@@ -142,6 +149,7 @@ const Login = () => {
                 bgColor="brand.900"
                 w="35vw"
                 textColor="white"
+                onClick={handleButtonClick}
               >
                 Entrar
               </Button>

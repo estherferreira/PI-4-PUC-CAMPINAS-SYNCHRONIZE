@@ -39,7 +39,7 @@ const Register = () => {
       if (!response.ok) {
         //Transforma o corpo da resposta em JSON
         const errorMessage = await response.text();
-        // console.log("Erro ao enviar dados para o backend!");
+        console.log("Erro ao enviar dados para o backend!");
         setError(errorMessage);
         throw new Error(errorMessage);
       }

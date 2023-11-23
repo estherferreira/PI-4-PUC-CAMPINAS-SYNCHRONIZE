@@ -27,26 +27,48 @@ public class AuthenticationService {
     private AuthenticationRepository userRepository;
 
     // usar na rota de registro
-    public void register(AuthenticationUser user) {
-        if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new RuntimeException("Este e-mail já está registrado.");
-        }
-        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-        user.setPassword(hashedPassword);
-        userRepository.save(user);
-    }
+    // public void register(AuthenticationUser user) {
+    //     if (userRepository.findByEmail(user.getEmail()) != null) {
+    //         throw new RuntimeException("Este e-mail já está registrado.");
+    //     }
+
+    //     String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+    //     user.setPassword(hashedPassword);
+    //     userRepository.save(user);
+    // }
 
     public String login(String email, String password) {
+        // Verifica se o e-mail foi fornecido
+        if (email == null || email.isEmpty()) {
+            throw new RuntimeException("E-mail não fornecido.");
+        }
+
+        // Verifica se a senha foi fornecida
+        if (password == null || password.isEmpty()) {
+            throw new RuntimeException("Senha não fornecida.");
+        }
+
         AuthenticationUser userInDb = userRepository.findByEmail(email);
-        if (userInDb.getEmail() == null) {
+        // Verifica se um usuário com o e-mail fornecido foi encontrado
+        if (userInDb == null) {
             throw new RuntimeException("E-mail não encontrado.");
         }
 
+        // Verifica se a senha está correta
         if (!BCrypt.checkpw(password, userInDb.getPassword())) {
             throw new RuntimeException("Senha incorreta.");
         }
+        System.out.println("sucesso");
+        return "sucesso";
 
-        return generateTokenForUser(userInDb);
+        // try {
+        //     // Gera o token para o usuário
+        //     return generateTokenForUser(userInDb);
+        // } catch (Exception e) {
+        //     // Loga a exceção para investigação futura e lança uma exceção mais amigável
+        //     e.printStackTrace();
+        //     throw new RuntimeException("Erro ao gerar o token de autenticação.");
+        // }
     }
 
     public String generateTokenForUser(AuthenticationUser user) {

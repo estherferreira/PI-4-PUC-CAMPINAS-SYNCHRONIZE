@@ -3,6 +3,7 @@ package com.synback.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 import com.synback.models.AuthenticationUser;
 import com.synback.repositories.AuthenticationRepository;
@@ -35,7 +36,8 @@ public class RegisterController {
 
         // Se a resposta for "valido", salva no banco de dados
         if ("valido".equals(response)) {
-            AuthenticationUser user = new AuthenticationUser(generateUniqueId(), email, password);
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+            AuthenticationUser user = new AuthenticationUser(generateUniqueId(), email, hashedPassword);
             userRepository.insert(user);
 
             System.out.println(user);
