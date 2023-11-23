@@ -44,13 +44,13 @@ const Login = () => {
         throw new Error(errorMessage);
       }
 
-      console.log("E-mail e senha enviados para o backend com sucesso!");
+      router.push("/app");
     } catch (error) {
       console.error("Erro ao enviar dados: ", error.message);
     }
   };
 
-  console.log(`login: ${email} ${password}`);
+  console.log(error);
 
   const handleButtonClick = () => {
     if (email && password) {
@@ -142,6 +142,11 @@ const Login = () => {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
               />
+              <Box py={2}>
+                <Text color="red" fontSize="xs">
+                  {error}
+                </Text>
+              </Box>
             </Box>
             <Box>
               <Button
@@ -155,11 +160,12 @@ const Login = () => {
               </Button>
             </Box>
             <Divider color="gray" />
-            <Text fontFamily="inter.400" fontSize="sm" display="flex">
-              Ainda não tem uma conta?
+            <Box display="flex" alignItems="center">
+              <Text fontFamily="inter.400" fontSize="sm">
+                Ainda não tem uma conta?
+              </Text>
               <Text
-                fontFamily="inter.400"
-                display="flex"
+                fontFamily="inter.500"
                 color="brand.900"
                 marginLeft="10px"
                 cursor="pointer"
@@ -167,7 +173,7 @@ const Login = () => {
               >
                 Criar conta
               </Text>
-            </Text>
+            </Box>
           </Flex>
         </GridItem>
       </Grid>
