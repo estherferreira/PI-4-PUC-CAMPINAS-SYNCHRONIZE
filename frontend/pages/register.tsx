@@ -37,22 +37,19 @@ const Register = () => {
       });
 
       if (!response.ok) {
-        //Transforma o corpo da resposta em JSON
         const errorMessage = await response.text();
-        // console.log("Erro ao enviar dados para o backend!");
+        console.log("Erro ao enviar dados para o backend!");
+        console.log(errorMessage);
         setError(errorMessage);
         throw new Error(errorMessage);
       }
 
-      // console.log("E-mail e senha enviados para o backend com sucesso!");
       router.push("/registration");
 
     } catch (error) {
       console.error("Erro ao enviar dados: ", error.message);
     }
   };
-
-
 
   const handleButtonClick = () => {
     if (email && password) {
@@ -62,6 +59,8 @@ const Register = () => {
     }
     setButtonClicked(true);
   };
+
+  console.log(error);
 
   return (
     <Box height="100vh">

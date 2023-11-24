@@ -31,7 +31,7 @@ public class RegistrationController {
 
         String name = data.getName();
         Data dateOfBirth = data.getDateOfBirth();
-        System.out.println(dateOfBirth);
+        // System.out.println(dateOfBirth);
         int weight = data.getWeight();
         int height = data.getHeight();
         String gender = data.getGender();
@@ -39,30 +39,27 @@ public class RegistrationController {
         String diseaseHistory = data.getDiseaseHistory();
 
         // Enviar dados para o servidor de socket
-        String response = sendUserProfileToSocketServer(dateOfBirth, weight, height, exerciseTime);
+        try {
+            String response = sendUserProfileToSocketServer(dateOfBirth, weight, height, exerciseTime);
 
-        // Ler a resposta do servidor de socket
-        System.out.println("Resposta: " + response);
+            // Ler a resposta do servidor de socket
+            System.out.println("Resposta: " + response);
 
-        // Se a resposta for "valido", salva no banco de dados
-        if ("sucesso".equals(response)) {
-            UserProfile userProfile = new UserProfile();
-            userProfile.setId(generateUniqueId());
-            userProfile.setName(name);
-            userProfile.setBirthDateFromData(dateOfBirth);
-            userProfile.setWeight(weight);
-            userProfile.setHeight(height);
-            userProfile.setGender(gender);
-            userProfile.setExerciseTime(exerciseTime);
-            userProfile.setDiseaseHistory(diseaseHistory);
-            userRepository.insert(userProfile);
+            // Se a resposta for "valido", salva no banco de dados
+            if ("sucesso".equals(response)) {
+                UserProfile userProfile = new UserProfile(generateUniqueId(), name, dateOfBirth, weight, height, gender,
+                        exerciseTime, diseaseHistory);
+                userRepository.insert(userProfile);
 
-            System.out.println(userProfile);
-            System.out.println("Informações cadastradas no banco de dados.");
+                // System.out.println(userProfile);
+                System.out.println("Informações cadastradas no banco de dados.");
 
-            return ResponseEntity.ok("Usuário validado e salvo com sucesso.");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                return ResponseEntity.ok("Usuário validado e salvo com sucesso.");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -71,8 +68,12 @@ public class RegistrationController {
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-                    out.println("USER:" + dateOfBirth + ":" + weight + ":" + height + ":" + exerciseTime);
-            return in.readLine();
+            out.println("USER:" + dateOfBirth + ":" + weight + ":" + height + ":" + exerciseTime);
+            String response = in.readLine();
+            if (response.startsWith("erro:")) {
+                throw new RuntimeException(response.substring(5)); // Remove "erro:"
+            }
+            return response;
 
         } catch (IOException e) {
             return "Erro ao se comunicar com o servidor de socket";

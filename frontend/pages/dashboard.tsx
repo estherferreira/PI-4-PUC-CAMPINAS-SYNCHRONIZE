@@ -2,9 +2,56 @@ import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 import { useRouter } from "next/router";
 import DateCard from "../components/DateCard";
+import React, { useEffect, useState } from "react";
+import { useUserContext } from "../context/UserContext";
 
-const History = () => {
+const Dashboard = () => {
   const router = useRouter();
+  const [userData, setUserData] = useState(null);
+  const { logout } = useUserContext();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Evita acessar localStorage durante a renderização do lado do servidor (SSR - Server-Side Rendering)
+      const token = localStorage.getItem("jwtToken");
+      const email = localStorage.getItem("email");
+
+      console.log(email);
+      console.log(token);
+
+      const fetchDiagnoses = async () => {
+        try {
+          const response = await fetch("http://localhost:5000/api/dashboard", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            const errorMessage = await response.text();
+            console.error("Erro ao enviar dados para o backend!", errorMessage);
+            return;
+          }
+
+          const disposis = await response.json();
+          setUserData(disposis);
+        } catch (error) {
+          console.error("Erro ao buscar diagnósticos", error);
+        }
+      };
+
+      fetchDiagnoses();
+    }
+  }, []);
+
+  const handleLogout = () => {
+    logout(); // Limpa o estado do usuário e remove o token
+    router.push("/login");
+  };
+
+  console.log(userData);
+
   return (
     <Box backgroundColor="offwhite" h="100vh">
       <Box paddingTop="100px" marginX="310px" justifyContent="center">
@@ -18,7 +65,7 @@ const History = () => {
             />
             <Box>
               <Text fontFamily="poppins.400" fontSize="lg">
-                Sophia Iwara
+                {userData ? userData[0]?.userName : ""}
               </Text>
               <Text
                 fontFamily="poppins.400"
@@ -36,9 +83,7 @@ const History = () => {
             <Text
               fontFamily="poppins.400"
               cursor="pointer"
-              onClick={() => {
-                router.push("/login");
-              }}
+              onClick={handleLogout}
             >
               Ir embora
             </Text>
@@ -92,4 +137,4 @@ const History = () => {
   );
 };
 
-export default History;
+export default Dashboard;

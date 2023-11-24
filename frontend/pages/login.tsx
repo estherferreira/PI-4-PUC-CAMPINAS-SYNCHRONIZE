@@ -14,9 +14,11 @@ import Logo from "../assets/Logo.svg";
 import { IoIosArrowBack } from "react-icons/io";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useUserContext } from "../context/UserContext";
 
 const Login = () => {
   const router = useRouter();
+  const { login } = useUserContext();
   const [error, setError] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [buttonClicked, setButtonClicked] = useState(false);
@@ -28,7 +30,7 @@ const Login = () => {
     setErrorMessage("");
 
     try {
-      const response = await fetch("http://localhost:8000/api/login", {
+      const response = await fetch("http://localhost:5000/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,11 +41,21 @@ const Login = () => {
       if (!response.ok) {
         //Transforma o corpo da resposta em JSON
         const errorMessage = await response.text();
+        console.log("Erro ao enviar dados para o backend!");
         setError(errorMessage);
         throw new Error(errorMessage);
       }
 
-      console.log("E-mail e senha enviados para o servidor com sucesso!");
+      //Armazenando o token
+      const data = await response.json();
+      const token = data.token;
+      localStorage.setItem("jwtToken", token);
+      localStorage.setItem("email", email);
+
+      //Atualiza o estado do usuário com o email e token recebidos
+      login({ email, token });
+
+      router.push("/dashboard");
     } catch (error) {
       console.error("Erro ao enviar dados: ", error.message);
     }
@@ -57,7 +69,7 @@ const Login = () => {
     }
     setButtonClicked(true);
   };
-  
+
   return (
     <Box height="100vh">
       <Grid templateColumns="repeat(10, 1fr)">
@@ -115,6 +127,8 @@ const Login = () => {
                 borderColor="white"
                 h="48px"
                 w="35vw"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
               />
             </Box>
             <Box>
@@ -134,7 +148,14 @@ const Login = () => {
                 borderColor="white"
                 h="48px"
                 w="35vw"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
               />
+              <Box py={2}>
+                <Text color="red" fontSize="xs">
+                  {error}
+                </Text>
+              </Box>
             </Box>
             <Box>
               <Button
@@ -142,16 +163,25 @@ const Login = () => {
                 bgColor="brand.900"
                 w="35vw"
                 textColor="white"
+                onClick={handleButtonClick}
               >
                 Entrar
               </Button>
+              {buttonClicked && errorMessage && (
+                <Box py={2}>
+                  <Text color="red" fontSize="xs">
+                    {errorMessage}
+                  </Text>
+                </Box>
+              )}
             </Box>
             <Divider color="gray" />
-            <Text fontFamily="inter.400" fontSize="sm" display="flex">
-              Ainda não tem uma conta?
+            <Box display="flex" alignItems="center">
+              <Text fontFamily="inter.400" fontSize="sm">
+                Ainda não tem uma conta?
+              </Text>
               <Text
-                fontFamily="inter.400"
-                display="flex"
+                fontFamily="inter.500"
                 color="brand.900"
                 marginLeft="10px"
                 cursor="pointer"
@@ -159,7 +189,7 @@ const Login = () => {
               >
                 Criar conta
               </Text>
-            </Text>
+            </Box>
           </Flex>
         </GridItem>
       </Grid>

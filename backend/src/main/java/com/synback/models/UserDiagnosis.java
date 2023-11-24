@@ -1,33 +1,38 @@
 package com.synback.models;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "diagnosis")
-public class Diagnosis implements Cloneable {
+@Document(collection = "Diagnosis")
+public class UserDiagnosis implements Cloneable {
 
-    @Id
-    private String id;
+    private String diagnosisId;
     private List<ReportItem> report;
     private String symptoms;
     private String userName;
+    private String email;
+    private String userId;
 
-    public Diagnosis(String id, List<ReportItem> report, String symptoms, String userName) {
-        this.id = id;
+    public UserDiagnosis() {
+    }
+
+    public UserDiagnosis(String diagnosisId, List<ReportItem> report, String symptoms, String userName, String email,
+            String userId) {
+        this.diagnosisId = diagnosisId;
         this.report = report;
         this.symptoms = symptoms;
         this.userName = userName;
+        this.email = email;
+        this.userId = userId;
     }
 
     public String getId() {
-        return id;
+        return diagnosisId;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.diagnosisId = id;
     }
 
     public List<ReportItem> getReport() {
@@ -54,14 +59,30 @@ public class Diagnosis implements Cloneable {
         this.userName = userName;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.email = userId;
+    }
+
     public static class ReportItem {
         private String problem;
-        private int percentage;
+        private String chanceOfOccurrence;
         private String description;
 
-        public ReportItem(String problem, int percentage, String description) {
+        public ReportItem(String problem, String chanceOfOccurrence, String description) {
             this.problem = problem;
-            this.percentage = percentage;
+            this.chanceOfOccurrence = chanceOfOccurrence;
             this.description = description;
         }
 
@@ -73,12 +94,12 @@ public class Diagnosis implements Cloneable {
             this.problem = problem;
         }
 
-        public int getPercentage() {
-            return percentage;
+        public String getChanceOfOccurrence() {
+            return chanceOfOccurrence;
         }
 
-        public void setPercentage(int percentage) {
-            this.percentage = percentage;
+        public void setChanceOfOccurrence(String chanceOfOccurrence) {
+            this.chanceOfOccurrence = chanceOfOccurrence;
         }
 
         public String getDescription() {
@@ -93,10 +114,12 @@ public class Diagnosis implements Cloneable {
     @Override
     public String toString() {
         return "Diagnosis{" +
-                "id='" + id + '\'' +
-                ", report=" + report +
-                ", symptoms='" + symptoms + '\'' +
-                ", userName='" + userName + '\'' +
+                "diagnosisId: " + diagnosisId + '\'' +
+                ", report: " + report +
+                ", symptoms: " + symptoms + '\'' +
+                ", userName: " + userName + '\'' +
+                ", email: " + email + '\'' +
+                ", userId: " + userId + '\'' +
                 '}';
     }
 
@@ -109,12 +132,14 @@ public class Diagnosis implements Cloneable {
         if (obj.getClass() != this.getClass())
             return false;
 
-        Diagnosis diagnosis = (Diagnosis) obj;
+        UserDiagnosis diagnosis = (UserDiagnosis) obj;
 
-        if (diagnosis.id != this.id ||
+        if (diagnosis.diagnosisId != this.diagnosisId ||
                 diagnosis.report != this.report ||
                 diagnosis.symptoms != this.symptoms ||
-                diagnosis.userName != this.userName)
+                diagnosis.userName != this.userName ||
+                diagnosis.email != this.email ||
+                diagnosis.userId != this.userId)
             return false;
 
         return true;
@@ -124,10 +149,12 @@ public class Diagnosis implements Cloneable {
     public int hashCode() {
         int result = 13;
 
-        result = 7 * result + id.hashCode();
+        result = 7 * result + diagnosisId.hashCode();
         result = 7 * result + report.hashCode();
         result = 7 * result + symptoms.hashCode();
         result = 7 * result + userName.hashCode();
+        result = 7 * result + email.hashCode();
+        result = 7 * result + userId.hashCode();
 
         if (result < 0)
             result = -result;
@@ -135,21 +162,23 @@ public class Diagnosis implements Cloneable {
         return result;
     }
 
-    private Diagnosis(Diagnosis modelo) throws Exception {
+    private UserDiagnosis(UserDiagnosis modelo) throws Exception {
         if (modelo == null)
             throw new Exception("modelo ausente");
 
-    this.id = modelo.id;
-    this.report = modelo.report != null ? new ArrayList<>(modelo.report) : null;
-    this.symptoms = modelo.symptoms;
-    this.userName = modelo.userName;
+        this.diagnosisId = modelo.diagnosisId;
+        this.report = modelo.report != null ? new ArrayList<>(modelo.report) : null;
+        this.symptoms = modelo.symptoms;
+        this.userName = modelo.userName;
+        this.email = modelo.email;
+        this.userId = modelo.userId;
     }
 
     public Object clone() {
-        Diagnosis ret = null;
+        UserDiagnosis ret = null;
 
         try {
-            ret = new Diagnosis(this);
+            ret = new UserDiagnosis(this);
         } catch (Exception erro) {
         }
 

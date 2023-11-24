@@ -71,9 +71,17 @@ const IndexPage = () => {
         >
           <Box>
             <SimpleGrid columns={3} spacing="150px">
-              <ProgressBar percentage={30} reason="Enxaqueca" />
-              <ProgressBar percentage={50} reason="Má alimentação" />
-              <ProgressBar percentage={60} reason="Falta de exercício" />
+              <ProgressBar height="50vh" percentage={30} reason="Enxaqueca" />
+              <ProgressBar
+                height="50vh"
+                percentage={50}
+                reason="Má alimentação"
+              />
+              <ProgressBar
+                height="50vh"
+                percentage={60}
+                reason="Falta de exercício"
+              />
             </SimpleGrid>
           </Box>
         </Box>
