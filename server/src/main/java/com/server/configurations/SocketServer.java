@@ -36,17 +36,26 @@ public class SocketServer {
 
                 String inputLine = in.readLine();
                 if (inputLine.startsWith("CRED:")) {
-                    String credentials = inputLine.substring(5); // Remove "CRED:"
-                    validateCredentials(credentials);
-                    out.println("valido");
+                    try {
+                        String credentials = inputLine.substring(5); // Remove "CRED:"
+                        validateCredentials(credentials);
+                        out.println("valido");
+                    } catch (CustomException e) {
+                        out.println("erro:" + e.getMessage());
+                    }
                 } else if (inputLine.startsWith("USER:")) {
-                    String userProfile = inputLine.substring(5); // Remove "USER:"
-                    validateUserData(userProfile);
-                    out.println("sucesso");
+                    try {
+                        String userProfile = inputLine.substring(5); // Remove "USER:"
+                        validateUserData(userProfile);
+                        out.println("sucesso");
+                    } catch (CustomException e) {
+                        out.println("erro:" + e.getMessage());
+                    }
+
                 } else {
                     out.println("Formato de mensagem desconhecido");
                 }
-                
+
             } catch (IOException e) {
                 System.out.println("Erro ao interagir com o cliente: " + e.getMessage());
             } finally {
@@ -107,24 +116,28 @@ public class SocketServer {
             Data birthDate = convertDateString(dateOfBirth);
             // Verificar se a data é válida
             if (!Data.isValida(birthDate.getDia(), birthDate.getMes(), birthDate.getAno())) {
-                throw new IllegalArgumentException("Data de nascimento inválida.");
+                throw new CustomException(
+                        "Data de nascimento inválida.",
+                        1003);
             }
 
             // Verificar se é adulto
             if (!isAdult(birthDate)) {
-                throw new IllegalArgumentException("O usuário deve ter mais de 18 anos.");
+                throw new CustomException(
+                        "O usuário deve ter mais de 18 anos.", 1004);
             }
             if (Double.parseDouble(weight) <= 0) {
-                throw new IllegalArgumentException("Peso inválido.");
+                throw new CustomException(
+                        "O usuário deve ter mPeso inválido.", 1005);
             }
 
             if (Integer.parseInt(height) <= 0) {
-                throw new IllegalArgumentException("Altura inválida.");
+                throw new CustomException("Altura inválida.", 1006);
             }
 
             int exerciseTimeInt = Integer.parseInt(exerciseTime);
             if (exerciseTimeInt < 0 || exerciseTimeInt > 1440) {
-                throw new IllegalArgumentException("Tempo de exercício diário inválido.");
+                throw new CustomException("Tempo de exercício diário inválido.", 1008);
             }
         }
 

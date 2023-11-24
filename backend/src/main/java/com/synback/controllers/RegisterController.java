@@ -28,26 +28,33 @@ public class RegisterController {
         String email = credentials.getEmail();
         String password = credentials.getPassword();
 
+        System.out.println("Email: " + email);
+        System.out.println("Senha: " + password);
+
         // Enviar dados para o servidor de socket
-        String response = sendCredentialsToSocketServer(email, password);
+        try {
+            String response = sendCredentialsToSocketServer(email, password);
 
-        // Ler a resposta do servidor de socket
-        // System.out.println("Resposta: " + response);
+            // Ler a resposta do servidor de socket
+            System.out.println("Resposta: " + response);
 
-        // Se a resposta for "valido", salva no banco de dados
-        if ("valido".equals(response)) {
-            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-            AuthenticationUser user = new AuthenticationUser(generateUniqueId(), email, hashedPassword);
-            userRepository.insert(user);
+            // Se a resposta for "valido", salva no banco de dados
+            if ("valido".equals(response)) {
+                String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+                AuthenticationUser user = new AuthenticationUser(generateUniqueId(), email, hashedPassword);
+                userRepository.insert(user);
 
-            // System.out.println(user);
-            System.out.println("Usuário salvo no banco de dados.");
+                // System.out.println(user);
+                System.out.println("Usuário salvo no banco de dados.");
 
-            return ResponseEntity.ok("Credenciais validadas e salvas com sucesso.");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                return ResponseEntity.ok("Credenciais validadas e salvas com sucesso.");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-
     }
 
     public String sendCredentialsToSocketServer(String email, String password) {
@@ -56,7 +63,11 @@ public class RegisterController {
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
             out.println("CRED:" + email + ":" + password);
-            return in.readLine();
+            String response = in.readLine();
+            if (response.startsWith("erro:")) {
+                throw new RuntimeException(response.substring(5)); // Remove "erro:"
+            }
+            return response;
 
         } catch (IOException e) {
             return "Erro ao se comunicar com o servidor de socket";

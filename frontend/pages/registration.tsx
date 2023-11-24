@@ -27,6 +27,7 @@ type FormValues = {
 
 const Dashboard = () => {
   const router = useRouter();
+  const [error, setError] = useState("");
   const [history, setHistory] = useState("false");
   const {
     register,
@@ -34,7 +35,7 @@ const Dashboard = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const convertDateToServerFormat = (dateString) => {
+  const convertDateToServerFormat = (dateString: any) => {
     const [year, month, day] = dateString.split("-").map(Number);
     return {
       dia: parseInt(day),
@@ -50,23 +51,28 @@ const Dashboard = () => {
     const exerciseTime = parseInt(formData.exerciseTime);
 
     try {
-      const response = await api.post("/profile/registration", {
-        name: formData.userName,
-        weight: weight,
-        height: height,
-        exerciseTime: exerciseTime,
-        dateOfBirth: dateOfBirth,
-        gender: formData.gender,
-        diseaseHistory:
-          history === "true" ? formData.diseaseHistory : "Não",
-      });
+        const response = await api.post("/profile/registration", {
+            name: formData.userName,
+            weight: weight,
+            height: height,
+            exerciseTime: exerciseTime,
+            dateOfBirth: dateOfBirth,
+            gender: formData.gender,
+            diseaseHistory: history === "true" ? formData.diseaseHistory : "Não",
+        });
 
-      router.push("/app");
-      
+        router.push("/dashboard");
     } catch (error) {
-      console.log(error);
+        if (error.response && error.response.data) {
+            // Se existe uma mensagem de erro específica enviada pelo backend
+            setError(error.response.data);
+        } else {
+            // Se o erro não contém uma resposta específica
+            setError("Ocorreu um erro ao enviar os dados. Por favor, tente novamente.");
+            console.log(error);
+        }
     }
-  };
+};
 
   return (
     <Box backgroundColor="offwhite" h="100vh">
@@ -187,7 +193,7 @@ const Dashboard = () => {
           </SimpleGrid>
 
           <Text fontFamily="poppins.500" marginTop="40px">
-            Doencas na familia?
+            Doenças na familia?
           </Text>
           <RadioGroup onChange={setHistory} value={history} marginY="30px">
             <Stack>
@@ -216,6 +222,7 @@ const Dashboard = () => {
             imediatamente.
           </Text>
           <Box display="flex" justifyContent="space-between" marginTop="30px">
+            <Box>
             <Checkbox
               size="lg"
               colorScheme="blackAlpha"
@@ -225,6 +232,10 @@ const Dashboard = () => {
             >
               <Text fontSize="small">Li e concordo com os termos de uso</Text>
             </Checkbox>
+              <Text color="red" fontSize="xs">
+                {error}
+              </Text>
+            </Box>
             <Button
               type="submit"
               color="brand.900"
