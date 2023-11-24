@@ -32,7 +32,7 @@ public class RegisterController {
         String response = sendCredentialsToSocketServer(email, password);
 
         // Ler a resposta do servidor de socket
-        System.out.println("Resposta: " + response);
+        // System.out.println("Resposta: " + response);
 
         // Se a resposta for "valido", salva no banco de dados
         if ("valido".equals(response)) {
@@ -40,7 +40,7 @@ public class RegisterController {
             AuthenticationUser user = new AuthenticationUser(generateUniqueId(), email, hashedPassword);
             userRepository.insert(user);
 
-            System.out.println(user);
+            // System.out.println(user);
             System.out.println("Usuário salvo no banco de dados.");
 
             return ResponseEntity.ok("Credenciais validadas e salvas com sucesso.");

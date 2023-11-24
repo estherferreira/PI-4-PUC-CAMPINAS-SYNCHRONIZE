@@ -1,14 +1,13 @@
 package com.synback.services;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.synback.models.AuthenticationUser;
 import com.synback.repositories.AuthenticationRepository;
 import java.util.Date;
@@ -18,18 +17,18 @@ public class AuthenticationService {
 
     @PostConstruct
     public void init() {
-        System.out.println("Expiration time: " + expirationTime);
+        // System.out.println("Expiration time: " + expirationTime);
     }
 
     @Value("${jwt.secret}")
     private String secretKey;
-
+    
     @Value("${jwt.expiration}")
     private long expirationTime;
-
+    
     @Autowired
     private AuthenticationRepository userRepository;
-
+    
     public String login(String email, String password) {
         // Verifica se o e-mail foi fornecido
         if (email == null || email.isEmpty()) {
@@ -62,16 +61,15 @@ public class AuthenticationService {
         }
     }
 
-public String generateToken(String email) {
+    public String generateToken(String email) {
     long nowMillis = System.currentTimeMillis();
     Date now = new Date(nowMillis);
-    Algorithm algorithm = Algorithm.HMAC512(secretKey);
-
-    return JWT.create()
-            .withSubject(email)
-            .withIssuedAt(now)
-            .withExpiresAt(new Date(nowMillis + expirationTime))
-            .sign(algorithm);
+    return Jwts.builder()
+            .setSubject(email)
+            .setIssuedAt(now)
+            .setExpiration(new Date(nowMillis + expirationTime))
+            .signWith(SignatureAlgorithm.HS512, secretKey)
+            .compact();
 }
 
     public Boolean validateToken(String token, UserDetails userDetails) {

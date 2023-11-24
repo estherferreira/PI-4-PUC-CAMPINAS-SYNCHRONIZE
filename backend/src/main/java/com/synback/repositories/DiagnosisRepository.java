@@ -1,7 +1,9 @@
 package com.synback.repositories;
 
-import com.synback.models.Diagnosis;
+import java.util.List;
+import com.synback.models.UserDiagnosis;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface DiagnosisRepository extends MongoRepository<Diagnosis, String> {
+public interface DiagnosisRepository extends MongoRepository<UserDiagnosis, String> {
+    List<UserDiagnosis> findByEmailIgnoreCase(String email);
 }

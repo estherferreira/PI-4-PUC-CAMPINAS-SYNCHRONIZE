@@ -50,11 +50,12 @@ const Login = () => {
       const data = await response.json();
       const token = data.token;
       localStorage.setItem("jwtToken", token);
+      localStorage.setItem("email", email);
 
       //Atualiza o estado do usuário com o email e token recebidos
       login({ email, token });
 
-      router.push("/app");
+      router.push("/dashboard");
     } catch (error) {
       console.error("Erro ao enviar dados: ", error.message);
     }

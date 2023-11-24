@@ -31,7 +31,7 @@ public class RegistrationController {
 
         String name = data.getName();
         Data dateOfBirth = data.getDateOfBirth();
-        System.out.println(dateOfBirth);
+        // System.out.println(dateOfBirth);
         int weight = data.getWeight();
         int height = data.getHeight();
         String gender = data.getGender();
@@ -50,7 +50,7 @@ public class RegistrationController {
                     exerciseTime, diseaseHistory);
             userRepository.insert(userProfile);
 
-            System.out.println(userProfile);
+            // System.out.println(userProfile);
             System.out.println("Informações cadastradas no banco de dados.");
 
             return ResponseEntity.ok("Usuário validado e salvo com sucesso.");

@@ -22,8 +22,8 @@ public class LoginController {
             String email = credentials.getEmail();
             String password = credentials.getPassword();
 
-            System.out.println("E-mail: " + email);
-            System.out.println("Senha: " + password);
+            // System.out.println("E-mail: " + email);
+            // System.out.println("Senha: " + password);
 
             // O serviço de autenticação verifica as credenciais e retorna um token
             String token = authService.login(email, password);
@@ -31,7 +31,7 @@ public class LoginController {
             // Cria uma resposta com o token
             Map<String, String> tokenResponse = new HashMap<>();
             tokenResponse.put("token", token);
-            System.out.println("Token: " + token);
+            // System.out.println("Token: " + token);
 
             // Retorna o token para o cliente
             System.out.println("Credenciais validadas.");
