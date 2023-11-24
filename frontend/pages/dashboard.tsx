@@ -10,44 +10,47 @@ const Dashboard = () => {
   const [userData, setUserData] = useState(null);
   const { logout } = useUserContext();
 
-  const token = localStorage.getItem("jwtToken");
-  const email = localStorage.getItem("email");
-
-  console.log(email);
-  console.log(token);
-
-  const fetchDiagnoses = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/dashboard", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        console.error("Erro ao enviar dados para o backend!", errorMessage);
-        return;
-      }
-
-      const disposis = await response.json();
-      setUserData(disposis);
-    } catch (error) {
-      console.error("Erro ao buscar diagnósticos", error);
-    }
-  };
-
-  console.log(userData);
-
   useEffect(() => {
-    fetchDiagnoses();
+    if (typeof window !== "undefined") {
+      // Evita acessar localStorage durante a renderização do lado do servidor (SSR - Server-Side Rendering)
+      const token = localStorage.getItem("jwtToken");
+      const email = localStorage.getItem("email");
+
+      console.log(email);
+      console.log(token);
+
+      const fetchDiagnoses = async () => {
+        try {
+          const response = await fetch("http://localhost:5000/api/dashboard", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            const errorMessage = await response.text();
+            console.error("Erro ao enviar dados para o backend!", errorMessage);
+            return;
+          }
+
+          const disposis = await response.json();
+          setUserData(disposis);
+        } catch (error) {
+          console.error("Erro ao buscar diagnósticos", error);
+        }
+      };
+
+      fetchDiagnoses();
+    }
   }, []);
 
   const handleLogout = () => {
     logout(); // Limpa o estado do usuário e remove o token
     router.push("/login");
   };
+
+  console.log(userData);
 
   return (
     <Box backgroundColor="offwhite" h="100vh">
@@ -62,7 +65,7 @@ const Dashboard = () => {
             />
             <Box>
               <Text fontFamily="poppins.400" fontSize="lg">
-                {userData ? userData[0]?.userName: ""}
+                {userData ? userData[0]?.userName : ""}
               </Text>
               <Text
                 fontFamily="poppins.400"
