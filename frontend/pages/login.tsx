@@ -14,9 +14,11 @@ import Logo from "../assets/Logo.svg";
 import { IoIosArrowBack } from "react-icons/io";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useUserContext } from "../context/UserContext";
 
 const Login = () => {
   const router = useRouter();
+  const { login } = useUserContext();
   const [error, setError] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [buttonClicked, setButtonClicked] = useState(false);
@@ -44,12 +46,13 @@ const Login = () => {
         throw new Error(errorMessage);
       }
 
-      // Recebendo e armazenando o token
+      //Armazenando o token
       const data = await response.json();
-      console.log("Dados recebidos: ", data);
       const token = data.token;
-      console.log("Token: ", token);
       localStorage.setItem("jwtToken", token);
+
+      //Atualiza o estado do usuário com o email e token recebidos
+      login({ email, token });
 
       router.push("/app");
     } catch (error) {

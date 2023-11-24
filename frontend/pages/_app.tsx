@@ -1,6 +1,7 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "../styles/theme/theme";
 import { Inter, Poppins } from "next/font/google";
+import { UserProvider } from '../context/UserContext';
 
 const inter400 = Inter({ subsets: ["latin"], weight: ["400"] });
 const inter500 = Inter({ subsets: ["latin"], weight: ["500"] });
@@ -24,7 +25,9 @@ export default function App({ Component, pageProps }) {
         `}
       </style>
       <ChakraProvider theme={theme}>
+      <UserProvider>
         <Component {...pageProps} />
+        </UserProvider>
       </ChakraProvider>
     </>
   );

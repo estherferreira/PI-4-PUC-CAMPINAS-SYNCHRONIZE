@@ -2,9 +2,19 @@ import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 import { useRouter } from "next/router";
 import DateCard from "../components/DateCard";
+import React, { useEffect, useState } from "react";
+import { useUserContext } from "../context/UserContext";
 
-const History = () => {
+const Dashboard = () => {
   const router = useRouter();
+  const [userData, setUserData] = useState(null);
+  const { logout } = useUserContext();
+
+  const handleLogout = () => {
+    logout(); // Limpa o estado do usuário e remove o token
+    router.push("/login");
+};
+
   return (
     <Box backgroundColor="offwhite" h="100vh">
       <Box paddingTop="100px" marginX="310px" justifyContent="center">
@@ -36,9 +46,7 @@ const History = () => {
             <Text
               fontFamily="poppins.400"
               cursor="pointer"
-              onClick={() => {
-                router.push("/login");
-              }}
+              onClick={handleLogout}
             >
               Ir embora
             </Text>
@@ -92,4 +100,4 @@ const History = () => {
   );
 };
 
-export default History;
+export default Dashboard;
