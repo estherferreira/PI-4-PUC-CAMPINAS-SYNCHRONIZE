@@ -63,7 +63,7 @@ const Dashboard = () => {
         diseaseHistory: history === "true" ? formData.diseaseHistory : "Não",
       });
 
-      router.push("/dashboard");
+      router.push("/login");
     } catch (error) {
       if (error.response && error.response.data) {
         // Se existe uma mensagem de erro específica enviada pelo backend
