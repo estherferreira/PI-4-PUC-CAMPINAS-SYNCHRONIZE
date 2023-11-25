@@ -137,7 +137,7 @@ public class SocketServer {
 
             int exerciseTimeInt = Integer.parseInt(exerciseTime);
             if (exerciseTimeInt < 0 || exerciseTimeInt > 1440) {
-                throw new CustomException("Tempo de exercício diário inválido.", 1008);
+                throw new CustomException("Tempo de exercício deve ser menor ou igual a 1440 minutos.", 1008);
             }
         }
 
