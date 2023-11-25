@@ -55,7 +55,7 @@ const Login = () => {
       //Atualiza o estado do usuário com o email e token recebidos
       login({ email, token });
 
-      router.push("/diagnostic");
+      router.push("/diagnostic/page");
     } catch (error) {
       console.error("Erro ao enviar dados: ", error.message);
     }

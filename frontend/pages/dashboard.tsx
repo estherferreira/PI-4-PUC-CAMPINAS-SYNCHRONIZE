@@ -101,13 +101,18 @@ const Dashboard = () => {
             width="200px"
             marginBottom="115px"
             onClick={() => {
-              router.push("/diagnostic");
+              router.push("/diagnostic/page");
             }}
           >
             Fazer diagnóstico
           </Button>
         </Flex>
-        <HistoryCard day="22" month="out" symptoms="Dor de cabeca, mal estar" />
+        <HistoryCard
+          diagnosticId={723981231}
+          day="22"
+          month="out"
+          symptoms="Dor de cabeca, mal estar"
+        />
       </Box>
     </Box>
   );

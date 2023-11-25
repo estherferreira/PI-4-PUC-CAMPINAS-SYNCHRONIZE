@@ -10,7 +10,7 @@ import {
 import { FiLogOut } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { InfoIcon } from "@chakra-ui/icons";
-import ProgressBar from "../components/ProgressBar";
+import ProgressBar from "../../components/ProgressBar";
 import { useRouter } from "next/router";
 
 const Diagnostic = () => {
@@ -30,14 +30,17 @@ const Diagnostic = () => {
 
   const fetchData = async () => {
     try {
-        const response = await fetch(`http://localhost:8000/api/diagnosis?userId=000152`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ symptoms }),
-      });
+      const response = await fetch(
+        `http://localhost:8000/api/diagnosis?userId=000152`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ symptoms }),
+        }
+      );
 
       if (!response.ok) {
         //Transforma o corpo da resposta em JSON
