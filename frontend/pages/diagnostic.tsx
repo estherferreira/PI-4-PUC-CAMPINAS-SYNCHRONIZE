@@ -14,7 +14,7 @@ import ProgressBar from "../components/ProgressBar";
 import { useRouter } from "next/router";
 
 const Diagnostic = () => {
-  const [newDiagnostic, setNewDiagnostic] = useState(false);
+  const [newDiagnostic, setNewDiagnostic] = useState(true);
   const [symptoms, setSymptoms] = useState("");
   const [token, setToken] = useState("");
   const router = useRouter();

@@ -79,7 +79,7 @@ const Dashboard = () => {
   };
 
   return (
-    <Box backgroundColor="offwhite" h="100vh">
+    <Box backgroundColor="offwhite" h="120vh">
       <Box paddingTop="100px" marginX="310px" justifyContent="center">
         <Box
           marginBottom="50px"
