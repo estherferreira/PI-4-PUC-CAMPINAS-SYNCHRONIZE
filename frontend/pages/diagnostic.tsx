@@ -16,38 +16,66 @@ import { useRouter } from "next/router";
 const Diagnostic = () => {
   const [newDiagnostic, setNewDiagnostic] = useState(true);
   const [symptoms, setSymptoms] = useState("");
-  const [token, setToken] = useState("");
+  const [userData, setUserData] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    // Acessar localStorage somente no lado do cliente
-    const jwtToken = localStorage.getItem("d4pM6FjtykjTwR");
-    console.log("Token: ", token);
-    if (jwtToken) {
-      setToken(jwtToken);
+    if (typeof window !== "undefined") {
+      // Evita acessar localStorage durante a renderização do lado do servidor (SSR - Server-Side Rendering)
+      const token = localStorage.getItem("jwtToken");
+      const email = localStorage.getItem("email");
+
+      console.log(email);
+      console.log(token);
+
+      const fetchDiagnoses = async () => {
+        try {
+          const response = await fetch("http://localhost:5000/api/dashboard", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            const errorMessage = await response.text();
+            console.error("Erro ao enviar dados para o backend!", errorMessage);
+            return;
+          }
+
+          const disposis = await response.json();
+          setUserData(disposis);
+        } catch (error) {
+          console.error("Erro ao buscar diagnósticos", error);
+        }
+      };
+
+      fetchDiagnoses();
     }
   }, []);
 
-  const fetchData = async () => {
+  const newDiagnosis = async () => {
+    const email = localStorage.getItem("email");
+    
     try {
-        const response = await fetch(`http://localhost:8000/api/diagnosis?userId=000152`, {
+      const response = await fetch("http://localhost:5000/profile/diagnosis", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ symptoms }),
+        body: JSON.stringify({ symptoms, email }),
       });
 
       if (!response.ok) {
-        //Transforma o corpo da resposta em JSON
-        const errorMessage = await response.text();
-        throw new Error(errorMessage);
+        const errorMessage = await response.json();
+        console.error("Erro ao enviar dados para o backend!", errorMessage);
+        return;
       }
 
-      console.log("Sintomas enviados para o servidor com sucesso!");
+      const disposis = await response.json();
+      setUserData(disposis);
     } catch (error) {
-      console.error("Erro ao enviar dados: ", error.message);
+      console.error("Erro ao criar diagnósticos", error);
     }
   };
 
@@ -64,9 +92,9 @@ const Diagnostic = () => {
             />
             <Box>
               <Text fontFamily="poppins.400" fontSize="lg">
-                Sophia Iwara
+                {userData ? userData[0]?.userName : "Synchronize"}
               </Text>
-              <Text
+              {/* <Text
                 fontFamily="poppins.400"
                 color="gray"
                 cursor="pointer"
@@ -75,7 +103,7 @@ const Diagnostic = () => {
                 }}
               >
                 Ver perfil
-              </Text>
+              </Text> */}
             </Box>
           </Flex>
           <Flex
@@ -148,7 +176,7 @@ const Diagnostic = () => {
                 color="brand.900"
                 backgroundColor="black"
                 width="150px"
-                onClick={fetchData}
+                onClick={newDiagnosis}
               >
                 Enviar
               </Button>

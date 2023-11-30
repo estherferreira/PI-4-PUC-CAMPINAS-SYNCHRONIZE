@@ -1,99 +1,146 @@
-// package com.synback.services;
+package com.synback.services;
 
-// import com.synback.models.UserProfile;
-// import com.synback.models.Diagnosis;
-// import com.synback.repositories.DiagnosisRepository;
-// import com.synback.repositories.UserProfileRepository;
-// import com.theokanning.openai.completion.CompletionRequest;
-// import com.theokanning.openai.service.OpenAiService;
-// import java.util.ArrayList;
-// import java.util.Calendar;
-// import com.synback.utils.Data;
-// import java.util.List;
-// import org.springframework.stereotype.Service;
+import com.synback.models.UserProfile;
+import com.synback.models.UserDiagnosis;
+import java.net.http.HttpRequest;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.Calendar;
+import com.synback.utils.Data;
+import java.util.List;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
-// @Service
-// public class DiagnosticsService {
+@Service
+public class DiagnosticsService {
 
-//     private final UserProfileRepository userRepository;
-//     private final DiagnosisRepository diagnosisRepository;
-//     private static final String OPENAI_API_KEY = System.getenv("PUBLIC_API_KEY");
+    @Value("${openai.token}")
+    private String openaiApiKey;
 
-//     public DiagnosticsService(UserProfileRepository userRepository, DiagnosisRepository diagnosisRepository) {
-//         this.userRepository = userRepository;
-//         this.diagnosisRepository = diagnosisRepository;
-//     }
+    public List<UserDiagnosis.ReportItem> parseOpenAiResponse(String response) {
+        List<UserDiagnosis.ReportItem> reportItems = new ArrayList<>();
+        Pattern pattern = Pattern.compile(
+                "Problema: (.*?)\\nChance de ocorrer: (.*?)\\nDescrição: (.*?)(?=\\n\\nProblema:|\\Z)", Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(response);
 
-//     public Diagnosis diagnosis(String userId, String symptoms) {
-//         UserProfile user = userRepository.findById(userId)
-//                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        while (matcher.find()) {
+            String problem = matcher.group(1).trim();
+            String chanceOfOccurrence = matcher.group(2).trim();
+            String description = matcher.group(3).trim();
+            reportItems.add(new UserDiagnosis.ReportItem(problem, chanceOfOccurrence, description));
+        }
 
-//         String prompt = buildPrompt(user, symptoms);
-//         String openAiResponse = callOpenAiService(prompt);
+        System.out.println(reportItems);
+        return reportItems;
+    }
 
-//         Diagnosis diagnosis = new Diagnosis(userId, parseOpenAiResponse(openAiResponse), symptoms, user.getName());
-//         return diagnosisRepository.save(diagnosis);
-//     }
+    private int calculateAge(Data birthData) {
+        Calendar birthDate = Calendar.getInstance();
+        birthDate.set(Calendar.YEAR, birthData.getAno());
+        birthDate.set(Calendar.MONTH, birthData.getMes() - 1); // O mês no Calendar começa do 0
+        birthDate.set(Calendar.DAY_OF_MONTH, birthData.getDia());
 
-//     private List<Diagnosis.ReportItem> parseOpenAiResponse(String response) {
-//         List<Diagnosis.ReportItem> reportItems = new ArrayList<>();
-//         String[] lines = response.split("\n");
+        Calendar currentDate = Calendar.getInstance();
 
-//         for (String line : lines) {
-//             String[] parts = line.split(",");
-//             if (parts.length >= 3) { // Garantir que há pelo menos 3 partes
-//                 String problem = parts[0].replace("Problema: ", "").trim();
-//                 String percentage = parts[1].replace("Chance de ocorrer: ", "").trim();
-//                 String description = parts[2].replace("Descrição: ", "").trim();
+        int age = currentDate.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
+        if (birthDate.get(Calendar.DAY_OF_YEAR) > currentDate.get(Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
 
-//                 // Agora adicionamos ReportItems à lista
-//                 reportItems.add(new Diagnosis.ReportItem(problem, percentage, description));
-//             }
-//         }
+        return age;
+    }
 
-//         return reportItems;
-//     }
+    public String buildPrompt(UserProfile user, String symptoms) {
+        int age = calculateAge(user.getDateOfBirth());
 
-//     private int calculateAge(Data birthData) {
-//         Calendar birthDate = Calendar.getInstance();
-//         birthDate.set(Calendar.YEAR, birthData.getAno());
-//         birthDate.set(Calendar.MONTH, birthData.getMes() - 1); // O mês no Calendar começa do 0
-//         birthDate.set(Calendar.DAY_OF_MONTH, birthData.getDia());
+        return "Por favor, analise as seguintes informações e forneça uma lista de três possíveis problemas de saúde. Para cada problema, indique o nome do problema, a chance de ocorrer (baixa, moderada ou alta) e uma breve descrição. Formate sua resposta como: 'Problema: [nome do problema], Chance de ocorrer: [baixa/moderada/alta], Descrição: [descrição]'.\n\n"
+                +
+                "Informações do usuário:\n" +
+                "- Idade: " + age + "\n" +
+                "- Gênero: " + user.getGender() + "\n" +
+                "- Peso: " + user.getWeight() + "\n" +
+                "- Altura: " + user.getHeight() + "\n" +
+                "- Doenças na família: " + user.getDiseaseHistory() + "\n" +
+                "- Tempo médio de exercícios por dia: " + user.getExerciseTime() + "\n" +
+                "- Sintoma: " + symptoms + "\n";
+    }
 
-//         Calendar currentDate = Calendar.getInstance();
+    // Método para extrair o conteúdo relevante da resposta da OpenAI
+    private String extractContentFromResponse(String response) {
+        String startToken = "\"content\": \"";
+        int startIndex = response.indexOf(startToken);
 
-//         int age = currentDate.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
-//         if (birthDate.get(Calendar.DAY_OF_YEAR) > currentDate.get(Calendar.DAY_OF_YEAR)) {
-//             age--;
-//         }
+        if (startIndex == -1) {
+            return ""; // Retorna string vazia se não encontrar o token
+        }
 
-//         return age;
-//     }
+        // Ajustar startIndex para começar após o token
+        startIndex += startToken.length();
 
-//     private String buildPrompt(UserProfile user, String symptoms) {
-//         int age = calculateAge(user.getDateOfBirth());
+        // Encontrar o índice de fim (pode ser o final da string ou um token específico)
+        int endIndex = response.indexOf("\n\n", startIndex);
+        endIndex = (endIndex == -1) ? response.length() : endIndex;
 
-//         return "Idade: " + age + "\n" +
-//                 "Gênero: " + user.getGender() + "\n" +
-//                 "Peso: " + user.getWeight() + "\n" +
-//                 "Altura: " + user.getHeight() + "\n" +
-//                 "Doenças na família: " + user.getDiseaseHistory() + "\n" +
-//                 "Tempo médio de exercícios por dia: " + user.getExerciseTime() + "\n" +
-//                 "Sintoma: " + symptoms + "\n" +
-//                 "Quais são as três doenças ou problemas de saúde mais prováveis que eu deveria me atentar baseado nos dados informados, quais são suas respectivas porcentagens em números de ocorrerem e o que devo fazer para melhorar esses sintomas ou acabar com eles?";
-//     }
+        // Extrair e retornar o conteúdo relevante
+        return response.substring(startIndex, endIndex).replace("\\n", "\n").trim();
+    }
 
-//     // Enviar para ChatGPT
-//     private String callOpenAiService(String prompt) {
-//         OpenAiService service = new OpenAiService(OPENAI_API_KEY);
-//         CompletionRequest completionRequest = CompletionRequest.builder()
-//                 .prompt(prompt)
-//                 .model("gpt-3.5-turbo")
-//                 .maxTokens(4000)
-//                 .echo(true)
-//                 .build();
-//         String response = service.createCompletion(completionRequest).getChoices().get(0).getText();
-//         System.out.println("Response" + response);
-//         return response;
-//     }
-// }
+    // Enviar para ChatGPT
+    public String callOpenAiService(String prompt) {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.openai.com/v1/chat/completions"))
+                .header("Authorization", "Bearer " + openaiApiKey)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(createRequestBody(prompt)))
+                .build();
+
+        // try {
+        // HttpResponse<String> response = client.send(request,
+        // HttpResponse.BodyHandlers.ofString());
+        // return parseResponse(response.body());
+        // } catch (IOException | InterruptedException e) {
+        // e.printStackTrace();
+        // return null;
+        // }
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String content = extractContentFromResponse(response.body());
+            return content;
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private String createRequestBody(String prompt) {
+        JsonObject messageUser = new JsonObject();
+        messageUser.addProperty("role", "user");
+        messageUser.addProperty("content", prompt);
+
+        JsonObject messageSystem = new JsonObject();
+        messageSystem.addProperty("role", "system");
+        messageSystem.addProperty("content", "Seu prompt aqui");
+
+        JsonArray messages = new JsonArray();
+        messages.add(messageSystem);
+        messages.add(messageUser);
+
+        JsonObject requestBody = new JsonObject();
+        requestBody.addProperty("model", "gpt-3.5-turbo");
+        requestBody.add("messages", messages);
+
+        return requestBody.toString();
+    }
+
+    private String parseResponse(String responseBody) {
+        return responseBody;
+    }
+}

@@ -1,32 +1,62 @@
 package com.synback.controllers;
 
-// import org.springframework.beans.factory.annotation.Autowired;
-// import jakarta.validation.Valid;
-// import org.springframework.http.HttpStatus;
-// import org.springframework.http.ResponseEntity;
+import java.util.Random;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-// import com.synback.services.DiagnosticsService;
-// import com.synback.models.UserDiagnosis;
+import com.synback.models.UserDiagnosis;
+import com.synback.models.UserProfile;
+import com.synback.repositories.DiagnosisRepository;
+import com.synback.repositories.UserProfileRepository;
+import com.synback.services.DiagnosticsService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/profile")
 @CrossOrigin(origins = "*") // Permitir CORS para o frontend
 public class DiagnosticController {
 
-    // @Autowired
-    // private DiagnosticsService diagnosticsService;
+    @Autowired
+    private DiagnosisRepository diagnosisRepository;
 
-    // @PostMapping("/diagnosis")
-    // public ResponseEntity<UserDiagnosis> diagnoseUser(@RequestHeader("Authorization")
-    // String token,
-    // @RequestBody String symptoms) {
-    // UserDiagnosis diagnosis = diagnosticsService.diagnosis(token, symptoms);
-    // return new ResponseEntity<>(diagnosis, HttpStatus.OK);
-    // }
+    @Autowired
+    private DiagnosticsService diagnosticsService;
 
-    // @PostMapping("/diagnosis")
-    // public ResponseEntity<Diagnosis> diagnoseUser(@RequestParam String userId, @RequestBody String symptoms) {
-    //     Diagnosis diagnosis = diagnosticsService.diagnosis(userId, symptoms);
-    //     return new ResponseEntity<>(diagnosis, HttpStatus.OK);
-    // }
+    @Autowired
+    private UserProfileRepository userRepository;
+
+    @PostMapping("/diagnosis")
+    public ResponseEntity<?> newDiagnosis(@RequestBody UserDiagnosis data) {
+        String symptoms = data.getSymptoms();
+        String email = data.getEmail();
+
+        UserProfile user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new RuntimeException("Usuário não encontrado");
+        }
+
+        String prompt = diagnosticsService.buildPrompt(user, symptoms);
+        System.out.println(prompt);
+        String openAiResponse = diagnosticsService.callOpenAiService(prompt);
+        System.out.println(openAiResponse);
+
+        UserDiagnosis diagnosis = new UserDiagnosis(generateUniqueId(),
+                diagnosticsService.parseOpenAiResponse(openAiResponse),
+                symptoms, user.getName(), email, user.getId());
+
+        System.out.println(diagnosticsService.parseOpenAiResponse(openAiResponse));
+        System.out.println(diagnosis);
+
+        return ResponseEntity.ok("OK");
+
+    }
+
+    private static String generateUniqueId() {
+        Random random = new Random();
+        // Gera um número aleatório com 10 dígitos
+        int number = random.nextInt(1000000000, 2000000000);
+        return "SYN-" + String.format("%010d", number);
+    }
+
 }

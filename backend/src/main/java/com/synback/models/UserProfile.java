@@ -13,9 +13,14 @@ public class UserProfile {
     private String gender;
     private int exerciseTime;
     private String diseaseHistory;
-    private final String subscriptionPlan = "Básico";
+    private String email;
+    private String subscriptionPlan;
 
-    public UserProfile(String profileId, String name, Data dateOfBirth, int weight, int height, String gender, int exerciseTime, String diseaseHistory) {
+    public UserProfile() {
+    }
+
+    public UserProfile(String profileId, String name, Data dateOfBirth, int weight, int height, String gender,
+            int exerciseTime, String diseaseHistory) {
         this.profileId = profileId;
         this.name = name;
         this.dateOfBirth = dateOfBirth;
@@ -24,12 +29,13 @@ public class UserProfile {
         this.gender = gender;
         this.exerciseTime = exerciseTime;
         this.diseaseHistory = diseaseHistory;
+        this.subscriptionPlan = "Básico";
     }
 
     public String getId() {
         return profileId;
     }
-    
+
     public void setId(String id) {
         this.profileId = id;
     }
@@ -61,13 +67,13 @@ public class UserProfile {
             byte day = (byte) dateOfBirth.getDia();
             byte month = (byte) dateOfBirth.getMes();
             short year = (short) dateOfBirth.getAno();
-    
+
             this.setBirthDate(day, month, year);
         } else {
             System.err.println("Objeto Data é nulo.");
         }
     }
-    
+
     public int getWeight() {
         return weight;
     }
@@ -108,6 +114,14 @@ public class UserProfile {
         this.diseaseHistory = diseaseHistory;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "Id: " + profileId + '\n' +
@@ -118,6 +132,7 @@ public class UserProfile {
                 "Gender: " + gender + '\n' +
                 "DailyExerciseTime: " + exerciseTime + '\n' +
                 "DiseasesInTheFamily: " + diseaseHistory + '\n' +
+                "Email: " + email + '\n' +
                 "SubscriptionPlan: " + subscriptionPlan;
     }
 
@@ -139,7 +154,8 @@ public class UserProfile {
                 user.height != this.height ||
                 user.gender != this.gender ||
                 user.exerciseTime != this.exerciseTime ||
-                user.diseaseHistory != this.diseaseHistory )
+                user.diseaseHistory != this.diseaseHistory ||
+                user.email != this.email)
             return false;
 
         return true;
@@ -157,6 +173,7 @@ public class UserProfile {
         result = 7 * result + gender.hashCode();
         result = 7 * result + Integer.hashCode(exerciseTime);
         result = 7 * result + diseaseHistory.hashCode();
+        result = 7 * result + email.hashCode();
 
         if (result < 0)
             result = -result;
@@ -175,6 +192,7 @@ public class UserProfile {
         this.gender = modelo.gender;
         this.exerciseTime = modelo.exerciseTime;
         this.diseaseHistory = modelo.diseaseHistory;
+        this.email = modelo.email;
     }
 
     public Object clone() {
@@ -188,4 +206,3 @@ public class UserProfile {
         return ret;
     }
 }
-

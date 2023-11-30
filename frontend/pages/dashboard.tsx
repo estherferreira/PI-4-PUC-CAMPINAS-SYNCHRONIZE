@@ -65,9 +65,9 @@ const Dashboard = () => {
             />
             <Box>
               <Text fontFamily="poppins.400" fontSize="lg">
-                {userData ? userData[0]?.userName : ""}
+                {userData ? userData[0]?.userName : "Synchronize"}
               </Text>
-              <Text
+              {/* <Text
                 fontFamily="poppins.400"
                 color="gray"
                 cursor="pointer"
@@ -76,7 +76,7 @@ const Dashboard = () => {
                 }}
               >
                 Ver perfil
-              </Text>
+              </Text> */}
             </Box>
           </Flex>
           <Flex align="center" gap="10px">
