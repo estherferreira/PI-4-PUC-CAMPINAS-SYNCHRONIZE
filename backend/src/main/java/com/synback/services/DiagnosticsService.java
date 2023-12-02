@@ -1,17 +1,13 @@
 package com.synback.services;
 
 import com.synback.models.UserProfile;
-import com.synback.models.UserDiagnosis.ReportItem;
-import com.synback.models.UserDiagnosis;
 import java.net.http.HttpRequest;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.Calendar;
 import com.synback.utils.Data;
-import java.util.List;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
 import java.util.regex.Matcher;
