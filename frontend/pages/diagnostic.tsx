@@ -25,7 +25,6 @@ const Diagnostic = () => {
     if (typeof window !== "undefined") {
       // Evita acessar localStorage durante a renderização do lado do servidor (SSR - Server-Side Rendering)
       const token = localStorage.getItem("jwtToken");
-      const email = localStorage.getItem("email");
 
       const fetchDiagnoses = async () => {
         try {
@@ -42,9 +41,9 @@ const Diagnostic = () => {
             return;
           }
 
-          const disposis = await response.json();
-          setUserData(disposis);
-          console.log("Disposis", disposis);
+          const GetResponse = await response.json();
+          setUserData(GetResponse);
+          console.log("GetResponse: ", GetResponse);
         } catch (error) {
           console.error("Erro ao buscar diagnósticos", error);
         }
@@ -56,15 +55,16 @@ const Diagnostic = () => {
 
   const newDiagnosis = async () => {
     setLoading(true);
-    const email = localStorage.getItem("email");
+    const token = localStorage.getItem("jwtToken");
 
     try {
       const response = await fetch("http://localhost:5000/profile/diagnosis", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ symptoms, email }),
+        body: JSON.stringify({ symptoms }),
       });
 
       if (!response.ok) {
@@ -73,16 +73,14 @@ const Diagnostic = () => {
         return;
       }
 
-      const data = await response.json();
-      setUserData(data);
+      console.log(response.json());
     } catch (error) {
       console.error("Erro ao criar diagnósticos", error);
     } finally {
       setLoading(false);
+      setNewDiagnostic(false);
     }
   };
-
-  console.log("userData", userData);
 
   return (
     <Box backgroundColor="offwhite" h="100vh">
@@ -173,7 +171,7 @@ const Diagnostic = () => {
                 width="500px"
                 marginTop="45px"
               >
-                Entao... me diga, o que voce esta sentindo?
+                Então... me diga, o que você está sentindo?
               </Text>
               <Input
                 borderColor="black"

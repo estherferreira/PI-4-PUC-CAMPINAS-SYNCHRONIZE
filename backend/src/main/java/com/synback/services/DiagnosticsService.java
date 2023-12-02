@@ -1,6 +1,7 @@
 package com.synback.services;
 
 import com.synback.models.UserProfile;
+import com.synback.models.UserDiagnosis.ReportItem;
 import com.synback.models.UserDiagnosis;
 import java.net.http.HttpRequest;
 import java.io.IOException;
@@ -23,23 +24,6 @@ public class DiagnosticsService {
 
     @Value("${openai.token}")
     private String openaiApiKey;
-
-    public List<UserDiagnosis.ReportItem> parseOpenAiResponse(String response) {
-        List<UserDiagnosis.ReportItem> reportItems = new ArrayList<>();
-        Pattern pattern = Pattern.compile(
-                "Problema: (.*?)\\nChance de ocorrer: (.*?)\\nDescrição: (.*?)(?=\\n\\nProblema:|\\Z)", Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(response);
-
-        while (matcher.find()) {
-            String problem = matcher.group(1).trim();
-            String chanceOfOccurrence = matcher.group(2).trim();
-            String description = matcher.group(3).trim();
-            reportItems.add(new UserDiagnosis.ReportItem(problem, chanceOfOccurrence, description));
-        }
-
-        System.out.println(reportItems);
-        return reportItems;
-    }
 
     private int calculateAge(Data birthData) {
         Calendar birthDate = Calendar.getInstance();
@@ -72,25 +56,31 @@ public class DiagnosticsService {
                 "- Sintoma: " + symptoms + "\n";
     }
 
-    // Método para extrair o conteúdo relevante da resposta da OpenAI
+    // Extrai apenas o conteúdo do relatório do OpenAI
     private String extractContentFromResponse(String response) {
         String startToken = "\"content\": \"";
         int startIndex = response.indexOf(startToken);
-
+    
         if (startIndex == -1) {
             return ""; // Retorna string vazia se não encontrar o token
         }
-
-        // Ajustar startIndex para começar após o token
+    
+        // Pega somente o conteúdo somente após o token
         startIndex += startToken.length();
+    
+        // Encontrar o índice de fim baseado em um padrão específico
+        Pattern endPattern = Pattern.compile("Descrição: [^\\n]*\\n"); // Procura por "Descrição:" seguido de algo que não seja uma nova linha
+        Matcher matcher = endPattern.matcher(response.substring(startIndex));
+        int endIndex = startIndex;
+        while (matcher.find()) {
+            endIndex = startIndex + matcher.end(); // Atualizar endIndex para o final da última descrição
+        }
 
-        // Encontrar o índice de fim (pode ser o final da string ou um token específico)
-        int endIndex = response.indexOf("\n\n", startIndex);
-        endIndex = (endIndex == -1) ? response.length() : endIndex;
-
-        // Extrair e retornar o conteúdo relevante
-        return response.substring(startIndex, endIndex).replace("\\n", "\n").trim();
+        String content = response.substring(startIndex, endIndex).replace("\\n", "\n").trim();
+        content = content.replaceAll("\"$", ""); // Remove aspas no final da string
+        return content;
     }
+    
 
     // Enviar para ChatGPT
     public String callOpenAiService(String prompt) {
@@ -101,15 +91,6 @@ public class DiagnosticsService {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(createRequestBody(prompt)))
                 .build();
-
-        // try {
-        // HttpResponse<String> response = client.send(request,
-        // HttpResponse.BodyHandlers.ofString());
-        // return parseResponse(response.body());
-        // } catch (IOException | InterruptedException e) {
-        // e.printStackTrace();
-        // return null;
-        // }
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             String content = extractContentFromResponse(response.body());
@@ -138,9 +119,5 @@ public class DiagnosticsService {
         requestBody.add("messages", messages);
 
         return requestBody.toString();
-    }
-
-    private String parseResponse(String responseBody) {
-        return responseBody;
     }
 }

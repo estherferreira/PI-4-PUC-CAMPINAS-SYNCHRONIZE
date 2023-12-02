@@ -93,11 +93,9 @@ public class UserDiagnosis implements Cloneable {
 
         @Override
         public String toString() {
-            return "{" +
-                    "Problem: " + problem + '\n' +
+            return "Problem: " + problem + '\n' +
                     "ChanceOfOccurrence: " + chanceOfOccurrence + '\n' +
-                    "Description: " + description + '\n' +
-                    "}\n";
+                    "Description: " + description;
         }
     }
 

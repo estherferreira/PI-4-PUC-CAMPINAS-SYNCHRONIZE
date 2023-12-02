@@ -14,10 +14,6 @@ const Dashboard = () => {
     if (typeof window !== "undefined") {
       // Evita acessar localStorage durante a renderização do lado do servidor (SSR - Server-Side Rendering)
       const token = localStorage.getItem("jwtToken");
-      const email = localStorage.getItem("email");
-
-      console.log(email);
-      console.log(token);
 
       const fetchDiagnoses = async () => {
         try {
@@ -126,7 +122,7 @@ const Dashboard = () => {
             width="200px"
             marginBottom="115px"
             onClick={() => {
-              router.push("/diagnostic/page");
+              router.push("/diagnostic");
             }}
           >
             Fazer diagnóstico

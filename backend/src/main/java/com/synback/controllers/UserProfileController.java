@@ -62,7 +62,6 @@ public class UserProfileController {
         Map<String, Object> response = new HashMap<>();
         response.put("diagnoses", diagnosisDTOs);
         response.put("userInfo", userProfileDTO);
-        System.out.println(response);
 
         if (!response.isEmpty()) {
             return ResponseEntity.ok(response);
