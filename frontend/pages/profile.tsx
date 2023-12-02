@@ -122,7 +122,7 @@ const Profile = () => {
             alignItems="center"
             gap="10px"
             onClick={() => {
-              router.push("/app");
+              router.push("/dashboard");
             }}
           >
             <IoIosArrowBack />

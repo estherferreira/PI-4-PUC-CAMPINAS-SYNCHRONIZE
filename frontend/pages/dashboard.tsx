@@ -1,9 +1,9 @@
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 import { useRouter } from "next/router";
-import DateCard from "../components/DateCard";
 import React, { useEffect, useState } from "react";
 import { useUserContext } from "../context/UserContext";
+import HistoryCard from "../components/HistoryCard";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -67,7 +67,7 @@ const Dashboard = () => {
               <Text fontFamily="poppins.400" fontSize="lg">
                 {userData ? userData[0]?.userName : "Synchronize"}
               </Text>
-              {/* <Text
+              <Text
                 fontFamily="poppins.400"
                 color="gray"
                 cursor="pointer"
@@ -76,7 +76,7 @@ const Dashboard = () => {
                 }}
               >
                 Ver perfil
-              </Text> */}
+              </Text>
             </Box>
           </Flex>
           <Flex align="center" gap="10px">
@@ -101,37 +101,18 @@ const Dashboard = () => {
             width="200px"
             marginBottom="115px"
             onClick={() => {
-              router.push("/diagnostic");
+              router.push("/diagnostic/page");
             }}
           >
             Fazer diagnóstico
           </Button>
         </Flex>
-        <Box
-          height="fit-content"
-          backgroundColor="ice"
-          borderRadius="16px"
-          padding="22px"
-          alignItems="center"
-          justifyContent="space-between"
-          display="flex"
-        >
-          <Box display="flex" alignItems="center" gap="20px">
-            <DateCard month="out" day="22" current={true} />
-            <Text fontFamily="poppins.400" fontSize="sm">
-              Estou me sentindo muito quente e suando muito, minha cabeça está
-              doendo muito, e minha garganta dói quando engulo
-            </Text>
-          </Box>
-          <Text
-            fontFamily="poppins.400"
-            fontSize="sm"
-            color="gray"
-            cursor="pointer"
-          >
-            Ver detalhes
-          </Text>
-        </Box>
+        <HistoryCard
+          diagnosticId={723981231}
+          day="22"
+          month="out"
+          symptoms="Dor de cabeca, mal estar"
+        />
       </Box>
     </Box>
   );
