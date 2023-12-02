@@ -1,6 +1,9 @@
 package com.synback.controllers;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import com.synback.models.AuthenticationUser;
 import com.synback.models.UserDiagnosis;
 import com.synback.models.UserProfile;
+import com.synback.models.UserProfileDTO;
 import com.synback.repositories.AuthenticationRepository;
 import com.synback.repositories.UserProfileRepository;
 import com.synback.services.DiagnosticsService;
@@ -55,7 +59,25 @@ public class DiagnosticController {
         System.out.println(diagnosticsService.parseOpenAiResponse(openAiResponse));
         System.out.println(diagnosis);
 
-        return ResponseEntity.ok("OK");
+        UserProfile userInfo = userRepository.findByUserId(userId);
+
+        UserProfileDTO userProfileDTO = null;
+        if (userInfo != null) {
+            userProfileDTO = new UserProfileDTO();
+            userProfileDTO.setUserId(userInfo.getId());
+            userProfileDTO.setName(userInfo.getName());
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("diagnoses", diagnosis);
+        response.put("userInfo", userProfileDTO);
+        System.out.println(response);
+
+        if (!response.isEmpty()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
 
     }
 }
