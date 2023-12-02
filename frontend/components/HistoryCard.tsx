@@ -14,6 +14,7 @@ const HistoryCard = ({ day, month, symptoms, diagnosticId }) => {
         alignItems="center"
         justifyContent="space-between"
         display="flex"
+        marginBottom="20px"
       >
         <Box display="flex" alignItems="center" gap="20px">
           <DateCard month={month} day={day} current={true} />

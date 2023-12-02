@@ -2,37 +2,26 @@ package com.synback.models;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Document(collection = "Diagnosis")
 public class UserDiagnosis implements Cloneable {
 
-    private String diagnosisId;
     private List<ReportItem> report;
     private String symptoms;
-    private String userName;
-    private String email;
     private String userId;
+    private Date currentDate;
 
     public UserDiagnosis() {
     }
 
-    public UserDiagnosis(String diagnosisId, List<ReportItem> report, String symptoms, String userName, String email,
-            String userId) {
-        this.diagnosisId = diagnosisId;
+    public UserDiagnosis(String diagnosisId, List<ReportItem> report, String symptoms,
+            String userId, Date currentDate) {
         this.report = report;
         this.symptoms = symptoms;
-        this.userName = userName;
-        this.email = email;
         this.userId = userId;
-    }
-
-    public String getId() {
-        return diagnosisId;
-    }
-
-    public void setId(String id) {
-        this.diagnosisId = id;
+        this.currentDate = currentDate;
     }
 
     public List<ReportItem> getReport() {
@@ -51,28 +40,20 @@ public class UserDiagnosis implements Cloneable {
         this.symptoms = symptoms;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getUserId() {
         return userId;
     }
 
     public void setUserId(String userId) {
-        this.email = userId;
+        this.userId = userId;
+    }
+
+    public Date getCurrentDate() {
+        return currentDate;
+    }
+
+    public void setCurrentDate(Date currentDate) {
+        this.currentDate = currentDate;
     }
 
     public static class ReportItem {
@@ -109,18 +90,23 @@ public class UserDiagnosis implements Cloneable {
         public void setDescription(String description) {
             this.description = description;
         }
+
+        @Override
+        public String toString() {
+            return "{" +
+                    "Problem: " + problem + '\n' +
+                    "ChanceOfOccurrence: " + chanceOfOccurrence + '\n' +
+                    "Description: " + description + '\n' +
+                    "}\n";
+        }
     }
 
     @Override
     public String toString() {
-        return "Diagnosis{" +
-                "diagnosisId: " + diagnosisId + '\'' +
-                ", report: " + report +
-                ", symptoms: " + symptoms + '\'' +
-                ", userName: " + userName + '\'' +
-                ", email: " + email + '\'' +
-                ", userId: " + userId + '\'' +
-                '}';
+        return "Report: " + report + '\n' + '\n' +
+                "Symptoms: " + symptoms + '\n' +
+                "UserId: " + userId + '\n' +
+                "CurrentDate: " + currentDate + '\n';
     }
 
     @Override
@@ -134,12 +120,10 @@ public class UserDiagnosis implements Cloneable {
 
         UserDiagnosis diagnosis = (UserDiagnosis) obj;
 
-        if (diagnosis.diagnosisId != this.diagnosisId ||
-                diagnosis.report != this.report ||
+        if (diagnosis.report != this.report ||
                 diagnosis.symptoms != this.symptoms ||
-                diagnosis.userName != this.userName ||
-                diagnosis.email != this.email ||
-                diagnosis.userId != this.userId)
+                diagnosis.userId != this.userId ||
+                diagnosis.currentDate != this.currentDate)
             return false;
 
         return true;
@@ -149,12 +133,10 @@ public class UserDiagnosis implements Cloneable {
     public int hashCode() {
         int result = 13;
 
-        result = 7 * result + diagnosisId.hashCode();
         result = 7 * result + report.hashCode();
         result = 7 * result + symptoms.hashCode();
-        result = 7 * result + userName.hashCode();
-        result = 7 * result + email.hashCode();
         result = 7 * result + userId.hashCode();
+        result = 7 * result + currentDate.hashCode();
 
         if (result < 0)
             result = -result;
@@ -166,12 +148,10 @@ public class UserDiagnosis implements Cloneable {
         if (modelo == null)
             throw new Exception("modelo ausente");
 
-        this.diagnosisId = modelo.diagnosisId;
         this.report = modelo.report != null ? new ArrayList<>(modelo.report) : null;
         this.symptoms = modelo.symptoms;
-        this.userName = modelo.userName;
-        this.email = modelo.email;
         this.userId = modelo.userId;
+        this.currentDate = modelo.currentDate;
     }
 
     public Object clone() {

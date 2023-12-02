@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "User")
 public class UserProfile {
-    private String profileId;
+    private String userId;
     private String name;
     private Data dateOfBirth;
     private int weight;
@@ -19,9 +19,9 @@ public class UserProfile {
     public UserProfile() {
     }
 
-    public UserProfile(String profileId, String name, Data dateOfBirth, int weight, int height, String gender,
+    public UserProfile(String userId, String name, Data dateOfBirth, int weight, int height, String gender,
             int exerciseTime, String diseaseHistory) {
-        this.profileId = profileId;
+        this.userId = userId;
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.weight = weight;
@@ -33,11 +33,11 @@ public class UserProfile {
     }
 
     public String getId() {
-        return profileId;
+        return userId;
     }
 
     public void setId(String id) {
-        this.profileId = id;
+        this.userId = id;
     }
 
     public String getName() {
@@ -124,7 +124,7 @@ public class UserProfile {
 
     @Override
     public String toString() {
-        return "Id: " + profileId + '\n' +
+        return "Id: " + userId + '\n' +
                 "Name: " + name + '\n' +
                 "DateOfBirth: " + dateOfBirth.toString() + '\n' +
                 "Weight: " + weight + '\n' +
@@ -147,7 +147,7 @@ public class UserProfile {
 
         UserProfile user = (UserProfile) obj;
 
-        if (user.profileId != this.profileId ||
+        if (user.userId != this.userId ||
                 user.name != this.name ||
                 user.dateOfBirth != this.dateOfBirth ||
                 user.weight != this.weight ||
@@ -165,7 +165,7 @@ public class UserProfile {
     public int hashCode() {
         int result = 13;
 
-        result = 7 * result + profileId.hashCode();
+        result = 7 * result + userId.hashCode();
         result = 7 * result + name.hashCode();
         result = 7 * result + dateOfBirth.hashCode();
         result = 7 * result + Double.hashCode(weight);
@@ -185,6 +185,7 @@ public class UserProfile {
         if (modelo == null)
             throw new Exception("modelo ausente");
 
+        this.userId = modelo.userId;
         this.name = modelo.name;
         this.dateOfBirth = modelo.dateOfBirth;
         this.weight = modelo.weight;

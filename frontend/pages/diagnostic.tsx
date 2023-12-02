@@ -45,6 +45,7 @@ const Diagnostic = () => {
 
           const disposis = await response.json();
           setUserData(disposis);
+          console.log("Disposis", disposis);
         } catch (error) {
           console.error("Erro ao buscar diagnósticos", error);
         }
@@ -94,7 +95,7 @@ const Diagnostic = () => {
               <Text fontFamily="poppins.400" fontSize="lg">
                 {userData ? userData[0]?.userName : "Synchronize"}
               </Text>
-              {/* <Text
+              <Text
                 fontFamily="poppins.400"
                 color="gray"
                 cursor="pointer"
@@ -103,7 +104,7 @@ const Diagnostic = () => {
                 }}
               >
                 Ver perfil
-              </Text> */}
+              </Text>
             </Box>
           </Flex>
           <Flex
@@ -155,7 +156,7 @@ const Diagnostic = () => {
               width="500px"
               marginTop="45px"
             >
-              Entao... me diga, o que voce esta sentindo?
+              Então... me diga, o que você está sentindo?
             </Text>
             <Input
               borderColor="black"

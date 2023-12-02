@@ -1,13 +1,16 @@
 package com.synback.controllers;
 
-import java.util.Random;
-
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import com.synback.models.AuthenticationUser;
 import com.synback.models.UserDiagnosis;
 import com.synback.models.UserProfile;
-import com.synback.repositories.DiagnosisRepository;
+import com.synback.repositories.AuthenticationRepository;
 import com.synback.repositories.UserProfileRepository;
 import com.synback.services.DiagnosticsService;
 
@@ -17,7 +20,7 @@ import com.synback.services.DiagnosticsService;
 public class DiagnosticController {
 
     @Autowired
-    private DiagnosisRepository diagnosisRepository;
+    private AuthenticationRepository authenticationRepository;
 
     @Autowired
     private DiagnosticsService diagnosticsService;
@@ -28,9 +31,13 @@ public class DiagnosticController {
     @PostMapping("/diagnosis")
     public ResponseEntity<?> newDiagnosis(@RequestBody UserDiagnosis data) {
         String symptoms = data.getSymptoms();
-        String email = data.getEmail();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = ((UserDetails) authentication.getPrincipal()).getUsername();
 
-        UserProfile user = userRepository.findByEmail(email);
+        AuthenticationUser credentials = authenticationRepository.findByEmail(email);
+        String userId = credentials.getUserId();
+
+        UserProfile user = userRepository.findByUserId(userId);
 
         if (user == null) {
             throw new RuntimeException("Usuário não encontrado");
@@ -41,9 +48,9 @@ public class DiagnosticController {
         String openAiResponse = diagnosticsService.callOpenAiService(prompt);
         System.out.println(openAiResponse);
 
-        UserDiagnosis diagnosis = new UserDiagnosis(generateUniqueId(),
+        UserDiagnosis diagnosis = new UserDiagnosis(userId,
                 diagnosticsService.parseOpenAiResponse(openAiResponse),
-                symptoms, user.getName(), email, user.getId());
+                symptoms, user.getId(), new Date());
 
         System.out.println(diagnosticsService.parseOpenAiResponse(openAiResponse));
         System.out.println(diagnosis);
@@ -51,12 +58,4 @@ public class DiagnosticController {
         return ResponseEntity.ok("OK");
 
     }
-
-    private static String generateUniqueId() {
-        Random random = new Random();
-        // Gera um número aleatório com 10 dígitos
-        int number = random.nextInt(1000000000, 2000000000);
-        return "SYN-" + String.format("%010d", number);
-    }
-
 }

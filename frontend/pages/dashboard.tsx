@@ -34,8 +34,8 @@ const Dashboard = () => {
             return;
           }
 
-          const disposis = await response.json();
-          setUserData(disposis);
+          const data = await response.json();
+          setUserData(data);
         } catch (error) {
           console.error("Erro ao buscar diagnósticos", error);
         }
@@ -50,7 +50,32 @@ const Dashboard = () => {
     router.push("/login");
   };
 
-  console.log(userData);
+  // Função para formatar o mês
+  function formatMonth(monthNumber: any) {
+    const months = [
+      "jan",
+      "fev",
+      "mar",
+      "abr",
+      "mai",
+      "jun",
+      "jul",
+      "ago",
+      "set",
+      "out",
+      "nov",
+      "dez",
+    ];
+    return months[monthNumber];
+  }
+
+  // Função para extrair dia e mês de uma string de data
+  function extractDayAndMonth(dateString: any) {
+    const date = new Date(dateString);
+    const day = date.getDate(); // Obtém o dia
+    const month = formatMonth(date.getMonth()); // Obtém o mês (0-11)
+    return { day, month };
+  }
 
   return (
     <Box backgroundColor="offwhite" h="100vh">
@@ -65,7 +90,7 @@ const Dashboard = () => {
             />
             <Box>
               <Text fontFamily="poppins.400" fontSize="lg">
-                {userData ? userData[0]?.userName : "Synchronize"}
+                {userData ? userData?.userInfo?.name : "Synchronize"}
               </Text>
               <Text
                 fontFamily="poppins.400"
@@ -107,12 +132,18 @@ const Dashboard = () => {
             Fazer diagnóstico
           </Button>
         </Flex>
-        <HistoryCard
-          diagnosticId={723981231}
-          day="22"
-          month="out"
-          symptoms="Dor de cabeca, mal estar"
-        />
+        {userData?.diagnoses?.map((diagnosis: any, index: number) => {
+          const { day, month } = extractDayAndMonth(diagnosis.currentDate);
+          return (
+            <HistoryCard
+              key={index}
+              diagnosticId={diagnosis.diagnosticId}
+              day={day.toString()}
+              month={month}
+              symptoms={diagnosis.symptoms}
+            />
+          );
+        })}
       </Box>
     </Box>
   );
