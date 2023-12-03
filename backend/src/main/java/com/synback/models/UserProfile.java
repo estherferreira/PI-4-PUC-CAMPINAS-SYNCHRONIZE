@@ -1,7 +1,10 @@
 package com.synback.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.synback.utils.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.Map;
 
 @Document(collection = "User")
 public class UserProfile {
@@ -13,17 +16,24 @@ public class UserProfile {
     private String gender;
     private int exerciseTime;
     private String diseaseHistory;
-    private String email;
     private String subscriptionPlan;
+    private String email;
 
     public UserProfile() {
     }
 
-    public UserProfile(String userId, String name, Data dateOfBirth, int weight, int height, String gender,
-            int exerciseTime, String diseaseHistory) {
+    @JsonCreator
+    public UserProfile(@JsonProperty("userId") String userId,
+            @JsonProperty("name") String name,
+            @JsonProperty("dateOfBirth") Map<String, Integer> dateOfBirthMap,
+            @JsonProperty("weight") int weight,
+            @JsonProperty("height") int height,
+            @JsonProperty("gender") String gender,
+            @JsonProperty("exerciseTime") int exerciseTime,
+            @JsonProperty("diseaseHistory") String diseaseHistory) {
         this.userId = userId;
         this.name = name;
-        this.dateOfBirth = dateOfBirth;
+        this.setBirthDateFromMap(dateOfBirthMap);
         this.weight = weight;
         this.height = height;
         this.gender = gender;
@@ -55,10 +65,9 @@ public class UserProfile {
     public void setBirthDate(byte day, byte month, short year) {
         try {
             Data date = new Data(day, month, year);
-
             this.dateOfBirth = date;
         } catch (Exception e) {
-            System.err.println("Ocorreu um erro ao definir a data de nascimento: " + e.getMessage());
+            System.err.println("Erro ao definir data de nascimento: " + e.getMessage());
         }
     }
 
@@ -122,6 +131,18 @@ public class UserProfile {
         this.email = email;
     }
 
+    // Método ajustado para aceitar um Map e configurar a data
+    public void setBirthDateFromMap(Map<String, Integer> dateOfBirthMap) {
+        if (dateOfBirthMap != null) {
+            byte day = dateOfBirthMap.get("dia").byteValue();
+            byte month = dateOfBirthMap.get("mes").byteValue();
+            short year = dateOfBirthMap.get("ano").shortValue();
+            this.setBirthDate(day, month, year);
+        } else {
+            System.err.println("Mapa da data de nascimento é nulo.");
+        }
+    }
+
     @Override
     public String toString() {
         return "Id: " + userId + '\n' +
@@ -132,8 +153,8 @@ public class UserProfile {
                 "Gender: " + gender + '\n' +
                 "DailyExerciseTime: " + exerciseTime + '\n' +
                 "DiseasesInTheFamily: " + diseaseHistory + '\n' +
-                "Email: " + email + '\n' +
-                "SubscriptionPlan: " + subscriptionPlan;
+                "SubscriptionPlan: " + subscriptionPlan + '\n' +
+                "Email: " + email + '\n';
     }
 
     @Override

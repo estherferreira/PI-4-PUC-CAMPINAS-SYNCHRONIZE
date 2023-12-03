@@ -14,8 +14,10 @@ import Logo from "../assets/Logo.svg";
 import { useRouter } from "next/router";
 import { IoIosArrowBack } from "react-icons/io";
 import { useState } from "react";
+import { useUserContext } from "../context/UserContext";
 
 const Register = () => {
+  const { setEmailOnly } = useUserContext();
   const router = useRouter();
   const [error, setError] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -44,8 +46,11 @@ const Register = () => {
         throw new Error(errorMessage);
       }
 
-      router.push("/registration");
+      //Atualiza o estado do usuário com o email
+      localStorage.setItem("email", email);
+      setEmailOnly(email);
 
+      router.push("/registration");
     } catch (error) {
       console.error("Erro ao enviar dados: ", error.message);
     }
