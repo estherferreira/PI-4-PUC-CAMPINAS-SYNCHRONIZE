@@ -2,7 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import DateCard from "./DateCard";
 import { useRouter } from "next/router";
 
-const HistoryCard = ({ day, month, symptoms, diagnosticId }) => {
+const HistoryCard = ({ day, month, symptoms, onclick }) => {
   const router = useRouter();
   return (
     <>
@@ -27,12 +27,7 @@ const HistoryCard = ({ day, month, symptoms, diagnosticId }) => {
           fontSize="sm"
           color="gray"
           cursor="pointer"
-          onClick={() => {
-            router.push({
-              pathname: "/diagnostic/[diagnosticId]",
-              query: { diagnosticId: diagnosticId },
-            });
-          }}
+          onClick={onclick}
         >
           Ver detalhes
         </Text>

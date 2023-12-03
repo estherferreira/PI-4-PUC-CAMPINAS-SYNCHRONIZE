@@ -3,6 +3,7 @@ package com.synback.models;
 import java.util.Date;
 
 public class UserDiagnosisDTO implements Cloneable {
+    private String diagnosisId;
     private String symptoms;
     private Date currentDate;
 
@@ -10,8 +11,17 @@ public class UserDiagnosisDTO implements Cloneable {
     }
 
     public UserDiagnosisDTO(String diagnosisId, String symptoms, Date currentDate) {
+        this.diagnosisId = diagnosisId;
         this.symptoms = symptoms;
         this.currentDate = currentDate;
+    }
+
+    public String getDiagnosisId() {
+        return diagnosisId;
+    }
+
+    public void setDiagnosisId(String diagnosisId) {
+        this.diagnosisId = diagnosisId;
     }
 
     public String getSymptoms() {
@@ -47,7 +57,7 @@ public class UserDiagnosisDTO implements Cloneable {
 
         UserDiagnosisDTO diagnosis = (UserDiagnosisDTO) obj;
 
-        if (diagnosis.symptoms != this.symptoms ||
+        if (diagnosis.diagnosisId != this.diagnosisId || diagnosis.symptoms != this.symptoms ||
                 diagnosis.currentDate != this.currentDate)
             return false;
 
@@ -58,6 +68,7 @@ public class UserDiagnosisDTO implements Cloneable {
     public int hashCode() {
         int result = 13;
 
+        result = 7 * result + diagnosisId.hashCode();
         result = 7 * result + symptoms.hashCode();
         result = 7 * result + currentDate.hashCode();
 
@@ -71,6 +82,7 @@ public class UserDiagnosisDTO implements Cloneable {
         if (modelo == null)
             throw new Exception("modelo ausente");
 
+        this.diagnosisId = modelo.diagnosisId;
         this.symptoms = modelo.symptoms;
         this.currentDate = modelo.currentDate;
     }

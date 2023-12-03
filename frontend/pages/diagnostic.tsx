@@ -4,18 +4,15 @@ import {
   Flex,
   IconButton,
   Input,
-  SimpleGrid,
   Spinner,
   Text,
 } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { InfoIcon } from "@chakra-ui/icons";
-import ProgressBar from "../components/ProgressBar";
 import { useRouter } from "next/router";
 
 const Diagnostic = () => {
-  const [newDiagnostic, setNewDiagnostic] = useState(true);
   const [symptoms, setSymptoms] = useState("");
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -28,12 +25,15 @@ const Diagnostic = () => {
 
       const fetchDiagnoses = async () => {
         try {
-          const response = await fetch("http://localhost:5000/api/dashboard", {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const response = await fetch(
+            "http://localhost:5000/profile/diagnosis",
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
 
           if (!response.ok) {
             const errorMessage = await response.text();
@@ -41,9 +41,9 @@ const Diagnostic = () => {
             return;
           }
 
-          const GetResponse = await response.json();
-          setUserData(GetResponse);
-          console.log("GetResponse: ", GetResponse);
+          const getResponse = await response.json();
+          setUserData(getResponse);
+          console.log("GetResponse: ", getResponse);
         } catch (error) {
           console.error("Erro ao buscar diagnósticos", error);
         }
@@ -56,6 +56,7 @@ const Diagnostic = () => {
   const newDiagnosis = async () => {
     setLoading(true);
     const token = localStorage.getItem("jwtToken");
+    let diagnosticId = null;
 
     try {
       const response = await fetch("http://localhost:5000/profile/diagnosis", {
@@ -73,12 +74,16 @@ const Diagnostic = () => {
         return;
       }
 
-      console.log(response.json());
+      const data = await response.json();
+      diagnosticId = data.id;
+
     } catch (error) {
       console.error("Erro ao criar diagnósticos", error);
     } finally {
       setLoading(false);
-      setNewDiagnostic(false);
+      if (diagnosticId) {
+        router.push(`diagnostic/${diagnosticId}`);
+      }
     }
   };
 
@@ -108,14 +113,14 @@ const Diagnostic = () => {
               />
               <Box>
                 <Text fontFamily="poppins.400" fontSize="lg">
-                  {userData ? userData?.userInfo?.name : "Synchronize"}
+                  {userData ? userData?.name : "Synchronize"}
                 </Text>
                 <Text
                   fontFamily="poppins.400"
                   color="gray"
                   cursor="pointer"
                   onClick={() => {
-                    router.push("/profile");
+                    router.push("/dashboard");
                   }}
                 >
                   Ver perfil
@@ -163,96 +168,44 @@ const Diagnostic = () => {
               icon={<InfoIcon />}
             />
           </Box>
-          {newDiagnostic ? (
-            <>
-              <Text
-                fontFamily="inter.400"
-                fontSize="4xl"
-                width="500px"
-                marginTop="45px"
-              >
-                Então... me diga, o que você está sentindo?
-              </Text>
-              <Input
-                borderColor="black"
-                borderWidth="2px"
-                height="40px"
-                width="50%"
-                fontSize="14px"
-                fontFamily="inter.400"
-                placeholder="Dor de cabeça, dores nas costas..."
-                marginBottom="15px"
-                marginTop="70px"
-                value={symptoms}
-                onChange={(event) => setSymptoms(event.target.value)}
-              />
-              <Box>
-                <Button
-                  fontFamily="inter.500"
-                  color="brand.900"
-                  backgroundColor="black"
-                  width="150px"
-                  onClick={newDiagnosis}
-                >
-                  Enviar
-                </Button>
-              </Box>
-              <Text color="gray" fontSize="sm" width="60%" marginTop="220px">
-                * Para obter um diagnóstico preciso e recomendações específicas,
-                é importante consultar um médico. Além disso, se os sintomas
-                persistirem ou piorarem, é essencial buscar atendimento médico
-                imediatamente.
-              </Text>
-            </>
-          ) : (
-            <Box display="flex" marginTop="50px" gap="70px">
-              <SimpleGrid columns={3} width="50%">
-                <ProgressBar percentage={30} height="40vh" reason="Enxaqueca" />
-                <ProgressBar
-                  percentage={50}
-                  height="40vh"
-                  reason="Má alimentação"
-                />
-                <ProgressBar
-                  percentage={60}
-                  height="40vh"
-                  reason="Falta de exercício"
-                />
-              </SimpleGrid>
-              <Box width="50%">
-                <Text fontFamily="inter.500" fontSize="2xl">
-                  Descritivo
-                </Text>
-                <Text fontFamily="inter.500" marginTop="40px">
-                  60% - Falta de exercício
-                </Text>
-                <Text fontFamily="inter.400" marginTop="15px" color="gray">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the.Lorem Ipsum is
-                  simply dummy text of the printing and typesetting industry.
-                  Lorem Ipsum has been the.
-                </Text>
-                <Text fontFamily="inter.500" marginTop="40px">
-                  60% - Falta de exercício
-                </Text>
-                <Text fontFamily="inter.400" marginTop="15px" color="gray">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the.Lorem Ipsum is
-                  simply dummy text of the printing and typesetting industry.
-                  Lorem Ipsum has been the.
-                </Text>
-                <Text fontFamily="inter.500" marginTop="40px">
-                  60% - Falta de exercício
-                </Text>
-                <Text fontFamily="inter.400" marginTop="15px" color="gray">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the.Lorem Ipsum is
-                  simply dummy text of the printing and typesetting industry.
-                  Lorem Ipsum has been the.
-                </Text>
-              </Box>
-            </Box>
-          )}
+          <Text
+            fontFamily="inter.400"
+            fontSize="4xl"
+            width="500px"
+            marginTop="45px"
+          >
+            Então... me diga, o que você está sentindo?
+          </Text>
+          <Input
+            borderColor="black"
+            borderWidth="2px"
+            height="40px"
+            width="50%"
+            fontSize="14px"
+            fontFamily="inter.400"
+            placeholder="Dor de cabeça, dores nas costas..."
+            marginBottom="15px"
+            marginTop="70px"
+            value={symptoms}
+            onChange={(event) => setSymptoms(event.target.value)}
+          />
+          <Box>
+            <Button
+              fontFamily="inter.500"
+              color="brand.900"
+              backgroundColor="black"
+              width="150px"
+              onClick={newDiagnosis}
+            >
+              Enviar
+            </Button>
+          </Box>
+          <Text color="gray" fontSize="sm" width="60%" marginTop="220px">
+            * Para obter um diagnóstico preciso e recomendações específicas, é
+            importante consultar um médico. Além disso, se os sintomas
+            persistirem ou piorarem, é essencial buscar atendimento médico
+            imediatamente.
+          </Text>
         </Box>
       )}
     </Box>

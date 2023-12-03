@@ -2,12 +2,10 @@ package com.synback.controllers;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,6 +21,7 @@ import com.synback.repositories.AuthenticationRepository;
 import com.synback.repositories.DiagnosisRepository;
 import com.synback.repositories.UserProfileRepository;
 import com.synback.services.DiagnosticsService;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/profile")
@@ -68,12 +67,23 @@ public class DiagnosticController {
         List<ReportItem> report = parseOpenAiResponse(openAiResponse);
         System.out.println("Report: " + "\n" + report);
 
+        // Gera um ID único
+        String uniqueId = generateUniqueId();
+
         // Salva o diagnóstico no banco de dados
-        UserDiagnosis diagnosis = new UserDiagnosis(userId, report, symptoms, user.getId(), new Date());
+        UserDiagnosis diagnosis = new UserDiagnosis(uniqueId, report, symptoms, user.getId(), new Date());
         System.out.println("Diagnóstico: " + "\n" + diagnosis);
         diagnosisRepository.insert(diagnosis);
 
-        return ResponseEntity.ok("Diagnóstico realizado e enviado para o banco de dados com sucesso");
+        // Retorna o ID na resposta
+        return ResponseEntity.ok(Map.of("id", uniqueId));
+    }
+
+    private static String generateUniqueId() {
+        Random random = new Random();
+        // Gera um número aleatório com 10 dígitos
+        int number = random.nextInt(1000000000, 2000000000);
+        return "SYN-" + String.format("%010d", number);
     }
 
     // Deixa a resposta da OpenAI no formato da classe UserDiagnostics - ReportItem
@@ -100,8 +110,6 @@ public class DiagnosticController {
         AuthenticationUser credentials = authenticationRepository.findByEmail(email);
         String userId = credentials.getUserId();
 
-        List<UserDiagnosis> diagnoses = diagnosisRepository.findByUserId(userId);
-
         UserProfile userInfo = userRepository.findByUserId(userId);
 
         UserProfileDTO userProfileDTO = null;
@@ -111,14 +119,6 @@ public class DiagnosticController {
             userProfileDTO.setName(userInfo.getName());
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("diagnoses", diagnoses);
-        response.put("userInfo", userProfileDTO);
-
-        if (!response.isEmpty()) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(userProfileDTO);
     }
 }

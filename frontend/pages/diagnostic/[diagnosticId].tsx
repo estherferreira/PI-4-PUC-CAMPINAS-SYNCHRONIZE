@@ -1,58 +1,51 @@
-import {
-  Box,
-  Button,
-  Flex,
-  IconButton,
-  Input,
-  SimpleGrid,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Flex, IconButton, Text } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { InfoIcon } from "@chakra-ui/icons";
-import ProgressBar from "../../components/ProgressBar";
 import { useRouter } from "next/router";
+import ReportCard from "../../components/ReportCard";
 
 const Diagnostic = () => {
-  const [newDiagnostic, setNewDiagnostic] = useState(false);
-  const [symptoms, setSymptoms] = useState("");
-  const [token, setToken] = useState("");
+  const [userData, setUserData] = useState(null);
   const router = useRouter();
 
+  const id = router.query.diagnosticId;
+
   useEffect(() => {
-    // Acessar localStorage somente no lado do cliente
-    const jwtToken = localStorage.getItem("d4pM6FjtykjTwR");
-    console.log("Token: ", token);
-    if (jwtToken) {
-      setToken(jwtToken);
-    }
-  }, []);
+    if (typeof window !== "undefined") {
+      // Evita acessar localStorage durante a renderização do lado do servidor (SSR - Server-Side Rendering)
+      const token = localStorage.getItem("jwtToken");
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/api/diagnosis?userId=000152`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ symptoms }),
+      const fetchDiagnoses = async () => {
+        try {
+          console.log(id);
+          const response = await fetch(
+            `http://localhost:5000/profile/diagnosis/${id}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (!response.ok) {
+            const errorMessage = await response.text();
+            console.error("Erro ao enviar dados para o backend!", errorMessage);
+            return;
+          }
+
+          const GetResponse = await response.json();
+          setUserData(GetResponse);
+          console.log("GetResponse: ", GetResponse);
+        } catch (error) {
+          console.error("Erro ao buscar diagnósticos", error);
         }
-      );
+      };
 
-      if (!response.ok) {
-        //Transforma o corpo da resposta em JSON
-        const errorMessage = await response.text();
-        throw new Error(errorMessage);
-      }
-
-      console.log("Sintomas enviados para o servidor com sucesso!");
-    } catch (error) {
-      console.error("Erro ao enviar dados: ", error.message);
+      fetchDiagnoses();
     }
-  };
+  }, [id]);
 
   return (
     <Box backgroundColor="offwhite" h="100vh">
@@ -67,14 +60,14 @@ const Diagnostic = () => {
             />
             <Box>
               <Text fontFamily="poppins.400" fontSize="lg">
-                Sophia Iwara
+                {userData ? userData?.userInfo?.name : "Synchronize"}
               </Text>
               <Text
                 fontFamily="poppins.400"
                 color="gray"
                 cursor="pointer"
                 onClick={() => {
-                  router.push("/profile");
+                  router.push("/dashboard");
                 }}
               >
                 Ver perfil
@@ -123,52 +116,19 @@ const Diagnostic = () => {
           />
         </Box>
 
-        <Box display="flex" marginTop="50px" gap="70px">
-          <SimpleGrid columns={3} width="50%">
-            <ProgressBar percentage={30} height="40vh" reason="Enxaqueca" />
-            <ProgressBar
-              percentage={50}
-              height="40vh"
-              reason="Má alimentação"
-            />
-            <ProgressBar
-              percentage={60}
-              height="40vh"
-              reason="Falta de exercício"
-            />
-          </SimpleGrid>
-          <Box width="50%">
-            <Text fontFamily="inter.500" fontSize="2xl">
-              Descritivo
-            </Text>
-            <Text fontFamily="inter.500" marginTop="40px">
-              60% - Falta de exercício
-            </Text>
-            <Text fontFamily="inter.400" marginTop="15px" color="gray">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the.Lorem Ipsum is simply dummy
-              text of the printing and typesetting industry. Lorem Ipsum has
-              been the.
-            </Text>
-            <Text fontFamily="inter.500" marginTop="40px">
-              60% - Falta de exercício
-            </Text>
-            <Text fontFamily="inter.400" marginTop="15px" color="gray">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the.Lorem Ipsum is simply dummy
-              text of the printing and typesetting industry. Lorem Ipsum has
-              been the.
-            </Text>
-            <Text fontFamily="inter.500" marginTop="40px">
-              60% - Falta de exercício
-            </Text>
-            <Text fontFamily="inter.400" marginTop="15px" color="gray">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the.Lorem Ipsum is simply dummy
-              text of the printing and typesetting industry. Lorem Ipsum has
-              been the.
-            </Text>
-          </Box>
+        <Box marginTop="50px" gap="70px">
+          <Text fontFamily="inter.500" fontSize="2xl">
+            Descritivo
+          </Text>
+          {userData &&
+            userData?.diagnoses?.report.map((item: any, index: number) => (
+              <ReportCard
+                key={index}
+                problem={item.problem}
+                chanceOfOccurrence={item.chanceOfOccurrence}
+                description={item.description}
+              />
+            ))}
         </Box>
       </Box>
     </Box>

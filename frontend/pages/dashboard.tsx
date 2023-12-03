@@ -46,6 +46,11 @@ const Dashboard = () => {
     router.push("/login");
   };
 
+  const handleDiagnostic = (diagnosisId: string) => {
+    // console.log("userData: ", userData);
+    router.push(`/diagnostic/${diagnosisId}`);
+  };
+
   // Função para formatar o mês
   function formatMonth(monthNumber: any) {
     const months = [
@@ -88,18 +93,18 @@ const Dashboard = () => {
               <Text fontFamily="poppins.400" fontSize="lg">
                 {userData ? userData?.userInfo?.name : "Synchronize"}
               </Text>
-              <Text
-                fontFamily="poppins.400"
-                color="gray"
-                cursor="pointer"
-                onClick={() => {
-                  router.push("/profile");
-                }}
-              >
-                Ver perfil
-              </Text>
             </Box>
           </Flex>
+          {/* <Text
+            fontFamily="poppins.400"
+            color="gray"
+            cursor="pointer"
+            onClick={() => {
+              router.push("/profile");
+            }}
+          >
+            Meus dados
+          </Text> */}
           <Flex align="center" gap="10px">
             <Text
               fontFamily="poppins.400"
@@ -133,10 +138,10 @@ const Dashboard = () => {
           return (
             <HistoryCard
               key={index}
-              diagnosticId={diagnosis.diagnosticId}
               day={day.toString()}
               month={month}
               symptoms={diagnosis.symptoms}
+              onclick={() => handleDiagnostic(diagnosis.diagnosisId)}
             />
           );
         })}

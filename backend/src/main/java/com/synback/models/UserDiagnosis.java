@@ -1,5 +1,6 @@
 package com.synback.models;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,6 +9,9 @@ import java.util.List;
 @Document(collection = "Diagnosis")
 public class UserDiagnosis implements Cloneable {
 
+    @Id
+    private String id;
+    private String diagnosisId;
     private List<ReportItem> report;
     private String symptoms;
     private String userId;
@@ -16,12 +20,25 @@ public class UserDiagnosis implements Cloneable {
     public UserDiagnosis() {
     }
 
-    public UserDiagnosis(String diagnosisId, List<ReportItem> report, String symptoms,
-            String userId, Date currentDate) {
+    public UserDiagnosis(String diagnosisId, List<ReportItem> report, String symptoms, String userId,
+            Date currentDate) {
+        this.diagnosisId = diagnosisId;
         this.report = report;
         this.symptoms = symptoms;
         this.userId = userId;
         this.currentDate = currentDate;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getDiagnosisId() {
+        return diagnosisId;
+    }
+
+    public void setDiagnosisId(String diagnosisId) {
+        this.diagnosisId = diagnosisId;
     }
 
     public List<ReportItem> getReport() {
@@ -101,7 +118,9 @@ public class UserDiagnosis implements Cloneable {
 
     @Override
     public String toString() {
-        return "Report: " + report + '\n' + '\n' +
+        return "Id: " + id + '\n' +
+                "DiagnosisId: " + diagnosisId + '\n' +
+                "Report: " + report + '\n' + '\n' +
                 "Symptoms: " + symptoms + '\n' +
                 "UserId: " + userId + '\n' +
                 "CurrentDate: " + currentDate + '\n';
@@ -118,7 +137,9 @@ public class UserDiagnosis implements Cloneable {
 
         UserDiagnosis diagnosis = (UserDiagnosis) obj;
 
-        if (diagnosis.report != this.report ||
+        if (diagnosis.id != this.id ||
+                diagnosis.diagnosisId != this.diagnosisId ||
+                diagnosis.report != this.report ||
                 diagnosis.symptoms != this.symptoms ||
                 diagnosis.userId != this.userId ||
                 diagnosis.currentDate != this.currentDate)
@@ -131,6 +152,8 @@ public class UserDiagnosis implements Cloneable {
     public int hashCode() {
         int result = 13;
 
+        result = 7 * result + id.hashCode();
+        result = 7 * result + diagnosisId.hashCode();
         result = 7 * result + report.hashCode();
         result = 7 * result + symptoms.hashCode();
         result = 7 * result + userId.hashCode();
@@ -146,6 +169,7 @@ public class UserDiagnosis implements Cloneable {
         if (modelo == null)
             throw new Exception("modelo ausente");
 
+        this.diagnosisId = modelo.diagnosisId;
         this.report = modelo.report != null ? new ArrayList<>(modelo.report) : null;
         this.symptoms = modelo.symptoms;
         this.userId = modelo.userId;
