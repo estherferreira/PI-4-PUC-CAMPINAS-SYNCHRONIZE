@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -16,6 +16,7 @@ const Dashboard = () => {
     if (typeof window !== "undefined") {
       // Evita acessar localStorage durante a renderização do lado do servidor (SSR - Server-Side Rendering)
       const token = localStorage.getItem("jwtToken");
+      console.log(token);
 
       const fetchDiagnoses = async () => {
         try {
@@ -34,6 +35,7 @@ const Dashboard = () => {
 
           const data = await response.json();
           setUserData(data);
+          console.log("userData: ", userData);
         } catch (error) {
           console.error("Erro ao buscar diagnósticos", error);
         }

@@ -37,9 +37,10 @@ public class UserProfileController {
     public ResponseEntity<?> getUserData() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = ((UserDetails) authentication.getPrincipal()).getUsername();
-
+        
         AuthenticationUser credentials = authenticationRepository.findByEmail(email);
         String userId = credentials.getUserId();
+        System.out.println("userId: " + userId);
 
         List<UserDiagnosis> diagnoses = diagnosisRepository.findByUserId(userId);
         
@@ -52,9 +53,10 @@ public class UserProfileController {
             return diagnosisDTO;
         }).collect(Collectors.toList());
         
-
+        
         UserProfile userInfo = userRepository.findByUserId(userId);
-
+        System.out.println("userInfo: " + userInfo);
+        
         UserProfileDTO userProfileDTO = null;
         if (userInfo != null) {
             userProfileDTO = new UserProfileDTO();

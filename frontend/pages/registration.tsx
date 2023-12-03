@@ -13,7 +13,6 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import api from "../api";
 import { useRouter } from "next/router";
 import { InfoIcon } from "@chakra-ui/icons";
 
@@ -25,45 +24,62 @@ type FormValues = {
   gender: string;
   exerciseTime: string;
   diseaseHistory: string;
+  email: string;
 };
 
-const Dashboard = () => {
+type ProcessedFormData = {
+  name: string;
+  dateOfBirth: { dia: number; mes: number; ano: number };
+  weight: number;
+  height: number;
+  gender: string;
+  exerciseTime: number;
+  diseaseHistory: string;
+  email: string;
+};
+
+const Registration = () => {
   const router = useRouter();
   const [error, setError] = useState("");
   const [history, setHistory] = useState("false");
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
 
-  const convertDateToServerFormat = (dateString: any) => {
+  const convertDateToServerFormat = (dateString) => {
     const [year, month, day] = dateString.split("-").map(Number);
     return {
-      dia: parseInt(day),
-      mes: parseInt(month),
-      ano: parseInt(year),
+      dia: day,
+      mes: month,
+      ano: year,
     };
   };
 
-  const onSubmit = async (formData: FormValues) => {
-    const dateOfBirth = convertDateToServerFormat(formData.dateOfBirth);
-    const weight = parseInt(formData.weight);
-    const height = parseInt(formData.height);
-    const exerciseTime = parseInt(formData.exerciseTime);
-
+  const fetchData = async (processedData: ProcessedFormData) => {
     try {
-      const response = await api.post("/profile/registration", {
-        name: formData.userName,
-        weight: weight,
-        height: height,
-        exerciseTime: exerciseTime,
-        dateOfBirth: dateOfBirth,
-        gender: formData.gender,
-        diseaseHistory: history === "true" ? formData.diseaseHistory : "Não",
-      });
+      const response = await fetch(
+        "http://localhost:5000/profile/registration",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(processedData),
+        }
+      );
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        console.log("Erro ao enviar dados para o backend!", errorMessage);
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
 
       router.push("/login");
+      console.log("Dados enviados com sucesso!");
     } catch (error) {
       if (error.response && error.response.data) {
         // Se existe uma mensagem de erro específica enviada pelo backend
@@ -76,6 +92,23 @@ const Dashboard = () => {
         console.log(error);
       }
     }
+  };
+
+  const onSubmit = (data: FormValues) => {
+    const email = localStorage.getItem("email");
+
+    const processedData: ProcessedFormData = {
+      name: data.userName,
+      dateOfBirth: convertDateToServerFormat(data.dateOfBirth),
+      weight: parseInt(data.weight),
+      height: parseInt(data.height),
+      gender: data.gender,
+      exerciseTime: parseInt(data.exerciseTime),
+      diseaseHistory: history === "true" ? data.diseaseHistory : "Não",
+      email: email,
+    };
+    console.log("Data formatada para o servidor: ", processedData.dateOfBirth);
+    fetchData(processedData);
   };
 
   return (
@@ -282,4 +315,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Registration;
