@@ -148,6 +148,7 @@ const Login = () => {
                 borderColor="white"
                 h="48px"
                 w="35vw"
+                type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
               />
