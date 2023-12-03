@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Checkbox,
+  IconButton,
   Input,
   Radio,
   RadioGroup,
@@ -14,6 +15,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import api from "../api";
 import { useRouter } from "next/router";
+import { InfoIcon } from "@chakra-ui/icons";
 
 type FormValues = {
   userName: string;
@@ -51,32 +53,60 @@ const Dashboard = () => {
     const exerciseTime = parseInt(formData.exerciseTime);
 
     try {
-        const response = await api.post("/profile/registration", {
-            name: formData.userName,
-            weight: weight,
-            height: height,
-            exerciseTime: exerciseTime,
-            dateOfBirth: dateOfBirth,
-            gender: formData.gender,
-            diseaseHistory: history === "true" ? formData.diseaseHistory : "Não",
-        });
+      const response = await api.post("/profile/registration", {
+        name: formData.userName,
+        weight: weight,
+        height: height,
+        exerciseTime: exerciseTime,
+        dateOfBirth: dateOfBirth,
+        gender: formData.gender,
+        diseaseHistory: history === "true" ? formData.diseaseHistory : "Não",
+      });
 
-        router.push("/dashboard");
+      router.push("/login");
     } catch (error) {
-        if (error.response && error.response.data) {
-            // Se existe uma mensagem de erro específica enviada pelo backend
-            setError(error.response.data);
-        } else {
-            // Se o erro não contém uma resposta específica
-            setError("Ocorreu um erro ao enviar os dados. Por favor, tente novamente.");
-            console.log(error);
-        }
+      if (error.response && error.response.data) {
+        // Se existe uma mensagem de erro específica enviada pelo backend
+        setError(error.response.data);
+      } else {
+        // Se o erro não contém uma resposta específica
+        setError(
+          "Ocorreu um erro ao enviar os dados. Por favor, tente novamente."
+        );
+        console.log(error);
+      }
     }
-};
+  };
 
   return (
-    <Box backgroundColor="offwhite" h="100vh">
+    <Box backgroundColor="offwhite" h="120vh">
       <Box paddingTop="100px" marginX="310px" justifyContent="center">
+        <Box
+          marginBottom="50px"
+          backgroundColor="black"
+          height="80px"
+          borderRadius="8px"
+          padding="20px"
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Box>
+            <Text color="white" fontSize="14px" fontFamily="inter.400">
+              Após completar seu cadastro, você será redirecionado para a página
+              de login para entrar com os seus dados.
+            </Text>
+          </Box>
+          <IconButton
+            isRound={true}
+            variant="solid"
+            colorScheme="white"
+            aria-label="Done"
+            fontSize="20px"
+            icon={<InfoIcon />}
+          />
+        </Box>
+
         <Text
           fontFamily="poppins.400"
           fontSize="3xl"
@@ -223,15 +253,15 @@ const Dashboard = () => {
           </Text>
           <Box display="flex" justifyContent="space-between" marginTop="30px">
             <Box>
-            <Checkbox
-              size="lg"
-              colorScheme="blackAlpha"
-              borderColor="black"
-              borderRadius="8px"
-              defaultChecked
-            >
-              <Text fontSize="small">Li e concordo com os termos de uso</Text>
-            </Checkbox>
+              <Checkbox
+                size="lg"
+                colorScheme="blackAlpha"
+                borderColor="black"
+                borderRadius="8px"
+                defaultChecked
+              >
+                <Text fontSize="small">Li e concordo com os termos de uso</Text>
+              </Checkbox>
               <Text color="red" fontSize="xs">
                 {error}
               </Text>

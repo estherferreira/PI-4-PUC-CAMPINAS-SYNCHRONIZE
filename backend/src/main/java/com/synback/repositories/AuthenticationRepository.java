@@ -12,4 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AuthenticationRepository extends MongoRepository<AuthenticationUser, String> {
     AuthenticationUser findByEmail(String email);
+    AuthenticationUser findByUserId(String id);
 }

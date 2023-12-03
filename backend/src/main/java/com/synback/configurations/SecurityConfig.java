@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .cors(cors -> {
                 })
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/register", "/api/login", "/api/dashboard", "/profile/registration", "/profile/my-data")
+                        .requestMatchers("/api/register", "/api/login", "/api/dashboard", "/profile/registration", "/profile/my-data", "/profile/diagnosis")
                         .permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form.disable())

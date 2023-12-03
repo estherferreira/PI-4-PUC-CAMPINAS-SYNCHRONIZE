@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "Credentials")
 public class AuthenticationUser implements Cloneable {
 
-    private String credentialId;
+    private String userId;
     private String email;
     private String password;
     private String role;
@@ -14,15 +14,15 @@ public class AuthenticationUser implements Cloneable {
     public AuthenticationUser() {
     }
 
-    public AuthenticationUser(String credentialId, String email, String password) {
-        this.credentialId = credentialId;
+    public AuthenticationUser(String userId, String email, String password) {
+        this.userId = userId;
         this.email = email;
         this.password = password;
         this.role = "customer";
     }
 
-    public String getId() {
-        return credentialId;
+    public String getUserId() {
+        return userId;
     }
 
     public String getEmail() {
@@ -33,8 +33,8 @@ public class AuthenticationUser implements Cloneable {
         return password;
     }
 
-    public void setId(String id) {
-        this.credentialId = id;
+    public void setUserId(String id) {
+        this.userId = id;
     }
 
     public void setEmail(String email) {
@@ -47,7 +47,7 @@ public class AuthenticationUser implements Cloneable {
 
     @Override
     public String toString() {
-        return "Id: " + credentialId + '\n' +
+        return "Id: " + userId + '\n' +
                 "Email: " + email.toString() + '\n' +
                 "Password: " + password + '\n' +
                 "Role: " + role;
@@ -68,7 +68,7 @@ public class AuthenticationUser implements Cloneable {
 
         AuthenticationUser user = (AuthenticationUser) obj;
 
-        if (user.credentialId != this.credentialId || user.email != this.email ||
+        if (user.userId != this.userId || user.email != this.email ||
                 user.password != this.password ||
                 user.role != this.role)
             return false;
@@ -80,7 +80,7 @@ public class AuthenticationUser implements Cloneable {
     public int hashCode() {
         int result = 13;
 
-        result = 7 * result + credentialId.hashCode();
+        result = 7 * result + userId.hashCode();
         result = 7 * result + email.hashCode();
         result = 7 * result + password.hashCode();
         result = 7 * result + role.hashCode();
@@ -97,6 +97,7 @@ public class AuthenticationUser implements Cloneable {
 
         this.email = modelo.email;
         this.password = modelo.password;
+        this.userId = modelo.userId;
     }
 
     public Object clone() {

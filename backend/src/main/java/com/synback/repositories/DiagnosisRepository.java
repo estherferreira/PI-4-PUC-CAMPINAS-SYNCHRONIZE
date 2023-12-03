@@ -5,5 +5,6 @@ import com.synback.models.UserDiagnosis;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface DiagnosisRepository extends MongoRepository<UserDiagnosis, String> {
-    List<UserDiagnosis> findByEmailIgnoreCase(String email);
+    List<UserDiagnosis> findByUserId(String id);
+    UserDiagnosis findByDiagnosisId(String id);
 }

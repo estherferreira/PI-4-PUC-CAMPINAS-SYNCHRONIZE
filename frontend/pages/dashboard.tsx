@@ -1,9 +1,11 @@
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, Text } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 import { useRouter } from "next/router";
-import DateCard from "../components/DateCard";
 import React, { useEffect, useState } from "react";
 import { useUserContext } from "../context/UserContext";
+import HistoryCard from "../components/HistoryCard";
+import ProfileImage from "../components/ProfileImage";
+import avatar from "../assets/avatar.jpg";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -14,10 +16,6 @@ const Dashboard = () => {
     if (typeof window !== "undefined") {
       // Evita acessar localStorage durante a renderização do lado do servidor (SSR - Server-Side Rendering)
       const token = localStorage.getItem("jwtToken");
-      const email = localStorage.getItem("email");
-
-      console.log(email);
-      console.log(token);
 
       const fetchDiagnoses = async () => {
         try {
@@ -34,8 +32,8 @@ const Dashboard = () => {
             return;
           }
 
-          const disposis = await response.json();
-          setUserData(disposis);
+          const data = await response.json();
+          setUserData(data);
         } catch (error) {
           console.error("Erro ao buscar diagnósticos", error);
         }
@@ -50,35 +48,60 @@ const Dashboard = () => {
     router.push("/login");
   };
 
-  console.log(userData);
+  const handleDiagnostic = (diagnosisId: string) => {
+    // console.log("userData: ", userData);
+    router.push(`/diagnostic/${diagnosisId}`);
+  };
+
+  // Função para formatar o mês
+  function formatMonth(monthNumber: any) {
+    const months = [
+      "jan",
+      "fev",
+      "mar",
+      "abr",
+      "mai",
+      "jun",
+      "jul",
+      "ago",
+      "set",
+      "out",
+      "nov",
+      "dez",
+    ];
+    return months[monthNumber];
+  }
+
+  // Função para extrair dia e mês de uma string de data
+  function extractDayAndMonth(dateString: any) {
+    const date = new Date(dateString);
+    const day = date.getDate(); // Obtém o dia
+    const month = formatMonth(date.getMonth()); // Obtém o mês (0-11)
+    return { day, month };
+  }
 
   return (
     <Box backgroundColor="offwhite" h="100vh">
       <Box paddingTop="100px" marginX="310px" justifyContent="center">
         <Box display="flex" gap="12px" justifyContent="space-between">
           <Flex align="center" gap="15px">
-            <Box
-              height="56px"
-              width="56px"
-              borderRadius="full"
-              backgroundColor="black"
-            />
+            <ProfileImage src={avatar}/>
             <Box>
               <Text fontFamily="poppins.400" fontSize="lg">
-                {userData ? userData[0]?.userName : ""}
-              </Text>
-              <Text
-                fontFamily="poppins.400"
-                color="gray"
-                cursor="pointer"
-                onClick={() => {
-                  router.push("/profile");
-                }}
-              >
-                Ver perfil
+                {userData ? userData?.userInfo?.name : "Synchronize"}
               </Text>
             </Box>
           </Flex>
+          {/* <Text
+            fontFamily="poppins.400"
+            color="gray"
+            cursor="pointer"
+            onClick={() => {
+              router.push("/profile");
+            }}
+          >
+            Meus dados
+          </Text> */}
           <Flex align="center" gap="10px">
             <Text
               fontFamily="poppins.400"
@@ -107,31 +130,18 @@ const Dashboard = () => {
             Fazer diagnóstico
           </Button>
         </Flex>
-        <Box
-          height="fit-content"
-          backgroundColor="ice"
-          borderRadius="16px"
-          padding="22px"
-          alignItems="center"
-          justifyContent="space-between"
-          display="flex"
-        >
-          <Box display="flex" alignItems="center" gap="20px">
-            <DateCard month="out" day="22" current={true} />
-            <Text fontFamily="poppins.400" fontSize="sm">
-              Estou me sentindo muito quente e suando muito, minha cabeça está
-              doendo muito, e minha garganta dói quando engulo
-            </Text>
-          </Box>
-          <Text
-            fontFamily="poppins.400"
-            fontSize="sm"
-            color="gray"
-            cursor="pointer"
-          >
-            Ver detalhes
-          </Text>
-        </Box>
+        {userData?.diagnoses?.map((diagnosis: any, index: number) => {
+          const { day, month } = extractDayAndMonth(diagnosis.currentDate);
+          return (
+            <HistoryCard
+              key={index}
+              day={day.toString()}
+              month={month}
+              symptoms={diagnosis.symptoms}
+              onclick={() => handleDiagnostic(diagnosis.diagnosisId)}
+            />
+          );
+        })}
       </Box>
     </Box>
   );
