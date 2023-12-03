@@ -14,6 +14,10 @@ import { ArrowForwardIcon } from "@chakra-ui/icons";
 import PlanCard from "../components/PlanCard";
 import DateCard from "../components/DateCard";
 import Navbar from "../components/Navbar";
+import Womam from "../assets/woman.png";
+import Image from "next/image";
+import ProfileImage from "../components/ProfileImage";
+import PlayerButtom from "../assets/player-buttom.svg";
 
 const IndexPage = () => {
   return (
@@ -98,12 +102,43 @@ const IndexPage = () => {
 
         <Box display="flex" justifyContent="center" alignContent="center">
           <SimpleGrid columns={3} spacing={20} alignItems="flex-end">
-            <Card
+            <Box
+              position="relative"
               width="300px"
               height="410px"
-              bgColor="black"
+              overflow="hidden"
               borderRadius="3xl"
-            ></Card>
+              bg="gray.200"
+            >
+              <Image src={Womam} alt="Woman" />
+              <Box
+                position="absolute"
+                bottom="4"
+                left="4"
+                right="4"
+                paddingY="2"
+                paddingX="4"
+                bg="blackAlpha.600"
+                borderRadius="2xl"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  gap="1rem"
+                  width="full"
+                  height="full"
+                >
+                  <Image src={PlayerButtom} alt="Player Button" />
+                  <Text color="white" fontSize="md" fontFamily="poppins.400">
+                    Informações pessoais
+                  </Text>
+                </Box>
+              </Box>
+            </Box>
             <Box minWidth="400px">
               <Card
                 width="280px"
@@ -122,12 +157,7 @@ const IndexPage = () => {
                     gap="20px"
                     height="inherit"
                   >
-                    <Box
-                      borderRadius="full"
-                      height="56px"
-                      width="56px"
-                      bg="offwhite"
-                    ></Box>
+                    <ProfileImage src={Womam} />
                     <Text color="white" fontSize="lg" fontFamily="poppins.400">
                       Sophia Iwara
                     </Text>

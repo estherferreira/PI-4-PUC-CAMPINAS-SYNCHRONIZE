@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import com.synback.utils.Data;
 import com.synback.models.AuthenticationUser;
 import com.synback.models.UserProfile;
@@ -15,9 +14,6 @@ import com.synback.repositories.AuthenticationRepository;
 import com.synback.repositories.UserProfileRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -99,12 +95,5 @@ public class RegistrationController {
         } catch (IOException e) {
             return "Erro ao se comunicar com o servidor de socket";
         }
-    }
-
-    private static String generateUniqueId() {
-        Random random = new Random();
-        // Gera um número aleatório com 10 dígitos
-        int number = random.nextInt(1000000000, 2000000000);
-        return "SYN-" + String.format("%010d", number);
     }
 }
