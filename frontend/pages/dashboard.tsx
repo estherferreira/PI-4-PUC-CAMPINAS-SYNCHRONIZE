@@ -1,9 +1,11 @@
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, Text } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useUserContext } from "../context/UserContext";
 import HistoryCard from "../components/HistoryCard";
+import ProfileImage from "../components/ProfileImage";
+import avatar from "../assets/avatar.jpg";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -83,12 +85,7 @@ const Dashboard = () => {
       <Box paddingTop="100px" marginX="310px" justifyContent="center">
         <Box display="flex" gap="12px" justifyContent="space-between">
           <Flex align="center" gap="15px">
-            <Box
-              height="56px"
-              width="56px"
-              borderRadius="full"
-              backgroundColor="black"
-            />
+            <ProfileImage src={avatar}/>
             <Box>
               <Text fontFamily="poppins.400" fontSize="lg">
                 {userData ? userData?.userInfo?.name : "Synchronize"}

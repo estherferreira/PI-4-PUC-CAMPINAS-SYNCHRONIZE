@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { InfoIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
 import ReportCard from "../../components/ReportCard";
+import ProfileImage from "../../components/ProfileImage";
+import avatar from "../../assets/avatar.jpg";
 
 const Diagnostic = () => {
   const [userData, setUserData] = useState(null);
@@ -52,12 +54,7 @@ const Diagnostic = () => {
       <Box paddingTop="100px" marginX="310px" justifyContent="center">
         <Box display="flex" gap="12px" justifyContent="space-between">
           <Flex align="center" gap="15px">
-            <Box
-              height="56px"
-              width="56px"
-              borderRadius="full"
-              backgroundColor="black"
-            />
+            <ProfileImage src={avatar} />
             <Box>
               <Text fontFamily="poppins.400" fontSize="lg">
                 {userData ? userData?.userInfo?.name : "Synchronize"}
