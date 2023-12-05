@@ -15,6 +15,6 @@ Integrado com uma IA, o usuário fará suas perguntas e ela responderá qual a s
 
 ### Desenvolvedores:
 
-   <a href="https://github.com/EhoTavas/CropTalk/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=EhoTavas/CropTalk" />
+   <a href="https://github.com/estherferreira/PI-4-PUC-CAMPINAS-SYNCHRONIZE/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=estherferreira/PI-4-PUC-CAMPINAS-SYNCHRONIZE" />
 </a><br>
