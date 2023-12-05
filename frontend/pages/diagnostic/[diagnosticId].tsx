@@ -1,4 +1,4 @@
-import { Box, Flex, IconButton, Text } from "@chakra-ui/react";
+import { Box, Center, Flex, IconButton, Text } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { InfoIcon } from "@chakra-ui/icons";
@@ -20,7 +20,6 @@ const Diagnostic = () => {
 
       const fetchDiagnoses = async () => {
         try {
-          console.log(id);
           const response = await fetch(
             `http://localhost:5000/profile/diagnosis/${id}`,
             {
@@ -67,7 +66,7 @@ const Diagnostic = () => {
                   router.push("/dashboard");
                 }}
               >
-                Ver perfil
+                Seus diagnósticos
               </Text>
             </Box>
           </Flex>
@@ -126,6 +125,11 @@ const Diagnostic = () => {
                 description={item.description}
               />
             ))}
+          {userData?.diagnoses?.report.length === 0 && (
+            <Center fontFamily="inter.400" fontSize="lg" paddingTop="100px">
+              Erro ao gerar diagnóstico, tente novamente.
+            </Center>
+          )}
         </Box>
       </Box>
     </Box>

@@ -1,10 +1,11 @@
 > Synchronize - Intelligent Diagnosis
 
-<div>
-
 ##
 
-Projetado para oferecer informações claras e acessíveis sobre a saúde com base nos sintomas apresentados, o Synchronize atende diretamente às necessidades daqueles que buscam um maior entendimento de seu estado de saúde e desejam assumir um papel mais ativo em seu cuidado pessoal.
+### Site:
+
+Dedicado a todos os tipos de agricultores, de pequeno, médio ou grande porte. O site será responsável por retirar as dúvidas frequentes dos usuários.
+Integrado com uma IA, o usuário fará suas perguntas e ela responderá qual a solução do seu problema e os possíveis equipamentos para tratamento ou prevenção.
 
 <br>
 
@@ -14,7 +15,6 @@ Projetado para oferecer informações claras e acessíveis sobre a saúde com ba
 
 ### Desenvolvedores:
 
-   <a href="https://github.com/estherferreira/PI-4-PUC-CAMPINAS-SYNCHRONIZE/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=estherferreira/PI-4-PUC-CAMPINAS-SYNCHRONIZE" />
+   <a href="https://github.com/EhoTavas/CropTalk/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=EhoTavas/CropTalk" />
 </a><br>
-</div>

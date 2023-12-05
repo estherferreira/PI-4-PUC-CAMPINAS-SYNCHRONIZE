@@ -119,7 +119,7 @@ const Diagnostic = () => {
                     router.push("/dashboard");
                   }}
                 >
-                  Ver perfil
+                  Seus diagnósticos
                 </Text>
               </Box>
             </Flex>

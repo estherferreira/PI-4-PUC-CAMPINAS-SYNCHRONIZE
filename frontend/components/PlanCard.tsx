@@ -25,14 +25,19 @@ const PlanCard = ({ name, price, features, color, subtitle }) => {
       <Box>
         {features.map((item: Object, index: number) => {
           return (
-            <Flex key={index} alignItems="center" gap="10px" marginBottom="30px">
+            <Flex
+              key={index}
+              alignItems="center"
+              gap="10px"
+              marginBottom="30px"
+            >
               <CheckIcon />
               <Text fontFamily="poppins.400">{item}</Text>
             </Flex>
           );
         })}
       </Box>
-      <Button
+      {/* <Button
         bgColor="black"
         color="white"
         fontFamily="poppins.500"
@@ -41,7 +46,7 @@ const PlanCard = ({ name, price, features, color, subtitle }) => {
         height="50px"
       >
         Escolher
-      </Button>
+      </Button> */}
     </Card>
   );
 };
