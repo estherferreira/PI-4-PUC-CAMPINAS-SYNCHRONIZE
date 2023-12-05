@@ -1,7 +1,5 @@
 > Synchronize - Intelligent Diagnosis
 
-<div>
-
 ##
 
 ### Site:
@@ -20,4 +18,3 @@ Integrado com uma IA, o usuário fará suas perguntas e ela responderá qual a s
    <a href="https://github.com/EhoTavas/CropTalk/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=EhoTavas/CropTalk" />
 </a><br>
-</div>
