@@ -59,7 +59,11 @@ public class RegisterController {
 
     public String sendCredentialsToSocketServer(String email, String password) {
         try (Socket socket = new Socket("localhost", 7000);
+
+                // Cria um PrintWriter para enviar dados através do socket
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+
+                //Cria um BufferedReader para ler a resposta do servidor
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
             out.println("CRED:" + email + ":" + password);

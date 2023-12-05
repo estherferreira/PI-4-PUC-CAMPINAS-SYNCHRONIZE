@@ -82,7 +82,11 @@ public class RegistrationController {
 
     public String sendUserProfileToSocketServer(Data dateOfBirth, int weight, int height, int exerciseTime) {
         try (Socket socket = new Socket("localhost", 7000);
+
+                // Cria um PrintWriter para enviar dados através do socket
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                
+                //Cria um BufferedReader para ler a resposta do servidor
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
             out.println("USER:" + dateOfBirth + ":" + weight + ":" + height + ":" + exerciseTime);
