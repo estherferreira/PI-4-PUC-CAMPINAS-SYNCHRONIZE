@@ -37,8 +37,14 @@ public class DiagnosticIdController {
         UserDiagnosis diagnoses = diagnosisRepository.findByDiagnosisId(diagnosisId);
         System.out.println("diagnoses: " + diagnoses);
 
-        // Obter dados do usuário
+        // SecurityContextHolder é uma classe auxiliar do Spring Security que fornece
+        // acesso ao SecurityContext
+        // getContext() retorna o SecurityContext associado ao thread atual
+        // O SecurityContext é onde os detalhes da autenticação atual são armazenados
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Extrai o principal (usuário logado) do objeto Authentication e converte para UserDetails
+        // UserDetails é usado para obter o identificador do usuário (e-mail)
         String email = ((UserDetails) authentication.getPrincipal()).getUsername();
 
         AuthenticationUser credentials = authenticationRepository.findByEmail(email);
